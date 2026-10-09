@@ -1400,6 +1400,16 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         g.fillRect(x0 + i * PX, y0 + ry * PX + (a.state === 'sleep' && c === 'E' ? 2 : 0), PX, a.state === 'sleep' && c === 'E' ? 1 : PX);
       }
     }
+    if (a.jet) {
+      const bx = a.dir > 0 ? x0 - 4 : x0 + SW;
+      g.fillStyle = '#8E8E93'; g.fillRect(bx, y0 + 9, 4, 10);
+      g.fillStyle = '#636366'; g.fillRect(bx, y0 + 9, 4, 2);
+      if (a.flame) {
+        const fl = 3 + (Math.floor(now / 60) % 3) * 2;
+        g.fillStyle = '#FF9F0A'; g.fillRect(bx, y0 + 19, 4, fl);
+        g.fillStyle = '#FFD60A'; g.fillRect(bx + 1, y0 + 19, 2, Math.max(2, fl - 2));
+      }
+    }
     if (a.carry) {
       g.fillStyle = a.carry;
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
@@ -1466,6 +1476,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     a.say = text; a.thinkUntil = now + think; a.sayUntil = now + think + ms; wake();
   }
   function hop(a, power = 150) { a.jv = -power; }
+  function flyAway(a, delay = 0) {
+    a.el = null; a.carry = null; a.jet = true; a.vy = 0; a.vx = (Math.random() - .5) * 60;
+    a.state = 'fly'; a.flyT0 = performance.now() + delay;
+    wake();
+  }
   function leave(a) {
     a.el = null; a.carry = null;
     a.tx = a.x < VW / 2 ? -40 : VW + 40;
@@ -1525,6 +1540,28 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
+      if (a.state === 'descend') {
+        // Soft landing: ease down to the baseline, puff of dust, then start walking
+        a.flame = true;
+        a.y += (a.ty - a.y) * Math.min(1, dt * 7);
+        if (Math.random() < .4) dusts.push({ x: a.x - a.dir * 18, y: a.y - 4, vx: (Math.random() - .5) * 20, vy: 30, life: .45 });
+        if (Math.abs(a.ty - a.y) < 1.5) { a.y = a.ty; a.flame = false; dust(a.x, a.y); a.state = 'walk'; a.tx = a.walkTo; }
+        drawSprite(a, now);
+        continue;
+      }
+      if (a.state === 'fly') {
+        // Crouch, light the jetpack, accelerate up and off the top
+        const age = now - a.flyT0;
+        a.flame = age > 160;
+        if (age > 160) {
+          a.vy -= 1500 * dt; a.x += a.vx * dt; a.y += a.vy * dt;
+          if (Math.random() < .55) dusts.push({ x: a.x - a.dir * 18, y: a.y - 2, vx: (Math.random() - .5) * 24, vy: 40, life: .5 });
+        } else if (age > 0) a.jump = 2;
+        if (a.y < -70) { agents.splice(k, 1); continue; }
+        drawSprite(a, now);
+        a.jump = 0;
+        continue;
+      }
       if (a.drag) {
         const s = partState.get(a.drag), pr = a.drag.getBoundingClientRect();
         const d = clamp01((now - s.t0) / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
@@ -1589,7 +1626,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     }
     g.globalAlpha = 1;
     const printing = parts.some(p => { const s = partState.get(p); return s.t0 && now - s.t0 < s.total + 200; });
-    const busy = printing || agents.some(a => a.drag || a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
+    const busy = printing || agents.some(a => a.drag || a.state === 'fly' || a.state === 'descend' || a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
@@ -1935,7 +1972,8 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     title && title.querySelectorAll('.word').forEach(w => setTimeout(() => w.classList.remove('sel'), 300));
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
-    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; if (i === 0) makeForeman(a); else leave(a); });
+    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; flyAway(a, i * 140); });
+    if (CREW && !foreman) setTimeout(() => { if (foreman) return; const tr = title ? title.getBoundingClientRect() : null; makeForeman(spawn({ x: VW + 30, y: tr ? tr.bottom + 12 : VH - 24, state: 'idle', buildMs: 0 })); }, 650);
   }
   const seen = false;   // every load builds the page again from the top
   if (!CREW || !title || seen || window.scrollY > 200) {
@@ -1969,11 +2007,10 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
-        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: false, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
-        if (k === 0) say(a, 'Building the page…', 1800);
-        const t0 = performance.now() + k * 140;
-        const fade = () => { a.alpha = Math.min(1, (performance.now() - t0) / 200); if (a.alpha < 1) requestAnimationFrame(fade); else { a.tx = x1; a.state = 'walk'; } };
-        setTimeout(fade, k * 140);
+        const a = spawn({ x: x0, y: -40, tx: x0, ty: base, intro: true, carry: null, tip: false, hat: HELPER_HAT, jet: true, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, state: 'hold' });
+        a.walkTo = x1;
+        setTimeout(() => { a.state = 'descend'; wake(); }, k * 140);
+        if (k === 0) setTimeout(() => say(a, 'Building the page…', 1800), 520);
         const watch = () => {
           if (introDone) return;
           idx.forEach(i => {
