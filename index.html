@@ -294,8 +294,6 @@ html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
 html.js [data-build] { clip-path: inset(0 100% 0 0); }
 html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s var(--ease-apple); }
-[data-agent-say] { transition: box-shadow .4s; }
-[data-agent-say].agent-built { box-shadow: 0 0 0 3px rgba(217, 119, 87, .28); }
 .tile2.agent-built .t-vis { transform: translateY(-8px); }
 .media-live { position: relative; padding-bottom: clamp(20px, 5vw, 64px); }
 .live-fit { position: relative; width: 100%; aspect-ratio: 760 / 520; max-width: 100%; }
@@ -1368,34 +1366,41 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
   const PX = 3, SW = 11 * PX, SH = 9 * PX;
   const BLOCKS = ['#0071E3', '#F2C14E', '#34C759', '#AF52DE', '#FF9F0A'];
 
+  // Builders are drawn crisp (whole pixels) but move with sub-pixel physics, so motion stays smooth
   function drawSprite(a, now) {
-    const legs = a.state === 'walk' || a.state === 'leave' ? LEGS[Math.floor(now / 110) % 2] : LEGS[2];
-    const bob = a.state === 'build' ? -Math.abs(Math.sin(now / 55)) * 3 : (a.state === 'walk' || a.state === 'leave') ? -(Math.floor(now / 110) % 2) : 0;
-    const blink = a.state === 'sleep' || (now % 3600) < 120;
+    const moving = a.speed2 > 18;
+    const step = Math.floor(a.phase / 8) % 2;
+    const legs = moving ? LEGS[step] : LEGS[2];
+    let bob = 0;
+    if (moving) bob = -Math.round(Math.abs(Math.sin(a.phase / 8 * Math.PI)) * 1.5);
+    else if (a.state === 'build') bob = Math.round(Math.pow(Math.sin(now / 260), 2) * 2);   // slow nod while working
+    else if (a.state === 'idle') bob = Math.round(Math.sin(now / 900) * .6);                // gentle breathing
+    const blink = a.state === 'sleep' || (now + a.seed) % 3800 < 110;
     const x0 = Math.round(a.x - SW / 2), y0 = Math.round(a.y - SH + bob + a.jump);
     g.globalAlpha = a.alpha;
     const rows = [...BODY, legs];
-    rows.forEach((row, ry) => {
+    for (let ry = 0; ry < rows.length; ry++) {
+      const row = rows[ry];
       for (let i = 0; i < 11; i++) {
         let c = row[a.dir < 0 ? 10 - i : i];
         if (c === '.') continue;
-        if (c === 'E' && blink) c = ry === 4 && a.state === 'sleep' ? 'E' : 'B';
+        if (c === 'E' && blink && a.state !== 'sleep') c = 'B';
         g.fillStyle = COL[c];
-        g.fillRect(x0 + i * PX, y0 + ry * PX, PX, a.state === 'sleep' && c === 'E' ? 1 : PX);
+        g.fillRect(x0 + i * PX, y0 + ry * PX + (a.state === 'sleep' && c === 'E' ? 2 : 0), PX, a.state === 'sleep' && c === 'E' ? 1 : PX);
       }
-    });
+    }
     if (a.carry) {
       g.fillStyle = a.carry;
-      g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (a.state === 'walk' ? (Math.floor(now / 110) % 2) : 0), 12, 12);
+      g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
     }
     g.globalAlpha = 1;
-    if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), a.say, a.y);
+    if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), now < a.thinkUntil ? null : a.say, a.y, now);
   }
 
   const CHROME = () => { const pills = document.querySelector('.secnav-in'); const r = pills && !pills.closest('[hidden]') ? pills.getBoundingClientRect() : null; return Math.max(60, r && r.bottom > 0 ? r.bottom + 6 : 60); };
-  function drawBubble(x, y, text, feet) {
+  function drawBubble(x, y, text, feet, now) {
     g.font = '600 12px -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif';
-    const w = Math.ceil(g.measureText(text).width) + 18, h = 24;
+    const w = text === null ? 46 : Math.ceil(g.measureText(text).width) + 18, h = 24;
     const bx = Math.max(8, Math.min(VW - w - 8, x - w / 2));
     let by = y - h - 6;
     const below = by < CHROME();
@@ -1408,16 +1413,29 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     if (below) { g.moveTo(x - 5, by); g.lineTo(x + 5, by); g.lineTo(x, by - 5); }
     else { g.moveTo(x - 5, by + h); g.lineTo(x + 5, by + h); g.lineTo(x, by + h + 5); }
     g.fill();
+    if (text === null) {
+      // Thinking: three dots that rise in turn
+      for (let i = 0; i < 3; i++) {
+        const t = Math.sin(now / 160 - i * .9);
+        g.globalAlpha = .45 + .55 * Math.max(0, t);
+        g.fillStyle = '#FFFFFF';
+        g.beginPath(); g.arc(bx + 14 + i * 9, by + h / 2 - Math.max(0, t) * 2, 2.2, 0, Math.PI * 2); g.fill();
+      }
+      g.globalAlpha = 1;
+      return;
+    }
     g.fillStyle = '#FFFFFF';
     g.textBaseline = 'middle';
     g.fillText(text, bx + 9, by + h / 2 + 1);
   }
 
   const agents = [];
-  const sparks = [];
-  if (location.hostname === 'localhost') window.__crew = { agents, sparks }; // inspection during local development only
+  const dusts = [];   // a few slow grey pixels when a block lands
+  const drops = [];   // carried blocks easing into place
+  const traces = [];  // outlines and underlines drawn around what a builder works on
+  if (location.hostname === 'localhost') window.__crew = { agents, traces }; // inspection during local development only
   function spawn(opts) {
-    const a = Object.assign({ x: 0, y: 0, tx: 0, ty: 0, el: null, ox: .5, oy: 0, speed: 420, state: 'walk', dir: 1, alpha: 1, jump: 0, carry: null, say: '', sayUntil: 0, buildMs: 520, onArrive: null, afterBuild: null }, opts);
+    const a = Object.assign({ x: 0, y: 0, tx: 0, ty: 0, vx: 0, vy: 0, speed2: 0, phase: 0, seed: Math.random() * 4000, el: null, ox: .5, oy: 0, speed: 420, state: 'walk', dir: 1, alpha: 1, jump: 0, jv: 0, carry: null, say: '', sayUntil: 0, thinkUntil: 0, buildMs: 600, onArrive: null, afterBuild: null }, opts);
     agents.push(a);
     wake();
     return a;
@@ -1429,57 +1447,122 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     }
     return [a.tx, a.ty];
   }
-  function say(a, text, ms = 2200) { a.say = text; a.sayUntil = performance.now() + ms; wake(); }
+  function say(a, text, ms = 2200, think = 0) {
+    const now = performance.now();
+    a.say = text; a.thinkUntil = now + think; a.sayUntil = now + think + ms; wake();
+  }
+  function hop(a, power = 150) { a.jv = -power; }
   function leave(a) {
     a.el = null; a.carry = null;
     a.tx = a.x < VW / 2 ? -40 : VW + 40;
     a.ty = a.y; a.state = 'leave';
   }
-  function burst(x, y, color) {
-    for (let i = 0; i < 6; i++) sparks.push({ x, y, vx: (Math.random() - .5) * 160, vy: -60 - Math.random() * 120, life: 1, color: color || BLOCKS[i % BLOCKS.length] });
+  function dust(x, y) {
+    for (let i = 0; i < 3; i++) dusts.push({ x: x + (i - 1) * 5, y, vx: (i - 1) * 22, vy: -18 - i * 6, life: .7 });
   }
+  // The carried block eases down beside the builder and clicks into place
+  function place(a) {
+    if (!a.carry) return;
+    drops.push({ color: a.carry, x0: a.x - 6, y0: a.y - SH - 14, x1: a.x + a.dir * 16 - 6, y1: a.y - 12, t0: performance.now() });
+    a.carry = null;
+  }
+  // Trace a thin line once around an element, starting where the builder stands
+  function trace(el, kind = 'frame', fromX = null) {
+    const cs = getComputedStyle(el);
+    traces.push({ el, kind, t0: performance.now(), dur: kind === 'frame' ? 900 : 650, radius: parseFloat(cs.borderTopLeftRadius) || 0, fromX });
+    wake();
+  }
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
 
   let raf = 0, last = 0;
   function wake() { if (!raf && CREW) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
-    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    const dt = Math.min(.04, (now - last) / 1000); last = now;
     g.clearRect(0, 0, VW, VH);
+
+    // Traces sit behind the builders
+    for (let k = traces.length - 1; k >= 0; k--) {
+      const t = traces[k];
+      const age = now - t.t0, p = easeOut(clamp01(age / t.dur)), fade = 1 - clamp01((age - t.dur - 500) / 500);
+      if (fade <= 0) { traces.splice(k, 1); continue; }
+      const r = t.el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > VH) continue;
+      g.save();
+      g.strokeStyle = `rgba(217, 119, 87, ${(.85 * fade).toFixed(3)})`;
+      g.lineWidth = 2;
+      g.lineCap = 'round';
+      if (t.kind === 'line') {
+        const y = Math.round(r.bottom + 8) + .5;
+        g.beginPath(); g.moveTo(r.left, y); g.lineTo(r.left + Math.min(r.width, 520) * p, y); g.stroke();
+      } else {
+        const x = r.left + 1, y = r.top + 1, w = r.width - 2, h = r.height - 2, rad = Math.min(t.radius, w / 2, h / 2);
+        const per = 2 * (w + h) - (8 - 2 * Math.PI) * rad;
+        const start = t.fromX === null ? 0 : Math.max(0, Math.min(w - 2 * rad, t.fromX - x - rad));
+        g.setLineDash([per * p, per]);
+        g.lineDashOffset = -start;
+        g.beginPath();
+        g.roundRect ? g.roundRect(x, y, w, h, rad) : g.rect(x, y, w, h);
+        g.stroke();
+      }
+      g.restore();
+    }
+
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
       if (a.state === 'walk' || a.state === 'leave') {
+        // Arrive steering: accelerate toward the target, ease out as it gets close
         const [tx, ty] = targetOf(a);
-        const dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy), step = a.speed * dt;
-        if (Math.abs(dx) > 1) a.dir = Math.sign(dx);
-        if (d <= step) {
-          a.x = tx; a.y = ty;
+        const dx = tx - a.x, dy = ty - a.y, d = Math.hypot(dx, dy);
+        const want = Math.min(a.speed, d * 8 + 24);
+        const wx = d > .01 ? dx / d * want : 0, wy = d > .01 ? dy / d * want : 0;
+        const k2 = 1 - Math.exp(-dt * 12);
+        a.vx += (wx - a.vx) * k2; a.vy += (wy - a.vy) * k2;
+        a.x += a.vx * dt; a.y += a.vy * dt;
+        a.speed2 = Math.hypot(a.vx, a.vy);
+        a.phase += a.speed2 * dt;
+        if (Math.abs(a.vx) > 24) a.dir = Math.sign(a.vx);
+        if (a.state === 'leave' && (a.x < -36 || a.x > VW + 36)) { agents.splice(k, 1); continue; }
+        if (d < 2.5) {
+          a.x = tx; a.y = ty; a.vx = a.vy = 0; a.speed2 = 0;
           if (a.state === 'leave') { agents.splice(k, 1); continue; }
           a.state = a.buildMs ? 'build' : 'idle';
           a.buildEnd = now + a.buildMs;
           const arrive = a.onArrive; a.onArrive = null;
           arrive && arrive(a);
-        } else { a.x += dx / d * step; a.y += dy / d * step; }
-      } else if (a.state === 'build') {
+        }
+      } else {
+        a.speed2 = 0;
         if (a.el) { const [tx, ty] = targetOf(a); a.x = tx; a.y = ty; }
-        if (Math.random() < .35) burst(a.x + a.dir * 12, a.y - SH / 2, a.carry);
-        if (now >= a.buildEnd) { a.state = 'idle'; const f = a.afterBuild; a.afterBuild = null; f ? f(a) : null; }
-      } else if (a.el && (a.state === 'idle' || a.state === 'sit')) {
-        const [tx, ty] = targetOf(a); a.x = tx; a.y = ty;
+        if (a.state === 'build' && now >= a.buildEnd) { a.state = 'idle'; const f = a.afterBuild; a.afterBuild = null; f && f(a); }
       }
-      if (a.jump < 0) a.jump = Math.min(0, a.jump + 60 * dt);
+      // Springy hop
+      if (a.jump < 0 || a.jv) { a.jv += 900 * dt; a.jump += a.jv * dt; if (a.jump >= 0) { a.jump = 0; a.jv = 0; } }
       drawSprite(a, now);
     }
-    for (let k = sparks.length - 1; k >= 0; k--) {
-      const s = sparks[k];
-      s.vy += 420 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt * 1.8;
-      if (s.life <= 0) { sparks.splice(k, 1); continue; }
-      g.globalAlpha = s.life; g.fillStyle = s.color; g.fillRect(Math.round(s.x), Math.round(s.y), 4, 4);
+
+    for (let k = drops.length - 1; k >= 0; k--) {
+      const d = drops[k], age = now - d.t0;
+      const p = easeOut(clamp01(age / 260)), s = age < 260 ? 12 : 12 * (1 - clamp01((age - 380) / 220));
+      if (s <= 0) { drops.splice(k, 1); continue; }
+      if (age >= 260 && !d.landed) { d.landed = true; dust(d.x1 + 6, d.y1 + 12); }
+      const squash = age >= 260 && age < 340 ? 2 : 0;
+      g.fillStyle = d.color;
+      g.fillRect(Math.round(lerp(d.x0, d.x1, p) + (12 - s) / 2 - squash / 2), Math.round(lerp(d.y0, d.y1, p) + (12 - s) + squash), Math.round(s + squash), Math.round(s - squash));
+    }
+    for (let k = dusts.length - 1; k >= 0; k--) {
+      const s = dusts[k];
+      s.vy += 40 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      if (s.life <= 0) { dusts.splice(k, 1); continue; }
+      g.globalAlpha = s.life / .7 * .7; g.fillStyle = s.z ? '#86868B' : '#B9B9BE';
+      if (s.z) { g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif'; g.fillText('z', s.x, s.y); }
+      else g.fillRect(Math.round(s.x), Math.round(s.y), 3, 3);
     }
     g.globalAlpha = 1;
-    const busy = agents.some(a => a.state !== 'idle' && a.state !== 'sit' && a.state !== 'sleep') || sparks.length || agents.some(a => a.say && now < a.sayUntil);
+    const busy = agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || companion ? requestAnimationFrame(frame) : 0;
   }
 
-  /* Section builds: two agents carry blocks to each heading and build it in */
+  /* Section builds: two builders carry blocks to each heading, set them down and underline it */
   const builds = [...document.querySelectorAll('[data-build]')];
   function build(el) {
     if (el.classList.contains('in')) return;
@@ -1494,7 +1577,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       spawn({
         x: fromLeft ? -30 - i * 40 : VW + 30 + i * 40, y: Math.max(60, Math.min(VH - 30, r.top - 2)),
         el, ox, oy: -2, carry: BLOCKS[(i + builds.indexOf(el)) % BLOCKS.length], speed: 560 + i * 60,
-        onArrive: a => { go(); },
+        onArrive: a => { go(); place(a); if (i === 0) trace(el.querySelector('h2') || el, 'line'); },
         afterBuild: a => leave(a),
       });
     });
@@ -1573,7 +1656,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         setTimeout(fade, k * 140);
         const watch = () => {
           if (introDone) return;
-          idx.forEach(i => { if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) { letters[i].classList.add('on'); if (Math.random() < .5) burst(rects[i].left + rects[i].width / 2, rects[i].bottom, a.carry); } });
+          idx.forEach(i => { if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) { letters[i].classList.add('on'); if (Math.random() < .2) dust(rects[i].left + rects[i].width / 2, rects[i].bottom); } });
           if (idx.every(i => letters[i].classList.contains('on'))) {
             a.carry = null;
             if (letters.every(s => s.classList.contains('on'))) setTimeout(finishIntro, 350);
@@ -1609,7 +1692,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     window.addEventListener('mousemove', e => {
       mouse = [e.clientX, e.clientY];
       if (!companion) return;
-      if (companion.state === 'sleep' || companion.state === 'sit') { companion.state = 'idle'; companion.jump = -6; }
+      if (companion.state === 'sleep' || companion.state === 'sit') { companion.state = 'idle'; hop(companion, 120); }
       companion.lastMove = performance.now();
       clearTimeout(restTimer);
       restTimer = setTimeout(() => {
@@ -1630,10 +1713,10 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         busyUntil = performance.now() + 3200;
         const r = t.getBoundingClientRect();
         companion.el = t; companion.ox = r.width > 360 ? .88 : .8; companion.oy = Math.min(r.height - 4, 22);
-        companion.buildMs = 900; companion.carry = BLOCKS[quip % BLOCKS.length]; companion.speed = 720;
+        companion.buildMs = 1100; companion.carry = BLOCKS[quip % BLOCKS.length]; companion.speed = 720;
         companion.state = 'walk';
-        companion.onArrive = a => { say(a, t.dataset.agentSay, 2600); t.classList.add('agent-built'); t.dispatchEvent(new CustomEvent('agent-arrive')); };
-        companion.afterBuild = a => { a.carry = null; a.buildMs = 0; a.speed = 300; setTimeout(() => t.classList.remove('agent-built'), 800); };
+        companion.onArrive = a => { say(a, t.dataset.agentSay, 2400, 480); trace(t, 'frame', a.x); place(a); t.classList.add('agent-built'); t.dispatchEvent(new CustomEvent('agent-arrive')); };
+        companion.afterBuild = a => { a.buildMs = 0; a.speed = 300; setTimeout(() => t.classList.remove('agent-built'), 900); };
         wake();
       }, 450);
     });
@@ -1641,9 +1724,8 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     document.addEventListener('click', e => {
       if (!companion) return;
       if (Math.hypot(e.clientX - companion.x, e.clientY - (companion.y - SH / 2)) < 30) {
-        companion.jump = -10;
-        say(companion, QUIPS[quip++ % QUIPS.length], 2600);
-        burst(companion.x, companion.y - SH, BLOCKS[quip % BLOCKS.length]);
+        hop(companion, 190);
+        say(companion, QUIPS[quip++ % QUIPS.length], 2600, 260);
       }
     });
 
@@ -1653,7 +1735,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       const idle = performance.now() - (companion.lastMove || 0);
       if (idle > 26000 && companion.state !== 'sleep') { companion.state = 'sleep'; companion.el = null; }
       else if (idle > 9000 && companion.state === 'idle') companion.state = 'sit';
-      if (companion.state === 'sleep' && Math.random() < .5) sparks.push({ x: companion.x + 10, y: companion.y - SH, vx: 14, vy: -50, life: 1.4, color: '#86868B' });
+      if (companion.state === 'sleep' && Math.random() < .5) dusts.push({ x: companion.x + 10, y: companion.y - SH, vx: 10, vy: -28, life: .7, z: true });
       wake();
     }, 900);
   }
@@ -1742,7 +1824,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         if (helper && p < .5) {
           const i = Math.min(LEADS.length - 1, Math.floor(Math.max(0, p - .08) / .055));
           const target = rowEls[i].querySelector('.iv-rank');
-          if (helper.el !== target) { helper.el = target; helper.state = 'walk'; burst(helper.x, helper.y - SH, '#34C759'); wake(); }
+          if (helper.el !== target) { if (helper.el) place(helper); helper.carry = '#34C759'; helper.el = target; helper.state = 'walk'; wake(); }
         } else if (helper && p >= .5 && !helper.sorted) {
           helper.sorted = true; helper.carry = null; say(helper, 'Re-sorting by rank', 1600);
         } else if (helper && p >= .8 && !helper.done) {
