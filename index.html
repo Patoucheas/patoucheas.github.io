@@ -4,21 +4,21 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kirk Patoucheas · Product designer and frontend engineer</title>
-<meta name="description" content="Kirk Patoucheas designs and builds software products end to end, from the first sketch to the shipped app. Frontend engineer at ExpoTools in Montréal.">
+<meta name="description" content="Kirk Patoucheas is a product designer and frontend engineer in Montréal who designs and builds software with AI at every step, from the first sketch to production code.">
 <meta name="author" content="Kirk Patoucheas">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Kirk Patoucheas · I build the whole thing.">
+<meta property="og:title" content="Kirk Patoucheas · AI-first. By design.">
 <meta property="og:description" content="Product design and frontend engineering, from the first sketch to the shipped app.">
 <meta property="og:image" content="assets/work/iv-hero.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0B0C0F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D1014'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Helvetica,Arial,sans-serif' font-weight='700' font-size='38' fill='%23ffffff'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Inter:wght@400..700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
 /* Base reset */
+:root { color-scheme: light; }
 body { margin: 0; }
 [hidden] { display: none !important; }
 
@@ -56,34 +56,6 @@ body { margin: 0; }
   --f-ls: "Archivo", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
   --ease: cubic-bezier(.2, .7, .1, 1);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0B0C0F; --surface: #15171C; --sunk: #101216; --fg: #ECEEF2; --muted: #9AA1AD; --faint: #6C727D; --line: #24272E;
-    --pill: #ECEEF2; --on-pill: #0B0C0F;
-    --ls: #5B7BFF; --ls-text: #8FA5FF; --ls-hero: #1C2BA8; --ls-tint: rgba(91, 123, 255, .14);
-    --iv: #5AA9E6; --iv-tint: rgba(90, 169, 230, .10);
-    --bud: #4CC48A; --bud-tint: rgba(76, 196, 138, .11);
-    --tsl: #FF6A6F; --tsl-tint: rgba(255, 106, 111, .10);
-    --cgm: #A28CFF; --cgm-tint: rgba(162, 140, 255, .12);
-    --good: #4CC48A; --warn: #F2C14E; --bad: #FF7A6B;
-    --code-bg: #121729;
-    --shadow: 0 30px 60px -24px rgba(0, 0, 0, .7);
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0B0C0F; --surface: #15171C; --sunk: #101216; --fg: #ECEEF2; --muted: #9AA1AD; --faint: #6C727D; --line: #24272E;
-  --pill: #ECEEF2; --on-pill: #0B0C0F;
-  --ls: #5B7BFF; --ls-text: #8FA5FF; --ls-hero: #1C2BA8; --ls-tint: rgba(91, 123, 255, .14);
-  --iv: #5AA9E6; --iv-tint: rgba(90, 169, 230, .10);
-  --bud: #4CC48A; --bud-tint: rgba(76, 196, 138, .11);
-  --tsl: #FF6A6F; --tsl-tint: rgba(255, 106, 111, .10);
-  --cgm: #A28CFF; --cgm-tint: rgba(162, 140, 255, .12);
-  --good: #4CC48A; --warn: #F2C14E; --bad: #FF7A6B;
-  --code-bg: #121729;
-  --shadow: 0 30px 60px -24px rgba(0, 0, 0, .7);
-  color-scheme: dark;
-}
 
 /* Minimal redesign: Apple-style palette and system type. Same token names, so case studies follow along. */
 :root {
@@ -95,28 +67,8 @@ body { margin: 0; }
   --f-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
   --ease-apple: cubic-bezier(.28, .11, .32, 1);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #000000; --surface: #161617; --sunk: #1D1D1F; --alt: #161617;
-    --fg: #F5F5F7; --muted: #A1A1A6; --faint: #86868B; --line: #424245;
-    --pill: #F5F5F7; --on-pill: #000000; --link: #2997FF;
-    --shadow: 0 24px 48px -24px rgba(0, 0, 0, .8);
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #000000; --surface: #161617; --sunk: #1D1D1F; --alt: #161617;
-  --fg: #F5F5F7; --muted: #A1A1A6; --faint: #86868B; --line: #424245;
-  --pill: #F5F5F7; --on-pill: #000000; --link: #2997FF;
-  --shadow: 0 24px 48px -24px rgba(0, 0, 0, .8);
-}
 
 .only-dark { display: none !important; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .only-dark { display: block !important; }
-  :root:not([data-theme="light"]) .only-light { display: none !important; }
-}
-:root[data-theme="dark"] .only-dark { display: block !important; }
-:root[data-theme="dark"] .only-light { display: none !important; }
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -153,9 +105,6 @@ img { max-width: 100%; }
 .nav-r { display: flex; align-items: center; gap: clamp(12px, 2.6vw, 28px); }
 .nav-r a { text-decoration: none; color: var(--muted); font-size: .94rem; transition: color .2s; }
 .nav-r a:hover { color: var(--fg); }
-.theme-btn { font: inherit; font-size: .82rem; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; transition: color .2s, border-color .2s; }
-.theme-btn:hover { color: var(--fg); border-color: var(--faint); }
-.theme-btn svg { width: 14px; height: 14px; }
 
 /* ---------- Home (minimal) ---------- */
 body { letter-spacing: -.01em; }
@@ -165,7 +114,6 @@ body { letter-spacing: -.01em; }
 .nav-in { height: 52px; }
 .brand { font-size: 15px; }
 .nav-r a { font-size: 13px; }
-.theme-btn { font-size: 12px; padding: 4px 11px; }
 
 .btn { display: inline-block; background: var(--btn); color: var(--on-btn); padding: 12px 22px; border-radius: 999px; font-size: 17px; font-weight: 500; text-decoration: none; transition: background .2s; }
 .btn:hover { background: color-mix(in srgb, var(--btn) 88%, #000); }
@@ -281,6 +229,13 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
   html.js [data-reveal] { opacity: 1; translate: none; }
   [data-zoom] { transform: none; }
 }
+
+.how-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.how-card { background: var(--alt); border-radius: 28px; padding: clamp(28px, 3.4vw, 40px); display: grid; gap: 12px; align-content: start; }
+.how-card h3 { font-size: clamp(22px, 2.2vw, 28px); font-weight: 700; letter-spacing: -.02em; line-height: 1.12; margin: 0; }
+.how-card p { color: var(--muted); font-size: 17px; line-height: 1.45; }
+.how-note { margin-top: 28px; color: var(--muted); font-size: 17px; }
+@media (max-width: 834px) { .how-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Case study template ---------- */
 .back { display: flex; justify-content: space-between; gap: 16px; padding-block: 18px; font-size: .94rem; }
@@ -542,7 +497,6 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 @media (max-width: 640px) {
   .tiles, .ls-stats, .scope { grid-template-columns: minmax(0, 1fr); }
   .nav-r a.opt { display: none; }
-  .theme-btn .t-label { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -559,10 +513,6 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
       <a href="#work">Work</a>
       <a href="#about" class="opt">About</a>
       <a href="#contact">Contact</a>
-      <button class="theme-btn" type="button" id="theme" aria-label="Change color theme">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.25" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.75a6.25 6.25 0 0 1 0 12.5z" fill="currentColor"/></svg>
-        <span class="t-label" id="theme-label">System</span>
-      </button>
     </div>
   </div>
 </header>
@@ -571,27 +521,44 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 <main data-view="home">
   <section class="hx" id="top">
     <div class="wrap">
-      <p class="hx-eyebrow" data-reveal>Kirk Patoucheas</p>
-      <h1 class="hx-title" data-reveal style="--d: .08s">I build the whole thing.</h1>
-      <p class="hx-sub" data-reveal style="--d: .16s">Product designer and frontend engineer in Montréal. I take software from the first sketch to the shipped app, and I care how it feels as much as how it works.</p>
-      <div class="hx-cta" data-reveal style="--d: .24s"><a class="btn" href="#work">See the work</a><a class="lnk" href="#contact">Get in touch</a></div>
+      <p class="hx-eyebrow" data-reveal>Kirk Patoucheas · Product designer and frontend engineer</p>
+      <h1 class="hx-title" data-reveal style="--d: .08s">AI-first. By design.</h1>
+      <p class="hx-sub" data-reveal style="--d: .16s">I design and build software with AI at every step, from the first sketch to production code. It's not a shortcut I hide. It's how one person ships a whole platform.</p>
+      <div class="hx-cta" data-reveal style="--d: .24s"><a class="btn" href="#work">See the work</a><a class="lnk" href="#how">How I work</a></div>
     </div>
     <div class="wrap">
       <div class="lineup" data-zoom aria-hidden="true">
         <div class="lu-browser"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
-        <div class="lu-phone l" data-par=".05"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="" loading="lazy"></div>
-        <div class="lu-phone r" data-par=".09"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="" loading="lazy"></div>
+        <div class="lu-phone l" data-par=".05"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
+        <div class="lu-phone r" data-par=".09"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </section>
 
   <nav class="secnav" aria-label="Sections"><div class="secnav-in">
+    <a href="#how" data-chip="how">How I work</a>
     <a href="#work" data-chip="work">Intelevents AI</a>
     <a href="#sites" data-chip="sites">Websites</a>
     <a href="#lastset-home" data-chip="lastset-home">LastSet</a>
     <a href="#side" data-chip="side">Side projects</a>
     <a href="#about" data-chip="about">About</a>
   </div></nav>
+
+  <section class="sec" id="how" style="padding-bottom: 0">
+    <div class="wrap">
+      <header class="sh" data-reveal>
+        <span class="ey">How I work</span>
+        <h2>AI-first doesn't mean hands-off.</h2>
+        <p>AI is part of every step of how I work, from research to production code. What it changes is how much one person can design, build and test. Taste, architecture and the final call stay with me.</p>
+      </header>
+      <div class="how-grid">
+        <div class="how-card" data-reveal><h3>Explore more, faster.</h3><p>I prototype in real code instead of static mockups, so I can try several directions and keep the one that feels right.</p></div>
+        <div class="how-card" data-reveal style="--d: .08s"><h3>Build with agents.</h3><p>Claude Code and Codex work alongside me. I set the architecture and the rules, review every change, and keep the tests green.</p></div>
+        <div class="how-card" data-reveal style="--d: .16s"><h3>Ship with judgment.</h3><p>AI drafts. I decide. The interactions, the edge cases and the details are where I spend the time it saves.</p></div>
+      </div>
+      <p class="how-note" data-reveal>This site was designed and built the same way.</p>
+    </div>
+  </section>
 
   <section class="sec" id="work" style="--acc: var(--iv)">
     <div class="wrap">
@@ -662,9 +629,9 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
         <p data-reveal style="--d: .12s">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
         <a class="lnk" href="#lastset" data-reveal style="--d: .18s">See the project</a>
         <div class="ls-phones" aria-hidden="true">
-          <div data-reveal style="--d: .2s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="" loading="lazy"></div></div>
-          <div data-reveal style="--d: .1s"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="" loading="lazy"></div>
-          <div data-reveal style="--d: .3s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/complete-improved-dark.jpg" alt="" loading="lazy"></div></div>
+          <div data-reveal style="--d: .2s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div></div>
+          <div data-reveal style="--d: .1s"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
+          <div data-reveal style="--d: .3s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="" loading="lazy"></div></div>
         </div>
       </div>
     </div>
@@ -698,7 +665,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
     <div class="wrap about2" data-reveal>
       <h2>I care how software feels as much as how it works.</h2>
       <p>I'm a frontend engineer at ExpoTools in Montréal, where I own most of the product surface: dashboards, design tooling, integrations and AI features. I usually end up doing both the design and the build. Outside work it's cars, hardware and home automation, mostly to find out how they work.</p>
-      <ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Angular</li><li>SwiftUI</li><li>Product design</li></ul>
+      <ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Angular</li><li>SwiftUI</li><li>Claude Code</li><li>Codex</li><li>Product design</li></ul>
     </div>
   </section>
 
@@ -711,7 +678,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
       </div>
     </div>
   </section>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Designed and built by me</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Designed and built by me, with AI</span></footer>
 </main>
 
 <!-- ================= Intelevents AI ================= -->
@@ -807,14 +774,14 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
   <section class="ls-hero">
     <div class="wrap ls-hero-in">
       <img class="app-icon only-light" src="assets/lastset/icon.png" alt="LastSet app icon">
-      <img class="app-icon only-dark" src="assets/lastset/icon-dark.png" alt="LastSet app icon">
+      
       <h1 class="ls-display ls-title">LastSet</h1>
       <p class="ls-tag">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
       <div class="ls-meta"><span>SwiftUI</span><span>SwiftData</span><span>Live Activities</span><span>HealthKit</span><span class="y">In TestFlight</span></div>
       <div class="ls-stage">
-        <div><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="Home screen showing the next workout and this week's sessions"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="Home screen showing the next workout and this week's sessions"></div>
-        <div><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="Gym mode for Barbell Bench Press: last time 175 lb for 10, try 180 lb for 8"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="Gym mode for Barbell Bench Press: last time 175 lb for 10, try 180 lb for 8"></div>
-        <div><img class="shot only-light" src="assets/lastset/rest-running-light.jpg" alt="Rest timer counting down from 3:00"><img class="shot only-dark" src="assets/lastset/rest-running-dark.jpg" alt="Rest timer counting down from 3:00"></div>
+        <div><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="Home screen showing the next workout and this week's sessions"></div>
+        <div><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="Gym mode for Barbell Bench Press: last time 175 lb for 10, try 180 lb for 8"></div>
+        <div><img class="shot only-light" src="assets/lastset/rest-running-light.jpg" alt="Rest timer counting down from 3:00"></div>
       </div>
     </div>
   </section>
@@ -878,7 +845,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
     <div class="split">
       <div class="lock-shot">
         <img class="shot only-light" src="assets/lastset/live-rest-light.jpg" alt="Lock Screen Live Activity showing a paused rest timer with resume, plus and minus 30 seconds, and skip controls" loading="lazy">
-        <img class="shot only-dark" src="assets/lastset/live-rest-dark.jpg" alt="Lock Screen Live Activity showing a paused rest timer with resume, plus and minus 30 seconds, and skip controls" loading="lazy">
+        
       </div>
       <div>
         <span class="kicker">Live Activities</span>
@@ -916,11 +883,11 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
     <div class="wrap">
       <header class="sec-head"><span class="kicker">The app</span><h2 class="h2">Built for the 90 seconds between sets.</h2></header>
       <div class="gallery" tabindex="0" aria-label="LastSet screens">
-        <figure><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="Home screen" loading="lazy"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="Home screen" loading="lazy"><figcaption><b>Home</b>Next workout and the week at a glance</figcaption></figure>
-        <figure><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="Gym mode" loading="lazy"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="Gym mode" loading="lazy"><figcaption><b>Gym mode</b>Last time and today's target, side by side</figcaption></figure>
-        <figure><img class="shot only-light" src="assets/lastset/rest-running-light.jpg" alt="Rest timer" loading="lazy"><img class="shot only-dark" src="assets/lastset/rest-running-dark.jpg" alt="Rest timer" loading="lazy"><figcaption><b>Rest</b>Starts on its own when you log a set</figcaption></figure>
-        <figure><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="Workout complete summary" loading="lazy"><img class="shot only-dark" src="assets/lastset/complete-improved-dark.jpg" alt="Workout complete summary" loading="lazy"><figcaption><b>Complete</b>New bests and Next time targets</figcaption></figure>
-        <figure><img class="shot only-light" src="assets/lastset/exercise-progress-light.jpg" alt="Exercise progress chart" loading="lazy"><img class="shot only-dark" src="assets/lastset/exercise-progress-dark.jpg" alt="Exercise progress chart" loading="lazy"><figcaption><b>Progress</b>Weight, e1RM, volume and reps over time</figcaption></figure>
+        <figure><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="Home screen" loading="lazy"><figcaption><b>Home</b>Next workout and the week at a glance</figcaption></figure>
+        <figure><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="Gym mode" loading="lazy"><figcaption><b>Gym mode</b>Last time and today's target, side by side</figcaption></figure>
+        <figure><img class="shot only-light" src="assets/lastset/rest-running-light.jpg" alt="Rest timer" loading="lazy"><figcaption><b>Rest</b>Starts on its own when you log a set</figcaption></figure>
+        <figure><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="Workout complete summary" loading="lazy"><figcaption><b>Complete</b>New bests and Next time targets</figcaption></figure>
+        <figure><img class="shot only-light" src="assets/lastset/exercise-progress-light.jpg" alt="Exercise progress chart" loading="lazy"><figcaption><b>Progress</b>Weight, e1RM, volume and reps over time</figcaption></figure>
       </div>
     </div>
   </section>
@@ -1139,24 +1106,6 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 
 <script>
 (() => {
-  /* ---------- Theme: System → Light → Dark ---------- */
-  const root = document.documentElement;
-  const label = document.getElementById('theme-label');
-  const modes = ['system', 'light', 'dark'];
-  let mode = 'system';
-  try { mode = localStorage.getItem('theme') || 'system'; } catch (e) {}
-  const applyTheme = () => {
-    if (mode === 'system') root.removeAttribute('data-theme');
-    else root.setAttribute('data-theme', mode);
-    label.textContent = mode[0].toUpperCase() + mode.slice(1);
-  };
-  applyTheme();
-  document.getElementById('theme').addEventListener('click', () => {
-    mode = modes[(modes.indexOf(mode) + 1) % modes.length];
-    try { localStorage.setItem('theme', mode); } catch (e) {}
-    applyTheme();
-  });
-
   /* ---------- Motion: reveal, scroll zoom, parallax ---------- */
   const clamp01 = v => Math.max(0, Math.min(1, v));
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
