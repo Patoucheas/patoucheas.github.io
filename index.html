@@ -16,7 +16,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D1014'/%3E%3Ctext x='50%25' y='54%25' dominant-baseline='middle' text-anchor='middle' font-family='Helvetica,Arial,sans-serif' font-weight='700' font-size='38' fill='%23ffffff'%3EK%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Geist:wght@400..700&family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,600..900&family=Inter:wght@400..700&family=Geist+Mono:wght@400;500&display=swap">
 <style>
 /* Base reset */
 body { margin: 0; }
@@ -85,6 +85,31 @@ body { margin: 0; }
   color-scheme: dark;
 }
 
+/* Minimal redesign: Apple-style palette and system type. Same token names, so case studies follow along. */
+:root {
+  --bg: #FFFFFF; --surface: #FFFFFF; --sunk: #F5F5F7; --alt: #F5F5F7;
+  --fg: #1D1D1F; --muted: #6E6E73; --faint: #86868B; --line: #D2D2D7;
+  --pill: #1D1D1F; --on-pill: #FFFFFF;
+  --link: #0066CC; --btn: #0071E3; --on-btn: #FFFFFF;
+  --shadow: 0 24px 48px -28px rgba(0, 0, 0, .28);
+  --f-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+  --ease-apple: cubic-bezier(.28, .11, .32, 1);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #000000; --surface: #161617; --sunk: #1D1D1F; --alt: #161617;
+    --fg: #F5F5F7; --muted: #A1A1A6; --faint: #86868B; --line: #424245;
+    --pill: #F5F5F7; --on-pill: #000000; --link: #2997FF;
+    --shadow: 0 24px 48px -24px rgba(0, 0, 0, .8);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #000000; --surface: #161617; --sunk: #1D1D1F; --alt: #161617;
+  --fg: #F5F5F7; --muted: #A1A1A6; --faint: #86868B; --line: #424245;
+  --pill: #F5F5F7; --on-pill: #000000; --link: #2997FF;
+  --shadow: 0 24px 48px -24px rgba(0, 0, 0, .8);
+}
+
 .only-dark { display: none !important; }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .only-dark { display: block !important; }
@@ -132,76 +157,130 @@ img { max-width: 100%; }
 .theme-btn:hover { color: var(--fg); border-color: var(--faint); }
 .theme-btn svg { width: 14px; height: 14px; }
 
-/* ---------- Home ---------- */
-.hero { padding-block: clamp(64px, 10vw, 128px) clamp(40px, 6vw, 72px); }
-.hero h1 { font-size: clamp(2.5rem, 6.6vw, 5.2rem); font-weight: 600; letter-spacing: -.045em; line-height: 1.0; max-width: 15ch; }
-.hero-sub { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 8px 28px; color: var(--muted); font-size: 1.06rem; }
-.hero-sub span { display: inline-flex; align-items: center; gap: 8px; }
+/* ---------- Home (minimal) ---------- */
+body { letter-spacing: -.01em; }
+.h2 { letter-spacing: -.025em; font-weight: 700; }
+.cs-hero h1 { letter-spacing: -.03em; font-weight: 700; }
+.nav { background: color-mix(in srgb, var(--bg) 72%, transparent); backdrop-filter: saturate(1.8) blur(20px); -webkit-backdrop-filter: saturate(1.8) blur(20px); border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent); }
+.nav-in { height: 52px; }
+.brand { font-size: 15px; }
+.nav-r a { font-size: 13px; }
+.theme-btn { font-size: 12px; padding: 4px 11px; }
 
-.group-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; padding-top: clamp(56px, 8vw, 96px); margin-bottom: 24px; border-top: 1px solid var(--line); margin-top: clamp(56px, 8vw, 96px); }
-.group-head:first-child { border-top: 0; margin-top: 0; padding-top: 0; }
-.group-head h2 { font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 600; letter-spacing: -.03em; }
-.group-head p { color: var(--muted); }
+.btn { display: inline-block; background: var(--btn); color: var(--on-btn); padding: 12px 22px; border-radius: 999px; font-size: 17px; font-weight: 500; text-decoration: none; transition: background .2s; }
+.btn:hover { background: color-mix(in srgb, var(--btn) 88%, #000); }
+.lnk { color: var(--link); text-decoration: none; font-size: 17px; }
+.lnk::after { content: " \203A"; }
+.lnk:hover { text-decoration: underline; }
 
-.feature { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 32px; align-items: center; border-radius: 28px; padding: clamp(28px, 5vw, 56px); text-decoration: none; overflow: hidden; position: relative; isolation: isolate; }
-.feature-copy { display: grid; gap: 16px; align-self: center; }
-.feature-name { font-size: clamp(2.4rem, 5.4vw, 4.2rem); font-weight: 600; letter-spacing: -.045em; line-height: .95; }
-.feature-copy p { font-size: 1.1rem; max-width: 26em; }
-.feature-meta { font-size: .88rem; }
-.cta { justify-self: start; display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: .95rem; padding: 11px 20px; border-radius: 999px; transition: transform .3s var(--ease); }
-.feature:hover .cta { transform: translateX(4px); }
+/* Reveal on scroll: content fades and rises once as it enters */
+html.js [data-reveal] { opacity: 0; translate: 0 36px; }
+html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.2s var(--ease-apple) var(--d, 0s); }
+[data-zoom] { transform: scale(calc(.9 + .1 * var(--z, 1))); transform-origin: 50% 0; will-change: transform; }
 
-.feature.iv { background: var(--iv-tint); border: 1px solid var(--line); }
-.feature.iv .feature-meta, .feature.iv .feature-copy p { color: var(--muted); }
-.feature.iv .feature-name { color: var(--fg); }
-.feature.iv .cta { background: var(--iv); color: var(--surface); }
-.feature.iv .browser { transform: translateX(4%) rotate(-1deg); transition: transform .8s var(--ease); }
-.feature.iv:hover .browser { transform: translateX(2%) rotate(0deg); }
+.hx { padding-block: clamp(64px, 11vw, 132px) 0; text-align: center; overflow: hidden; }
+.hx-eyebrow { font-size: clamp(17px, 1.8vw, 21px); font-weight: 600; }
+.hx-title { font-size: clamp(48px, 9vw, 96px); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; margin-top: 10px; }
+.hx-sub { font-size: clamp(19px, 2vw, 24px); color: var(--muted); max-width: 30em; margin: 22px auto 0; line-height: 1.35; }
+.hx-cta { display: flex; justify-content: center; align-items: center; gap: 28px; flex-wrap: wrap; margin-top: 34px; }
+.lineup { position: relative; max-width: 1040px; margin: clamp(56px, 8vw, 96px) auto 0; padding-bottom: clamp(24px, 4vw, 48px); }
+.lu-browser { width: 76%; margin: 0 auto; }
+.lu-browser .browser { box-shadow: 0 40px 80px -40px rgba(0, 0, 0, .45); }
+.lu-phone { position: absolute; top: 22%; width: 18%; }
+.lu-phone.l { left: 3%; }
+.lu-phone.r { right: 3%; }
+.lu-phone .shot { box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .5); }
 
-.feature.ls-f { background: var(--ls-hero); color: var(--on-hero); padding-bottom: 0; }
-.feature.ls-f::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(60% 80% at 80% 100%, rgba(255, 255, 255, .16), transparent 70%); }
-.feature.ls-f .feature-copy { padding-bottom: clamp(28px, 5vw, 56px); }
-.feature.ls-f .feature-name { font-family: var(--f-ls); font-stretch: 125%; font-weight: 900; letter-spacing: -.03em; }
-.feature.ls-f .feature-copy p, .feature.ls-f .feature-meta { color: var(--on-hero-2); }
-.feature.ls-f .cta { background: var(--on-hero); color: var(--ls-text); }
-.feature-shots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.6vw, 20px); align-items: end; }
-.feature-shots > div { transition: transform .8s var(--ease); }
-.feature-shots > div:nth-child(1) { transform: translateY(18%); }
-.feature-shots > div:nth-child(2) { transform: translateY(6%); }
-.feature-shots > div:nth-child(3) { transform: translateY(22%); }
-.feature.ls-f:hover .feature-shots > div:nth-child(1) { transform: translateY(13%); }
-.feature.ls-f:hover .feature-shots > div:nth-child(2) { transform: translateY(1%); }
-.feature.ls-f:hover .feature-shots > div:nth-child(3) { transform: translateY(17%); }
-.feature.ls-f .shot { box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .45); }
+.secnav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 60px); z-index: 15; pointer-events: none; padding-block: 0 8px; margin-top: clamp(40px, 6vw, 72px); }
+.secnav-in { display: flex; justify-content: center; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-inline: 16px; }
+.secnav-in::-webkit-scrollbar { display: none; }
+.secnav a { pointer-events: auto; flex: none; font-size: 13px; padding: 7px 16px; border-radius: 999px; text-decoration: none; color: var(--fg); background: color-mix(in srgb, var(--sunk) 82%, transparent); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid color-mix(in srgb, var(--line) 50%, transparent); transition: background .3s, color .3s; }
+.secnav a.on { background: var(--pill); color: var(--on-pill); border-color: var(--pill); }
 
-.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; margin-top: 20px; }
-.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; display: grid; grid-template-rows: auto 1fr; text-decoration: none; transition: border-color .3s, transform .5s var(--ease); }
-.tile:hover { border-color: var(--faint); transform: translateY(-3px); }
-.tile-art { aspect-ratio: 16 / 10; max-width: 100%; overflow: hidden; background: var(--t-tint, var(--sunk)); display: grid; place-items: end center; padding: 22px 22px 0; }
-.tile-art .browser { width: 100%; border-bottom: 0; border-radius: 10px 10px 0 0; box-shadow: 0 10px 30px -14px rgba(0, 0, 0, .3); align-self: end; }
-.tile-art .browser-bar { height: 22px; padding-inline: 10px; gap: 4px; }
-.tile-art .browser-bar i { width: 6px; height: 6px; }
-.tile-art .browser-bar span { font-size: .58rem; padding: 0 8px; }
-.tile-body { padding: 20px 22px 24px; display: grid; gap: 6px; align-content: start; }
-.tile-body h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -.02em; display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
-.tile-body h3 small { font-size: .82rem; font-weight: 500; color: var(--faint); white-space: nowrap; }
-.tile:hover h3 small { color: var(--fg); }
-.tile-body p { color: var(--muted); font-size: .97rem; }
-.tile-meta { font-size: .82rem; color: var(--faint); margin-top: 4px; }
+.sec { padding-block: clamp(88px, 11vw, 150px); scroll-margin-top: 112px; }
+.sec.alt { background: var(--alt); }
+.sh { max-width: 820px; display: grid; gap: 14px; justify-items: start; margin-bottom: clamp(40px, 5vw, 64px); }
+.sh .ey { font-size: clamp(17px, 1.6vw, 21px); font-weight: 600; color: var(--acc, var(--fg)); }
+.sh h2 { font-size: clamp(40px, 5.6vw, 64px); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
+.sh p { font-size: clamp(17px, 1.6vw, 21px); color: var(--muted); line-height: 1.42; max-width: 36em; }
+.sh.center { margin-inline: auto; justify-items: center; text-align: center; }
 
-.about { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: clamp(32px, 6vw, 96px); }
-.about-text { display: grid; gap: 20px; font-size: 1.14rem; max-width: 36em; }
-.about-text p:not(:first-child) { color: var(--muted); }
-.facts { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px 24px; margin: 8px 0 0; padding-top: 24px; border-top: 1px solid var(--line); font-size: 1rem; }
-.facts dt { color: var(--faint); }
-.facts dd { margin: 0; }
+.media { background: var(--alt); border-radius: 32px; padding: clamp(20px, 5vw, 64px) clamp(16px, 5vw, 64px) 0; overflow: hidden; }
+.sec.alt .media { background: var(--bg); }
+.media .browser { border-radius: 14px 14px 0 0; border-bottom: 0; }
 
-.contact h2 { font-size: clamp(2.4rem, 6vw, 4.6rem); font-weight: 600; letter-spacing: -.045em; line-height: 1; }
-.links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; padding: 0; list-style: none; }
-.links a { display: inline-block; text-decoration: none; padding: 10px 18px; border: 1px solid var(--line); border-radius: 999px; font-weight: 500; transition: border-color .2s, background .2s; }
-.links a:hover { border-color: var(--faint); background: var(--surface); }
-.links a.primary { background: var(--pill); color: var(--on-pill); border-color: var(--pill); }
-.foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--faint); font-size: .88rem; padding-block: 32px; border-top: 1px solid var(--line); }
+.car { margin-top: clamp(40px, 5vw, 64px); }
+.car-track { --gut: max(clamp(16px, 4.5vw, 48px), calc((100% - 1180px) / 2 + 48px)); display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); padding: 4px var(--gut) 8px; scrollbar-width: none; }
+.car-track::-webkit-scrollbar { display: none; }
+.car-card { flex: 0 0 clamp(280px, 31vw, 400px); scroll-snap-align: start; background: var(--alt); border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; margin: 0; }
+.sec.alt .car-card { background: var(--bg); }
+.car-img { aspect-ratio: 4 / 3.3; max-width: 100%; padding: 26px; }
+.car-img img { display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 18px 24px rgba(0, 0, 0, .14)); }
+.car-card figcaption { padding: 0 28px 30px; font-size: 17px; color: var(--muted); line-height: 1.42; }
+.car-card figcaption b { color: var(--fg); font-weight: 600; }
+.car-nav { display: flex; justify-content: flex-end; gap: 12px; margin-top: 22px; }
+.car-nav button { width: 38px; height: 38px; border-radius: 50%; border: 0; background: var(--alt); color: var(--fg); font-size: 22px; line-height: 1; cursor: pointer; display: grid; place-items: center; transition: opacity .3s, background .2s; }
+.sec.alt .car-nav button { background: var(--bg); }
+.car-nav button:disabled { opacity: .35; cursor: default; }
+
+.cmp-list { display: grid; gap: 28px; }
+.cmp-card { background: var(--bg); border-radius: 32px; padding: clamp(18px, 3vw, 36px); }
+.cmp-card .site-frame { width: 100%; box-shadow: var(--shadow); }
+.cmp-card .cmp { height: auto; aspect-ratio: 16 / 10; }
+.cmp-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 20px; flex-wrap: wrap; padding: 24px 4px 2px; }
+.cmp-meta b { font-size: 21px; font-weight: 600; letter-spacing: -.015em; }
+.cmp-meta span { color: var(--muted); flex: 1 1 22em; }
+
+.ls-band { background: var(--ls-hero); color: var(--on-hero); border-radius: 32px; text-align: center; padding: clamp(52px, 7vw, 92px) clamp(16px, 4vw, 48px) 0; overflow: hidden; position: relative; isolation: isolate; }
+.ls-band::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(70% 60% at 50% 100%, rgba(255, 255, 255, .2), transparent 70%); }
+.ls-band .ey { font-size: clamp(17px, 1.6vw, 21px); font-weight: 600; color: var(--on-hero-2); }
+.ls-band h2 { font-family: var(--f-ls); font-stretch: 125%; font-weight: 900; font-size: clamp(56px, 11vw, 128px); letter-spacing: -.03em; line-height: .95; margin-top: 10px; }
+.ls-band p { color: var(--on-hero-2); font-size: clamp(17px, 1.8vw, 22px); max-width: 28em; margin: 20px auto 0; line-height: 1.4; }
+.ls-band .lnk { color: var(--on-hero); display: inline-block; margin-top: 22px; }
+.ls-phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 3vw, 40px); max-width: 820px; margin: clamp(44px, 6vw, 72px) auto -16%; align-items: start; }
+.ls-phones > div:nth-child(odd) { margin-top: 13%; }
+.ls-phones .shot { box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .55); }
+
+.bento { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.tile2 { background: var(--alt); border-radius: 32px; overflow: hidden; display: flex; flex-direction: column; text-decoration: none; color: inherit; min-width: 0; }
+.tile2.wide { grid-column: 1 / -1; flex-direction: row; align-items: stretch; }
+.t-copy { padding: clamp(28px, 4vw, 52px); display: grid; gap: 12px; align-content: start; flex: 1 1 0; min-width: 0; }
+.t-copy .ey { font-size: 17px; font-weight: 600; color: var(--acc); }
+.t-copy h3 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 700; letter-spacing: -.025em; line-height: 1.08; margin: 0; }
+.t-copy p { color: var(--muted); font-size: 17px; line-height: 1.42; max-width: 30em; }
+.t-copy .lnk { margin-top: 4px; }
+.t-vis { margin-top: auto; padding-left: clamp(28px, 4vw, 52px); transition: transform .6s var(--ease-apple); }
+.tile2.wide .t-vis { flex: 1.35 1 0; min-width: 0; align-self: flex-end; padding-top: clamp(28px, 4vw, 52px); }
+.t-vis .browser { border-radius: 12px 0 0 0; border-right: 0; border-bottom: 0; box-shadow: var(--shadow); }
+.tile2:hover .t-vis { transform: translateY(-6px); }
+
+.about2 { max-width: 880px; margin: 0 auto; text-align: center; display: grid; gap: 22px; justify-items: center; }
+.about2 h2 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; }
+.about2 p { font-size: clamp(17px, 1.7vw, 21px); color: var(--muted); line-height: 1.45; max-width: 34em; }
+.about2 ul { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.about2 li { font-size: 14px; padding: 7px 14px; border-radius: 999px; background: var(--alt); }
+
+.contact2 { background: var(--alt); border-radius: 32px; text-align: center; padding: clamp(56px, 8vw, 104px) 24px; display: grid; gap: 18px; justify-items: center; }
+.contact2 h2 { font-size: clamp(40px, 6vw, 64px); font-weight: 700; letter-spacing: -.03em; line-height: 1.05; }
+.contact2 p { color: var(--muted); font-size: clamp(17px, 1.7vw, 21px); }
+.contact2 .row { display: flex; gap: 28px; align-items: center; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+
+.foot { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--faint); font-size: 12px; padding-block: 22px 32px; border-top: 1px solid var(--line); }
+
+@media (max-width: 834px) {
+  .bento { grid-template-columns: minmax(0, 1fr); }
+  .tile2.wide { flex-direction: column; }
+  .tile2.wide .t-vis { padding-top: 0; }
+  .lu-browser { width: 84%; }
+  .lu-phone { width: 22%; top: 30%; }
+  .lu-phone.l { left: 0; }
+  .lu-phone.r { right: 0; }
+  .secnav-in { justify-content: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js [data-reveal] { opacity: 1; translate: none; }
+  [data-zoom] { transform: none; }
+}
 
 /* ---------- Case study template ---------- */
 .back { display: flex; justify-content: space-between; gap: 16px; padding-block: 18px; font-size: .94rem; }
@@ -430,48 +509,6 @@ img { max-width: 100%; }
 .decision-copy .to { font-size: .98rem; padding-top: 14px; border-top: 1px solid var(--line); }
 
 
-/* ---------- Hero ---------- */
-.hero2 { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: clamp(32px, 5vw, 72px); align-items: center; padding-block: clamp(48px, 8vw, 104px) clamp(72px, 10vw, 128px); }
-.hero2-copy { display: grid; gap: 24px; }
-.hero2-eyebrow { color: var(--muted); font-size: .95rem; }
-.hero2-title { font-size: clamp(2.9rem, 6.8vw, 6.4rem); font-weight: 600; letter-spacing: -.055em; line-height: .92; }
-.hl1 { display: block; overflow: hidden; padding-bottom: .06em; white-space: nowrap; }
-.rise { display: inline-block; animation: heroup 1s var(--ease) both; }
-.rise.d1 { animation-delay: .1s; }
-@keyframes heroup { from { transform: translateY(105%); } }
-.hero2-lead { font-size: clamp(1.06rem, 1.5vw, 1.22rem); color: var(--muted); max-width: 32em; animation: fade 1s .35s both; }
-.hero2-cta { display: flex; flex-wrap: wrap; gap: 12px; animation: fade 1s .5s both; }
-.btn-pill, .btn-line { text-decoration: none; font-weight: 600; font-size: .98rem; padding: 12px 22px; border-radius: 999px; border: 1px solid var(--pill); transition: transform .3s var(--ease), background .2s; }
-.btn-pill { background: var(--pill); color: var(--on-pill); }
-.btn-line { border-color: var(--line); }
-.btn-line:hover { border-color: var(--faint); }
-.btn-pill:hover { transform: translateY(-2px); }
-.hero2-vis { position: relative; width: 100%; aspect-ratio: 560 / 520; max-width: 100%; }
-.collage { position: relative; width: 560px; height: 520px; }
-.pc { position: absolute; animation: pcin 1.1s var(--ease) both; will-change: translate; }
-.pc-iv { left: 0; top: 78px; width: 420px; animation-delay: .25s; }
-.pc-iv .browser { transform: rotate(-2deg); }
-.pc-ls { left: 372px; top: 118px; width: 176px; animation-delay: .4s; }
-.pc-ls .shot { transform: rotate(3deg); }
-.pc-cgm { left: 24px; top: 356px; width: 196px; animation-delay: .55s; }
-.pc-cgm .dv-box { width: 100%; transform: rotate(-4deg); }
-.pc-cgm .dv-screen b { font-size: 46px; }
-.pc-mail { left: 170px; top: 8px; width: 300px; display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 16px; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 12.5px; line-height: 1.35; animation-delay: .7s; }
-.mail-ic { width: 32px; height: 32px; border-radius: 8px; background: var(--tsl); color: var(--surface); display: grid; place-items: center; font-weight: 700; flex: none; }
-.mail-top { display: flex; justify-content: space-between; gap: 8px; color: var(--faint); font-size: 11.5px; }
-.mail-top b { color: var(--muted); font-weight: 600; }
-.mail-t { font-weight: 600; margin-top: 2px; }
-.mail-b { color: var(--muted); }
-@keyframes pcin { from { opacity: 0; transform: translateY(40px); } }
-/* Before / after wipe */
-.ba { position: relative; --w: 0; overflow: hidden; }
-.ba img { display: block; width: 100%; height: auto; }
-.ba .ba-after { position: absolute; inset: 0; clip-path: inset(0 calc((1 - var(--w)) * 100%) 0 0); }
-.ba-line { position: absolute; top: 0; bottom: 0; left: calc(var(--w) * 100%); width: 2px; margin-left: -1px; background: var(--surface); box-shadow: 0 0 0 1px var(--line), 0 0 24px rgba(0, 0, 0, .35); opacity: calc(min(var(--w) * 30, (1 - var(--w)) * 30, 1)); }
-.ba-tag { position: absolute; top: 12px; font-size: .75rem; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--pill); color: var(--on-pill); transition: opacity .3s; }
-.ba-tag.before { right: 12px; opacity: calc(1 - var(--w) * 1.6); }
-.ba-tag.after { left: 12px; background: var(--iv); color: var(--surface); opacity: calc(var(--w) * 1.6 - .4); }
-
 /* Before / after compare */
 .pin-grid.wide { grid-template-columns: minmax(0, .62fr) minmax(0, 1.38fr); }
 .site-frame { width: 960px; overflow: visible; }
@@ -489,196 +526,6 @@ img { max-width: 100%; }
 .cmp-tag { position: absolute; top: 14px; z-index: 2; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: 999px; pointer-events: none; transition: opacity .25s; }
 .cmp-tag.l { left: 14px; background: var(--pill); color: var(--on-pill); opacity: clamp(0, calc(var(--x) * 5 - .5), 1); }
 .cmp-tag.r { right: 14px; background: var(--iv); color: var(--surface); opacity: clamp(0, calc((1 - var(--x)) * 5 - .5), 1); }
-
-/* ---------- Pinned project scenes ---------- */
-.group-head.first { border-top: 0; margin-top: 0; padding-top: 0; }
-.scene { position: relative; height: calc(var(--len, 300) * 1vh); }
-.pin { position: sticky; top: 0; height: 100vh; height: 100dvh; overflow: hidden; display: flex; flex-direction: column; padding-top: 60px; }
-.pin-grid { flex: 1; min-height: 0; width: 100%; display: grid; grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); gap: clamp(24px, 4vw, 64px); align-items: center; padding-block: 24px 40px; }
-.pin-copy { display: grid; gap: 14px; align-content: center; }
-.pin-name { font-size: clamp(2rem, 4.2vw, 3.5rem); font-weight: 600; letter-spacing: -.045em; line-height: 1; }
-.pin-desc { color: var(--muted); font-size: 1.05rem; max-width: 28em; }
-.beats { list-style: none; padding: 0; margin: 8px 0 0; display: grid; }
-.beats li { padding: 9px 0 9px 18px; border-left: 2px solid var(--line); color: var(--faint); transition: color .35s, border-color .35s; }
-.beats li.past { color: var(--muted); }
-.beats li.on { color: var(--fg); border-color: var(--acc); }
-.pin-cta { justify-self: start; font-weight: 600; text-decoration: none; color: var(--acc); margin-top: 6px; }
-.pin-cta:hover { text-decoration: underline; text-underline-offset: 4px; }
-.pin-vis { position: relative; height: 100%; min-height: 0; }
-.fit { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(var(--s, 1)); font-family: var(--f-sans); }
-.pin-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--line); }
-.pin-bar b { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--acc); }
-
-/* Intelevents */
-.iv-card { width: 760px; height: 520px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); overflow: hidden; display: flex; flex-direction: column; font-size: 13px; line-height: 1.35; }
-.iv-top { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
-.iv-top b { font-size: 15px; }
-.iv-sort { margin-left: auto; font-size: 12px; padding: 5px 10px; border-radius: 8px; background: var(--sunk); color: var(--muted); transition: background .3s, color .3s; }
-.iv-sort.ai { background: var(--iv-tint); color: var(--iv); font-weight: 600; }
-.iv-body { flex: 1; display: grid; grid-template-columns: 1fr 250px; min-height: 0; }
-.iv-head, .iv-row { display: grid; grid-template-columns: 1.5fr 1.2fr 50px 66px; gap: 8px; align-items: center; padding-inline: 18px; }
-.iv-head { padding-block: 10px; color: var(--faint); font-size: 11.5px; border-bottom: 1px solid var(--line); }
-.iv-head .r, .iv-time { text-align: right; }
-.iv-rows { position: relative; height: 392px; }
-.iv-row { position: absolute; left: 0; right: 0; top: 0; height: 56px; border-bottom: 1px solid var(--line); background: var(--surface); transition: background .3s, opacity .3s; will-change: transform; }
-.iv-row.top { background: var(--iv-tint); }
-.iv-who { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.iv-who > div { min-width: 0; }
-.iv-who b { display: block; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.iv-who small { display: block; color: var(--faint); font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.iv-av { width: 30px; height: 30px; border-radius: 50%; background: var(--sunk); display: grid; place-items: center; font-size: 10.5px; font-weight: 600; color: var(--muted); flex: none; }
-.iv-co { color: var(--muted); display: grid; min-width: 0; }
-.iv-co > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.iv-comp { font-size: 11px; font-weight: 600; color: var(--bad); opacity: 0; transition: opacity .3s; }
-.iv-comp.on { opacity: 1; }
-.iv-rank { width: 32px; height: 22px; border-radius: 11px; display: grid; place-items: center; font-weight: 600; font-size: 12px; background: var(--sunk); color: var(--faint); transition: background .3s, color .3s; }
-.iv-rank.hi, .iv-av.hi { background: color-mix(in srgb, var(--good) 15%, transparent); color: var(--good); }
-.iv-rank.mid { background: var(--iv-tint); color: var(--iv); }
-.iv-rank.lo { background: color-mix(in srgb, var(--bad) 13%, transparent); color: var(--bad); }
-.iv-time { color: var(--faint); font-variant-numeric: tabular-nums; }
-.iv-detail { border-left: 1px solid var(--line); padding: 18px; position: relative; }
-.iv-empty { color: var(--faint); font-size: 12.5px; transition: opacity .3s; }
-.iv-full { position: absolute; inset: 18px; display: grid; gap: 8px; align-content: start; opacity: 0; transition: opacity .4s; }
-.iv-full .iv-who { align-items: flex-start; }
-.iv-full .iv-who b { white-space: normal; }
-.iv-full .iv-who small { white-space: normal; }
-.iv-lbl { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin-top: 6px; }
-.iv-score { display: flex; align-items: baseline; gap: 6px; }
-.iv-score b { font-size: 30px; font-weight: 600; letter-spacing: -.03em; }
-.iv-score span { color: var(--faint); }
-.iv-score em { font-style: normal; font-size: 11.5px; font-weight: 600; color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); padding: 2px 8px; border-radius: 999px; margin-left: 4px; }
-.iv-why { font-size: 12.5px; line-height: 1.5; min-height: 112px; }
-.caret { display: inline-block; width: 1px; height: 13px; background: var(--fg); margin-left: 1px; vertical-align: -2px; animation: blink 1s steps(1) infinite; }
-@keyframes blink { 50% { opacity: 0; } }
-.iv-facts { display: grid; grid-template-columns: 1fr auto; gap: 6px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px; }
-.iv-facts span { color: var(--faint); }
-.iv-facts b { font-weight: 500; text-align: right; }
-
-/* Company sites */
-.pin-sites { justify-content: center; gap: clamp(20px, 4vh, 40px); padding-bottom: 32px; }
-.sites-head { width: 100%; display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap; }
-.sites-head .pin-name { margin-top: 10px; }
-.sites-view { width: 100%; overflow: hidden; }
-.sites-track { display: flex; gap: clamp(20px, 3vw, 40px); padding-inline: max(clamp(16px, 4.5vw, 48px), calc((100vw - 1180px) / 2 + 48px)); width: max-content; will-change: transform; }
-.site-card { width: min(68vw, 820px, calc((100dvh - 330px) * 1.6)); min-width: 260px; display: grid; gap: 16px; text-decoration: none; transition: opacity .4s, transform .4s var(--ease); opacity: .45; transform: scale(.97); }
-.site-card.on { opacity: 1; transform: none; }
-.site-cap { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 4px 16px; align-items: baseline; }
-.site-cap b { font-weight: 600; font-size: 1.1rem; }
-.site-cap span { color: var(--muted); }
-.site-cap small { color: var(--faint); font-size: .85rem; white-space: nowrap; }
-.site-card:hover .site-cap small { color: var(--fg); }
-
-/* LastSet */
-.ls-scene { background: var(--ls-hero); color: var(--on-hero); --acc: var(--ls-yellow); }
-.ls-scene .pin-name { font-family: var(--f-ls); font-stretch: 125%; font-weight: 900; letter-spacing: -.03em; }
-.ls-scene .kicker, .ls-scene .pin-desc { color: var(--on-hero-2); }
-.ls-scene .beats li { color: var(--on-hero-3); border-color: var(--on-hero-line); }
-.ls-scene .beats li.past { color: var(--on-hero-2); }
-.ls-scene .beats li.on { color: var(--on-hero); border-color: var(--ls-yellow); }
-.ls-scene .pin-cta { color: var(--on-hero); }
-.ls-scene .pin-bar { background: var(--on-hero-line); }
-.ls-phone { width: 330px; height: 700px; position: relative; }
-.ls-screen { position: absolute; inset: 0; opacity: 0; will-change: opacity, transform; }
-.ls-screen:first-child { opacity: 1; }
-.ls-screen .shot { box-shadow: 0 40px 80px -24px rgba(0, 0, 0, .55); }
-
-/* Budgy */
-.bd { width: 820px; height: 500px; display: grid; grid-template-columns: 330px 36px 1fr; align-items: center; font-size: 13px; line-height: 1.35; }
-.bd-csv { background: var(--code-bg); color: var(--code-fg); border-radius: 14px; padding: 16px; font-family: var(--f-mono); font-size: 11.5px; box-shadow: var(--shadow); }
-.bd-file { display: flex; justify-content: space-between; color: var(--code-dim); margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255, 255, 255, .08); }
-.bd-line { padding: 7px 8px; border-radius: 6px; white-space: nowrap; transition: background .3s, color .3s; }
-.bd-line.dim { color: var(--code-dim); }
-.bd-line.cur { background: rgba(255, 210, 63, .16); }
-.bd-line.done { color: var(--code-dim); }
-.bd-line.done::after { content: " ✓"; color: var(--bud); }
-.bd-arrow { text-align: center; color: var(--faint); font-size: 20px; }
-.bd-out { display: grid; gap: 12px; }
-.bd-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow); }
-.bd-h { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12.5px; }
-.bd-h span { color: var(--faint); font-variant-numeric: tabular-nums; }
-.bd-budgets { display: grid; gap: 9px; }
-.bd-b { display: grid; grid-template-columns: 1fr auto; font-variant-numeric: tabular-nums; }
-.bd-b span:last-child { color: var(--muted); font-size: 12px; }
-.bd-b .bar { grid-column: 1 / -1; height: 5px; border-radius: 3px; background: var(--sunk); overflow: hidden; margin-top: 5px; }
-.bd-b .bar b { display: block; height: 100%; background: var(--bud); border-radius: 3px; transition: width .45s var(--ease), background .3s; }
-.bd-b.over .bar b { background: var(--bad); }
-.bd-b.over span:last-child { color: var(--bad); font-weight: 600; }
-.bd-tx { display: grid; height: 136px; align-content: start; overflow: hidden; }
-.bd-t { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 5px 0; border-top: 1px solid var(--line); font-variant-numeric: tabular-nums; animation: slidein .4s var(--ease); }
-.bd-t:first-child { border-top: 0; }
-.bd-t small { color: var(--faint); margin-left: 6px; }
-.bd-t .in { color: var(--good); }
-@keyframes slidein { from { opacity: 0; transform: translateX(-10px); } }
-
-/* Tesla */
-.ts { width: 820px; height: 500px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); padding: 22px 24px; display: grid; grid-template-rows: auto auto 1fr; gap: 14px; font-size: 13px; line-height: 1.35; }
-.ts small { display: block; color: var(--faint); font-size: 11.5px; }
-.ts-top { display: flex; justify-content: space-between; align-items: end; gap: 20px; }
-.ts-top > div > b { font-size: 30px; font-weight: 600; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.ts-stats { display: flex; gap: 26px; }
-.ts-stats b { font-size: 20px; font-weight: 600; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.ts-chart { width: 100%; height: auto; display: block; overflow: visible; }
-.ts-chart .g { stroke: var(--line); }
-.ts-chart .t { fill: var(--faint); font-size: 11px; font-family: var(--f-sans); }
-.ts-log { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px 16px; align-content: start; }
-.ts-ev { display: flex; gap: 10px; align-items: center; padding: 8px 10px; border-radius: 10px; background: var(--sunk); opacity: .25; transition: opacity .35s; font-variant-numeric: tabular-nums; }
-.ts-ev.on { opacity: 1; }
-.ts-ev em { font-style: normal; font-size: 10px; font-weight: 700; letter-spacing: .05em; padding: 2px 6px; border-radius: 4px; flex: none; }
-.ts-ev .new { color: var(--tsl); background: var(--tsl-tint); }
-.ts-ev .drop { color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
-.ts-ev .sold { color: var(--muted); background: var(--surface); }
-.ts-ev .alert { color: var(--surface); background: var(--tsl); }
-.ts-ev.on:has(.alert) { box-shadow: inset 0 0 0 1.5px var(--tsl); }
-.ts-ev span:last-child { margin-left: auto; color: var(--faint); font-size: 11.5px; }
-
-/* CGM */
-.cg { width: 820px; height: 500px; display: grid; grid-template-columns: 240px 1fr; gap: 14px; font-size: 13px; line-height: 1.35; }
-.cg-left { display: grid; gap: 14px; grid-template-rows: 1fr auto auto; }
-.cg-card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: var(--shadow); }
-.cg-card small { color: var(--faint); font-size: 11.5px; font-variant-numeric: tabular-nums; }
-.cg-val { display: flex; align-items: baseline; gap: 6px; margin-top: 18px; }
-.cg-val b { font-size: 76px; font-weight: 600; letter-spacing: -.05em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--cgm); transition: color .3s; }
-.cg-val span { color: var(--muted); }
-.cg-trend { display: flex; gap: 8px; align-items: center; margin-top: 14px; font-weight: 600; }
-.cg-trend span:first-child { font-size: 20px; }
-.cg-menubar { display: flex; justify-content: space-between; align-items: center; background: var(--sunk); border: 1px solid var(--line); border-radius: 10px; padding: 9px 14px; color: var(--muted); font-size: 12px; }
-.cg-menubar b { color: var(--fg); font-weight: 600; font-variant-numeric: tabular-nums; }
-.cg-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; background: var(--cgm); }
-.cg-screens { padding-block: 14px; }
-.cg-s { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--line); font-size: 12.5px; }
-.cg-screens small + .cg-s { border-top: 0; margin-top: 4px; }
-.cg-s span { color: var(--muted); }
-.cg-s b { font-weight: 600; font-variant-numeric: tabular-nums; }
-.cg-tir b { display: block; font-size: 24px; font-weight: 600; letter-spacing: -.03em; margin-top: 4px; font-variant-numeric: tabular-nums; }
-.cg-chart { display: flex; flex-direction: column; }
-.cg-h { display: flex; justify-content: space-between; margin-bottom: 8px; }
-.cg-h span { color: var(--faint); font-size: 12px; }
-.cg-chart svg { width: 100%; flex: 1; overflow: visible; }
-.cg-chart .g { stroke: var(--line); }
-.cg-chart .t { fill: var(--faint); font-size: 11px; font-family: var(--f-sans); }
-
-@media (max-width: 860px) {
-  .pin-grid.wide { grid-template-columns: minmax(0, 1fr); }
-  .pin-grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); align-items: stretch; padding-block: 14px 22px; gap: 14px; }
-  .pin-copy { gap: 8px; }
-  .pin-name { font-size: clamp(1.7rem, 7vw, 2.4rem); }
-  .pin-desc { display: none; }
-  .beats { margin: 0; }
-  .beats li { display: none; }
-  .beats li.on { display: block; }
-  .pin-cta { margin-top: 0; font-size: .95rem; }
-  .fit { top: 0; transform: translate(-50%, 0) scale(var(--s, 1)); transform-origin: 50% 0; }
-  .site-card { width: min(84vw, calc((100dvh - 330px) * 1.6)); }
-  .site-cap { grid-template-columns: minmax(0, 1fr) auto; }
-  .site-cap span { grid-column: 1 / -1; grid-row: 2; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .scene { height: auto; }
-  .pin { position: relative; height: auto; min-height: 0; padding-block: 48px; }
-  .pin-vis { height: min(70vh, 560px); }
-  .sites-view { overflow-x: auto; }
-  .site-card { opacity: 1; transform: none; }
-}
 
 /* ---------- Responsive ---------- */
 @media (max-width: 960px) {
@@ -702,6 +549,7 @@ img { max-width: 100%; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 </style>
+<script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
 <header class="nav">
@@ -721,306 +569,149 @@ img { max-width: 100%; }
 
 <!-- ================= Home ================= -->
 <main data-view="home">
-  <section class="wrap hero2" id="top">
-    <div class="hero2-copy">
-      <p class="hero2-eyebrow">Kirk Patoucheas · Product designer and frontend engineer · Montréal</p>
-      <h1 class="hero2-title"><span class="hl1"><span class="rise">I build the</span></span><span class="hl1"><span class="rise d1">whole thing.</span></span></h1>
-      <p class="hero2-lead">Product design and frontend engineering, from the first sketch to the shipped app. At ExpoTools I designed and built an AI lead platform end to end. On my own time I build tools I actually use, like the one that saved me $30,000 on a car.</p>
-      <div class="hero2-cta"><a class="btn-pill" href="#work">See the work</a><a class="btn-line" href="#contact">Get in touch</a></div>
+  <section class="hx" id="top">
+    <div class="wrap">
+      <p class="hx-eyebrow" data-reveal>Kirk Patoucheas</p>
+      <h1 class="hx-title" data-reveal style="--d: .08s">I build the whole thing.</h1>
+      <p class="hx-sub" data-reveal style="--d: .16s">Product designer and frontend engineer in Montréal. I take software from the first sketch to the shipped app, and I care how it feels as much as how it works.</p>
+      <div class="hx-cta" data-reveal style="--d: .24s"><a class="btn" href="#work">See the work</a><a class="lnk" href="#contact">Get in touch</a></div>
     </div>
-    <div class="hero2-vis" aria-hidden="true"><div class="fit" data-w="560" data-h="520">
-      <div class="collage">
-        <div class="pc pc-iv" data-d=".04"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
-        <div class="pc pc-cgm" data-d=".14"><div class="dv-box"><div class="dv-screen"><small>mmol/L</small><b>6.4</b><span>→ 2 min ago</span></div></div></div>
-        <div class="pc pc-ls" data-d=".2"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt=""><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt=""></div>
-        <div class="pc pc-mail" data-d=".3">
-          <span class="mail-ic">T</span>
-          <div><div class="mail-top"><b>Inventory Tracker</b><span>now</span></div><div class="mail-t">New match near Montréal</div><div class="mail-b">2023 Model 3 Long Range · 5,000 km · $47,900</div></div>
-        </div>
-      </div>
-    </div></div>
-  </section>
-  <section id="work">
-    <div class="wrap"><header class="group-head first">
-      <h2>At ExpoTools</h2>
-      <p>Event technology for trade shows and conferences</p>
-    </header></div>
-
-    <!-- Intelevents: scan order → scored → ranked → reasoned -->
-    <section class="scene" data-scene="iv" style="--len: 320; --acc: var(--iv)">
-      <div class="pin">
-        <div class="wrap pin-grid">
-          <div class="pin-copy">
-            <span class="kicker">Designed and built end to end</span>
-            <h3 class="pin-name">Intelevents AI</h3>
-            <p class="pin-desc">An AI lead platform for trade shows. I designed and built all of it: the marketing site, dashboards, lead tables, AI ranking, the pipeline, CRM integrations, email and calendar booking, and more.</p>
-            <ol class="beats">
-              <li data-at="0">Leads first appear the way the floor sees them, in scan order.</li>
-              <li data-at=".2">I designed the AI rank as a compact, color-coded badge, so the table scans in a second.</li>
-              <li data-at=".48">Sorting by rank keeps every lead. Competitors are labeled, not hidden.</li>
-              <li data-at=".76">Every score opens to a plain-language reason, because trust beats mystery.</li>
-            </ol>
-            <a class="pin-cta" href="#intelevents">See how I built it →</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="760" data-h="520">
-            <div class="iv-card">
-              <div class="iv-top"><b>Leads</b><span class="muted">7 scanned · Day 2 of 3</span><span class="iv-sort" id="iv-sort">Sorted by scan time</span></div>
-              <div class="iv-body">
-                <div>
-                  <div class="iv-head"><span>Lead</span><span>Company</span><span>AI rank</span><span class="r">Scanned</span></div>
-                  <div class="iv-rows" id="iv-rows"></div>
-                </div>
-                <div class="iv-detail">
-                  <div class="iv-empty" id="iv-empty">Scores appear as each lead is researched.</div>
-                  <div class="iv-full" id="iv-full">
-                    <div class="iv-who"><span class="iv-av hi">PR</span><div><b>Priya Raman</b><small>Director of Operations · Northgate Cold Storage</small></div></div>
-                    <span class="iv-lbl">AI rank</span>
-                    <div class="iv-score"><b>9</b><span>/10</span><em>Excellent</em></div>
-                    <span class="iv-lbl">Why</span>
-                    <p class="iv-why"><span id="iv-why"></span><i class="caret"></i></p>
-                    <div class="iv-facts"><span>Company size</span><b>500–1,000</b><span>Industry</span><b>Cold storage</b><span>Competitor</span><b>No</b></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-    <!-- ExpoTools USA: draggable before/after, both full pages scroll together -->
-    <section class="scene" data-scene="usa" style="--len: 520; --acc: var(--iv)">
-      <div class="pin">
-        <div class="wrap pin-grid wide">
-          <div class="pin-copy">
-            <span class="kicker">Redesigned and rebuilt</span>
-            <h3 class="pin-name">ExpoTools USA</h3>
-            <p class="pin-desc">The US company site. I replaced a stock WordPress theme with a custom design built to turn visitors into consultation requests, and it has helped ExpoTools land six-figure deals.</p>
-            <ol class="beats">
-              <li data-at="0">Before: a stock WordPress theme over a crowd photo.</li>
-              <li data-at=".1">The redesign wipes in. Drag the handle back anytime to compare.</li>
-              <li data-at=".4">Keep scrolling to see the new site from top to bottom.</li>
-              <li data-at=".7">Walls of text became scannable service cards, client proof and a clear path to contact.</li>
-            </ol>
-            <a class="pin-cta" href="https://www.expotoolsusa.com/" target="_blank" rel="noopener">Visit expotoolsusa.com ↗</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="960" data-h="636">
-            <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotoolsusa.com</span></div>
-              <div class="cmp" id="usa-cmp" style="--x: 1">
-                <div class="cmp-layer"><img src="assets/work/usa-new-full.jpg" width="1440" height="5535" alt="The redesigned ExpoTools USA site, from top to bottom" draggable="false"></div>
-                <div class="cmp-layer cmp-before"><img src="assets/work/usa-old-full.jpg" width="1440" height="7820" alt="The old ExpoTools USA site, a stock WordPress theme, from top to bottom" draggable="false"></div>
-                <span class="cmp-tag l">Before · 2023</span><span class="cmp-tag r">After</span>
-                <div class="cmp-handle" role="slider" tabindex="0" aria-label="Compare the old and new expotoolsusa.com" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Showing the old site">
-                  <span class="cmp-knob"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5 2 10l5 5M13 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                </div>
-              </div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-    <!-- ExpoTools.biz: draggable before/after, both full pages scroll together -->
-    <section class="scene" data-scene="biz" style="--len: 400; --acc: var(--iv)">
-      <div class="pin">
-        <div class="wrap pin-grid wide">
-          <div class="pin-copy">
-            <span class="kicker">Redesigned and rebuilt</span>
-            <h3 class="pin-name">ExpoTools.biz</h3>
-            <p class="pin-desc">The international site, rebuilt from a layout that dated back more than a decade.</p>
-            <ol class="beats">
-              <li data-at="0">Before: stock photos, small type and competing buttons.</li>
-              <li data-at=".1">The redesign wipes in. Drag the handle back anytime to compare.</li>
-              <li data-at=".4">A single dated screen became a full site with services, proof and articles.</li>
-              <li data-at=".7">Real event photography replaced stock images throughout.</li>
-            </ol>
-            <a class="pin-cta" href="https://www.expotools.biz/" target="_blank" rel="noopener">Visit expotools.biz ↗</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="960" data-h="636">
-            <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotools.biz</span></div>
-              <div class="cmp" id="biz-cmp" style="--x: 1">
-                <div class="cmp-layer"><img src="assets/work/biz-new-full.jpg" width="1440" height="3821" alt="The redesigned ExpoTools.biz site, from top to bottom" draggable="false"></div>
-                <div class="cmp-layer cmp-before"><img src="assets/work/biz-old-full.jpg" width="1440" height="1011" alt="The old ExpoTools.biz site, with stock photography and several buttons" draggable="false"></div>
-                <span class="cmp-tag l">Before</span><span class="cmp-tag r">After</span>
-                <div class="cmp-handle" role="slider" tabindex="0" aria-label="Compare the old and new expotools.biz" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Showing the old site">
-                  <span class="cmp-knob"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5 2 10l5 5M13 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                </div>
-              </div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-    <div class="wrap"><header class="group-head">
-      <h2>Personal</h2>
-      <p>Built for myself, self-hosted, and used daily</p>
-    </header></div>
-
-    <!-- LastSet: log → rest → next time → lock screen -->
-    <section class="scene ls-scene" data-scene="ls" style="--len: 360">
-      <div class="pin">
-        <div class="wrap pin-grid">
-          <div class="pin-copy">
-            <span class="kicker">iPhone app · In TestFlight</span>
-            <h3 class="pin-name ls-display">LastSet</h3>
-            <p class="pin-desc">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
-            <ol class="beats">
-              <li data-at="0">Last time and today's target, side by side.</li>
-              <li data-at=".25">Log the set and rest starts on its own.</li>
-              <li data-at=".5">Finish, and every exercise gets a Next time target.</li>
-              <li data-at=".75">The whole workout runs from the Lock Screen.</li>
-            </ol>
-            <a class="pin-cta" href="#lastset">See the project →</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="330" data-h="700">
-            <div class="ls-phone" id="ls-phone">
-              <div class="ls-screen"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="Gym mode"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="Gym mode"></div>
-              <div class="ls-screen"><img class="shot only-light" src="assets/lastset/rest-running-light.jpg" alt="Rest timer"><img class="shot only-dark" src="assets/lastset/rest-running-dark.jpg" alt="Rest timer"></div>
-              <div class="ls-screen"><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="Workout complete"><img class="shot only-dark" src="assets/lastset/complete-improved-dark.jpg" alt="Workout complete"></div>
-              <div class="ls-screen"><img class="shot only-light" src="assets/lastset/live-rest-light.jpg" alt="Lock Screen Live Activity"><img class="shot only-dark" src="assets/lastset/live-rest-dark.jpg" alt="Lock Screen Live Activity"></div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-    <!-- Tesla: 30 days of snapshots play back -->
-    <section class="scene" data-scene="ts" style="--len: 300; --acc: var(--tsl)">
-      <div class="pin">
-        <div class="wrap pin-grid">
-          <div class="pin-copy">
-            <span class="kicker">Car shopping, automated</span>
-            <h3 class="pin-name">Tesla Inventory Tracker</h3>
-            <p class="pin-desc">Watched Tesla's inventory for the exact car I wanted and emailed me the moment one went live near me. It saved me over $30,000.</p>
-            <ol class="beats">
-              <li data-at="0">Every hour, a fresh snapshot of Tesla's inventory.</li>
-              <li data-at=".3">New listings and price drops show up in the log.</li>
-              <li data-at=".55">Good cars sell within hours. Sold ones stay in the history.</li>
-              <li data-at=".86">A match goes live, and the email goes out right away.</li>
-            </ol>
-            <a class="pin-cta" href="#tesla">Read the case study →</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="820" data-h="500">
-            <div class="ts">
-              <div class="ts-top">
-                <div><small>Model 3 · Used · within 200 km of Montréal</small><b id="ts-date">Sep 9</b></div>
-                <div class="ts-stats">
-                  <div><small>Median price</small><b id="ts-med">$49,800</b></div>
-                  <div><small>Matches</small><b id="ts-match">31</b></div>
-                  <div><small>Snapshots</small><b id="ts-snap">0</b></div>
-                </div>
-              </div>
-              <svg class="ts-chart" viewBox="0 0 780 190" id="ts-chart" aria-hidden="true"></svg>
-              <div class="ts-log" id="ts-log"></div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-    <!-- CGM: six hours of readings play back -->
-    <section class="scene" data-scene="cg" style="--len: 300; --acc: var(--cgm)">
-      <div class="pin">
-        <div class="wrap pin-grid">
-          <div class="pin-copy">
-            <span class="kicker">Glanceable health data</span>
-            <h3 class="pin-name">CGM Display Hub</h3>
-            <p class="pin-desc">My blood sugar wherever I look: a Mac menu bar app while I work, and small Arduino displays on my desk and my bedroom wall.</p>
-            <ol class="beats">
-              <li data-at="0">A new reading syncs to my server every five minutes.</li>
-              <li data-at=".3">Highs and lows are colored against my target range.</li>
-              <li data-at=".6">The trend arrow comes from the last 15 minutes.</li>
-              <li data-at=".86">My Mac, my office desk and my bedroom wall all show the same number.</li>
-            </ol>
-            <a class="pin-cta" href="#cgm">Read the case study →</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="820" data-h="500">
-            <div class="cg">
-              <div class="cg-left">
-                <div class="cg-card">
-                  <small id="cg-time">10:00</small>
-                  <div class="cg-val"><b id="cg-val">6.2</b><span>mmol/L</span></div>
-                  <div class="cg-trend"><span id="cg-arrow">→</span><span id="cg-tlabel">Steady</span></div>
-                </div>
-                <div class="cg-card cg-screens"><small>On every screen</small><div class="cg-s"><span>Mac menu bar</span><b class="cg-mirror">6.2 →</b></div><div class="cg-s"><span>Office display</span><b class="cg-mirror">6.2 →</b></div><div class="cg-s"><span>Bedroom wall</span><b class="cg-mirror">6.2 →</b></div></div>
-                <div class="cg-card cg-tir">
-                  <small>Time in range so far</small>
-                  <b id="cg-tir">100%</b>
-                </div>
-              </div>
-              <div class="cg-card cg-chart"><div class="cg-h"><b>Last 6 hours</b><span>Target 3.9–10.0</span></div><svg viewBox="-34 -8 560 262" id="cg-chart" aria-hidden="true"></svg></div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-    <!-- Budgy: raw CSV → categorized → budgets fill → over budget -->
-    <section class="scene" data-scene="bd" style="--len: 300; --acc: var(--bud)">
-      <div class="pin">
-        <div class="wrap pin-grid">
-          <div class="pin-copy">
-            <span class="kicker">Personal finance · Self-hosted</span>
-            <h3 class="pin-name">Budgy</h3>
-            <p class="pin-desc">A budget tracker with one Postgres model behind a web portal and an offline-first iPhone app.</p>
-            <ol class="beats">
-              <li data-at="0">A raw bank export comes in.</li>
-              <li data-at=".12">Each row is stored as-is, then categorized.</li>
-              <li data-at=".45">Budgets update as the import runs.</li>
-              <li data-at=".8">Dining out went over. Budgy says so.</li>
-            </ol>
-            <a class="pin-cta" href="#budgy">Read the case study →</a>
-          </div>
-          <div class="pin-vis"><div class="fit" data-w="820" data-h="500">
-            <div class="bd">
-              <div class="bd-csv">
-                <div class="bd-file"><span>desjardins-oct.csv</span><span id="bd-count">0 / 6</span></div>
-                <div class="bd-line dim">date,description,amount</div>
-                <div id="bd-lines"></div>
-              </div>
-              <div class="bd-arrow">→</div>
-              <div class="bd-out">
-                <div class="bd-card"><div class="bd-h"><b>October budgets</b><span id="bd-left">$885 left</span></div><div id="bd-budgets" class="bd-budgets"></div></div>
-                <div class="bd-card"><div class="bd-h"><b>Imported</b><span>Normalized</span></div><div id="bd-tx" class="bd-tx"></div></div>
-              </div>
-            </div>
-          </div></div>
-        </div>
-        <div class="pin-bar"><b></b></div>
-      </div>
-    </section>
-
-  </section>
-
-  <section class="wrap section" id="about">
-    <div class="about">
-      <h2 class="h2">About</h2>
-      <div class="about-text">
-        <p>I'm a frontend engineer at ExpoTools in Montréal, where I own most of the product surface: dashboards, design tooling, integrations and AI features.</p>
-        <p>I care about how something feels as much as how it works, so I usually end up doing both the design and the build. Outside work it's cars, hardware and home automation, mostly to find out how they work.</p>
-        <dl class="facts">
-          <dt>Daily</dt><dd>Next.js, React, TypeScript, Angular</dd>
-          <dt>Lately</dt><dd>SwiftUI, SwiftData, ActivityKit</dd>
-          <dt>Based</dt><dd>Montréal, QC</dd>
-        </dl>
+    <div class="wrap">
+      <div class="lineup" data-zoom aria-hidden="true">
+        <div class="lu-browser"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
+        <div class="lu-phone l" data-par=".05"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="" loading="lazy"></div>
+        <div class="lu-phone r" data-par=".09"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </section>
 
-  <section class="wrap section contact" id="contact" style="border-top: 1px solid var(--line)">
-    <h2>Building something?<br><span class="muted">Let's talk.</span></h2>
-    <ul class="links">
-      <li><a class="primary" href="https://www.linkedin.com/in/patoucheas/" target="_blank" rel="noopener">LinkedIn</a></li>
-      <li><a href="https://github.com/Patoucheas" target="_blank" rel="noopener">GitHub</a></li>
-    </ul>
+  <nav class="secnav" aria-label="Sections"><div class="secnav-in">
+    <a href="#work" data-chip="work">Intelevents AI</a>
+    <a href="#sites" data-chip="sites">Websites</a>
+    <a href="#lastset-home" data-chip="lastset-home">LastSet</a>
+    <a href="#side" data-chip="side">Side projects</a>
+    <a href="#about" data-chip="about">About</a>
+  </div></nav>
+
+  <section class="sec" id="work" style="--acc: var(--iv)">
+    <div class="wrap">
+      <header class="sh" data-reveal>
+        <span class="ey">At ExpoTools</span>
+        <h2>One AI platform. Designed and built end to end.</h2>
+        <p>Intelevents AI researches every trade show lead and ranks who to call first. I designed and built all of it: the marketing site, dashboards, lead tables, AI ranking, the pipeline, CRM integrations, and email and calendar booking.</p>
+        <a class="lnk" href="#intelevents">Read the case study</a>
+      </header>
+      <div class="media" data-zoom>
+        <div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt="The Intelevents AI homepage with a leads table sorted by AI rank" loading="lazy"></div>
+      </div>
+    </div>
+    <div class="car" data-carousel>
+      <div class="car-track" tabindex="0" aria-label="Intelevents AI features">
+        <figure class="car-card" data-reveal><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>A score with a reason.</b> Every lead is ranked out of 10 against what the exhibitor sells, with one plain sentence explaining why.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .08s"><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Built for the show floor.</b> Two taps to qualify a lead, saved on the device until the hall Wi-Fi comes back.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .16s"><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>A ranked pipeline.</b> A kanban board that keeps the AI's order from the lead table to the follow-up.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .24s"><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One timeline per lead.</b> The badge scan, emails from Gmail or Outlook, and booked meetings, all in order.</figcaption></figure>
+      </div>
+      <div class="wrap car-nav"><button type="button" data-prev aria-label="Previous">&#8249;</button><button type="button" data-next aria-label="Next">&#8250;</button></div>
+    </div>
   </section>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+
+  <section class="sec alt" id="sites" style="--acc: var(--iv)">
+    <div class="wrap">
+      <header class="sh" data-reveal>
+        <span class="ey">Redesigned and rebuilt</span>
+        <h2>From WordPress to six-figure deals.</h2>
+        <p>I redesigned and rebuilt every public ExpoTools site, replacing dated WordPress themes with fast, modern pages built to convert. Drag the handle to compare.</p>
+      </header>
+      <div class="cmp-list">
+        <div class="cmp-card" data-reveal>
+          <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotoolsusa.com</span></div>
+            <div class="cmp" id="usa-cmp" style="--x: 1">
+              <div class="cmp-layer"><img src="assets/work/usa-new-full.jpg" width="1440" height="5535" alt="The redesigned ExpoTools USA site" draggable="false" loading="lazy"></div>
+              <div class="cmp-layer cmp-before"><img src="assets/work/usa-old-full.jpg" width="1440" height="7820" alt="The old ExpoTools USA site, a stock WordPress theme" draggable="false" loading="lazy"></div>
+              <span class="cmp-tag l">Before · 2023</span><span class="cmp-tag r">After</span>
+              <div class="cmp-handle" role="slider" tabindex="0" aria-label="Compare the old and new expotoolsusa.com" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Showing the old site">
+                <span class="cmp-knob"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5 2 10l5 5M13 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-meta"><b>ExpoTools USA</b><span>From a stock WordPress theme to a custom site built for consultation requests.</span><a class="lnk" href="https://www.expotoolsusa.com/" target="_blank" rel="noopener">Visit</a></div>
+        </div>
+        <div class="cmp-card" data-reveal>
+          <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotools.biz</span></div>
+            <div class="cmp" id="biz-cmp" style="--x: 1">
+              <div class="cmp-layer"><img src="assets/work/biz-new-full.jpg" width="1440" height="3821" alt="The redesigned ExpoTools.biz site" draggable="false" loading="lazy"></div>
+              <div class="cmp-layer cmp-before"><img src="assets/work/biz-old-full.jpg" width="1440" height="1011" alt="The old ExpoTools.biz site, with stock photography and several buttons" draggable="false" loading="lazy"></div>
+              <span class="cmp-tag l">Before</span><span class="cmp-tag r">After</span>
+              <div class="cmp-handle" role="slider" tabindex="0" aria-label="Compare the old and new expotools.biz" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-valuetext="Showing the old site">
+                <span class="cmp-knob"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 5 2 10l5 5M13 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              </div>
+            </div>
+          </div>
+          <div class="cmp-meta"><b>ExpoTools.biz</b><span>The international site, rebuilt from a layout that dated back more than a decade.</span><a class="lnk" href="https://www.expotools.biz/" target="_blank" rel="noopener">Visit</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="lastset-home">
+    <div class="wrap">
+      <div class="ls-band">
+        <span class="ey" data-reveal>Personal · iPhone app</span>
+        <h2 data-reveal style="--d: .06s">LastSet</h2>
+        <p data-reveal style="--d: .12s">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
+        <a class="lnk" href="#lastset" data-reveal style="--d: .18s">See the project</a>
+        <div class="ls-phones" aria-hidden="true">
+          <div data-reveal style="--d: .2s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/home-populated-dark.jpg" alt="" loading="lazy"></div></div>
+          <div data-reveal style="--d: .1s"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/returning-workout-dark.jpg" alt="" loading="lazy"></div>
+          <div data-reveal style="--d: .3s"><div data-par=".04"><img class="shot only-light" src="assets/lastset/complete-improved-light.jpg" alt="" loading="lazy"><img class="shot only-dark" src="assets/lastset/complete-improved-dark.jpg" alt="" loading="lazy"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="side" style="padding-top: 0">
+    <div class="wrap">
+      <header class="sh" data-reveal>
+        <span class="ey">Personal</span>
+        <h2>Tools I built for myself, and use every day.</h2>
+        <p>Self-hosted projects that started as my own problems.</p>
+      </header>
+      <div class="bento">
+        <a class="tile2 wide" href="#tesla" style="--acc: var(--tsl)" data-reveal>
+          <div class="t-copy"><span class="ey">Tesla Inventory Tracker</span><h3>$30,000 saved.</h3><p>It emailed me the moment the right used Model 3 went live near me: 5,000 km, with Full Self-Driving already included.</p><span class="lnk">Read the story</span></div>
+          <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inventory.local</span></div><div class="mock" data-mock="tesla" aria-hidden="true"></div></div></div>
+        </a>
+        <a class="tile2" href="#cgm" style="--acc: var(--cgm)" data-reveal>
+          <div class="t-copy"><span class="ey">CGM Display Hub</span><h3>Three screens. One number.</h3><p>My blood sugar on my Mac's menu bar and on Arduino displays at my desk and on my bedroom wall.</p><span class="lnk">Learn more</span></div>
+          <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>cgm.local</span></div><div class="mock" data-mock="cgm" aria-hidden="true"></div></div></div>
+        </a>
+        <a class="tile2" href="#budgy" style="--acc: var(--bud); --d: .08s" data-reveal>
+          <div class="t-copy"><span class="ey">Budgy</span><h3>One budget, every device.</h3><p>A web portal and an offline-first iPhone app on one Postgres model, running on my own server.</p><span class="lnk">Learn more</span></div>
+          <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>budgy.local</span></div><div class="mock" data-mock="budgy" aria-hidden="true"></div></div></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec alt" id="about">
+    <div class="wrap about2" data-reveal>
+      <h2>I care how software feels as much as how it works.</h2>
+      <p>I'm a frontend engineer at ExpoTools in Montréal, where I own most of the product surface: dashboards, design tooling, integrations and AI features. I usually end up doing both the design and the build. Outside work it's cars, hardware and home automation, mostly to find out how they work.</p>
+      <ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Angular</li><li>SwiftUI</li><li>Product design</li></ul>
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="wrap">
+      <div class="contact2" data-reveal>
+        <h2>Let's build something.</h2>
+        <p>The best way to reach me is LinkedIn.</p>
+        <div class="row"><a class="btn" href="https://www.linkedin.com/in/patoucheas/" target="_blank" rel="noopener">Message me on LinkedIn</a><a class="lnk" href="https://github.com/Patoucheas" target="_blank" rel="noopener">GitHub</a></div>
+      </div>
+    </div>
+  </section>
+  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Designed and built by me</span></footer>
 </main>
 
 <!-- ================= Intelevents AI ================= -->
@@ -1466,70 +1157,77 @@ img { max-width: 100%; }
     applyTheme();
   });
 
-  /* ---------- Pinned scenes: scroll progress drives each project's animation ---------- */
+  /* ---------- Motion: reveal, scroll zoom, parallax ---------- */
   const clamp01 = v => Math.max(0, Math.min(1, v));
-  const seg = (p, a, b) => clamp01((p - a) / (b - a));
   const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const money = n => '$' + Math.round(n).toLocaleString('en-CA');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // Scale fixed-size visuals to fit their stage
-  const fits = [...document.querySelectorAll('.fit')];
-  fits.forEach(f => { f.style.width = f.dataset.w + 'px'; f.style.height = f.dataset.h + 'px'; });
-  function fitStages() {
-    fits.forEach(f => {
-      const box = f.parentElement;
-      const s = Math.min(box.clientWidth / f.dataset.w, box.clientHeight / f.dataset.h, 1.15);
-      if (s > 0) f.style.setProperty('--s', s.toFixed(4));
-    });
+  // Fade and rise once, as each element enters the viewport
+  const reveals = [...document.querySelectorAll('[data-reveal]')];
+  if (reduced || !('IntersectionObserver' in window)) {
+    reveals.forEach(el => el.classList.add('in'));
+  } else {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }), { rootMargin: '0px 0px -8% 0px', threshold: .12 });
+    reveals.forEach(el => io.observe(el));
   }
 
-  /* Intelevents */
-  const LEADS = [
-    ['EC', 'Elena Castillo', 'Facilities Manager', 'Brightwater Health', '9:58 AM', 6],
-    ['PR', 'Priya Raman', 'Director of Operations', 'Northgate Cold Storage', '10:42 AM', 9],
-    ['MO', 'Marcus Oyelaran', 'VP, Supply Chain', 'Halvorsen Foods', '11:15 AM', 8],
-    ['OH', 'Omar Haddad', 'Procurement Lead', 'Westline Grocers', '12:20 PM', 7],
-    ['SW', 'Sam Whitaker', 'Account Executive', 'FrostLink Sensors', '1:07 PM', 2, true],
-    ['GL', 'Grace Liu', 'Graduate Student', 'Eastfield University', '2:30 PM', 1],
-    ['RA', 'Ruth Adeyemi', 'Warehouse Supervisor', 'Coastal Produce Co.', '3:02 PM', 5],
-  ];
-  const WHY = 'Runs 14 refrigerated warehouses and is replacing paper temperature logs before a food-safety audit this spring. Asked for pricing on wireless sensors at the booth.';
-  const ROW = 56;
-  const rankOrder = LEADS.map((l, i) => i).sort((a, b) => LEADS[b][5] - LEADS[a][5]);
-  const ivRows = document.getElementById('iv-rows');
-  ivRows.innerHTML = LEADS.map(([ini, n, t, c, time, r, comp]) => `
-    <div class="iv-row"><div class="iv-who"><span class="iv-av">${ini}</span><div><b>${n}</b><small>${t}</small></div></div>
-    <span class="iv-co"><span>${c}</span>${comp ? '<small class="iv-comp">Competitor</small>' : ''}</span>
-    <span class="iv-rank">···</span><span class="iv-time">${time}</span></div>`).join('');
-  const ivRowEls = [...ivRows.children];
-  const ivWhy = document.getElementById('iv-why');
-
-  function ivScene(p) {
-    const sortT = ease(seg(p, .48, .72));
-    ivRowEls.forEach((el, i) => {
-      const r = LEADS[i][5];
-      const scored = p >= .2 + i * .035;
-      const badge = el.querySelector('.iv-rank');
-      badge.textContent = scored ? r : '···';
-      badge.className = 'iv-rank' + (scored ? (r >= 8 ? ' hi' : r >= 5 ? ' mid' : ' lo') : '');
-      el.querySelector('.iv-comp')?.classList.toggle('on', scored);
-      const y = lerp(i, rankOrder.indexOf(i), sortT) * ROW;
-      el.style.transform = `translateY(${y.toFixed(1)}px)`;
-      el.style.zIndex = 10 - rankOrder.indexOf(i);
-      el.style.opacity = r <= 2 ? (1 - .5 * sortT).toFixed(2) : 1;
-      el.classList.toggle('top', i === 1 && p >= .76);
+  // Large media scales up slightly as it scrolls into view; phones drift at their own pace
+  const zooms = [...document.querySelectorAll('[data-zoom]')];
+  const pars = [...document.querySelectorAll('[data-par]')];
+  function onScroll() {
+    if (reduced) return;
+    const vh = window.innerHeight;
+    zooms.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) return;
+      el.style.setProperty('--z', ease(clamp01((vh - r.top) / (vh * .8))).toFixed(4));
     });
-    document.getElementById('iv-sort').classList.toggle('ai', p >= .5);
-    document.getElementById('iv-sort').textContent = p >= .5 ? 'Sorted by AI rank' : 'Sorted by scan time';
-    const showDetail = p >= .76;
-    document.getElementById('iv-full').style.opacity = showDetail ? 1 : 0;
-    document.getElementById('iv-empty').style.opacity = showDetail ? 0 : 1;
-    ivWhy.textContent = WHY.slice(0, Math.round(WHY.length * seg(p, .8, .97)));
+    pars.forEach(el => {
+      const r = el.getBoundingClientRect();
+      if (r.bottom < -200 || r.top > vh + 200) return;
+      el.style.translate = `0 ${((r.top + r.height / 2 - vh / 2) * -el.dataset.par).toFixed(1)}px`;
+    });
+    updateChips();
   }
 
-  /* Before/after comparisons: scroll sets the split and scrolls both pages; dragging takes over the split */
+  // Sticky section pills follow the section in view
+  const chipLinks = [...document.querySelectorAll('[data-chip]')];
+  const chipTargets = chipLinks.map(a => document.getElementById(a.dataset.chip));
+  function updateChips() {
+    let active = -1;
+    chipTargets.forEach((s, k) => { if (s && s.getBoundingClientRect().top < window.innerHeight * .4) active = k; });
+    chipLinks.forEach((a, k) => a.classList.toggle('on', k === active));
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; onScroll(); });
+  }, { passive: true });
+  window.addEventListener('resize', onScroll);
+  onScroll();
+
+  // Carousels: arrow buttons step one card; buttons disable at the ends
+  document.querySelectorAll('[data-carousel]').forEach(car => {
+    const track = car.querySelector('.car-track');
+    const prev = car.querySelector('[data-prev]');
+    const next = car.querySelector('[data-next]');
+    const step = () => { const c = track.querySelector('.car-card'); return c ? c.getBoundingClientRect().width + 20 : track.clientWidth * .8; };
+    const sync = () => {
+      prev.disabled = track.scrollLeft < 4;
+      next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 4;
+    };
+    prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: reduced ? 'auto' : 'smooth' }));
+    next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: reduced ? 'auto' : 'smooth' }));
+    track.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
+  });
+
+  /* ---------- Before / after comparisons ---------- */
   function makeCompare(id) {
     const el = document.getElementById(id);
     const handle = el.querySelector('.cmp-handle');
@@ -1567,195 +1265,25 @@ img { max-width: 100%; }
     });
     return c;
   }
-  const usaCmp = makeCompare('usa-cmp');
-  const bizCmp = makeCompare('biz-cmp');
-  function compareScene(c, p) {
-    // Wipe all the way to the new site, then scroll it. The old page scrolls along underneath,
-    // so dragging the handle back always compares the same part of the page.
-    c.set(c.user ?? lerp(1, 0, ease(seg(p, .04, .22))));
-    c.scroll(ease(seg(p, .25, .97)));
-  }
-  const usaScene = p => compareScene(usaCmp, p);
-  const bizScene = p => compareScene(bizCmp, p);
-
-  /* LastSet */
-  const lsScreens = [...document.querySelectorAll('#ls-phone .ls-screen')];
-  function lsScene(p) {
-    // Each screen fades in on top of the one before it, so there is never a double exposure
-    const pos = p * lsScreens.length, w = .14;
-    lsScreens.forEach((el, k) => {
-      const o = k === 0 ? 1 : clamp01((pos - k + w) / (2 * w));
-      el.style.zIndex = k;
-      el.style.opacity = o.toFixed(3);
-      el.style.transform = `translateY(${((1 - o) * 28).toFixed(1)}px) scale(${(.97 + .03 * o).toFixed(3)})`;
-    });
-  }
-
-  /* Budgy */
-  const CSV = [
-    ['2026-10-03,NETFLIX.COM,-18.39', 'Netflix', 'Subscriptions', -18.39],
-    ['2026-10-04,RESTO LE PETIT ALEP,-45.60', 'Le Petit Alep', 'Dining out', -45.60],
-    ['2026-10-05,HYDRO-QUEBEC,-78.40', 'Hydro-Québec', 'Utilities', -78.40],
-    ['2026-10-06,PAYROLL DEP,2930.00', 'Payroll', 'Income', 2930],
-    ['2026-10-07,STM CARTE OPUS,-97.00', 'STM', 'Transport', -97],
-    ['2026-10-08,METRO #142,-84.12', 'Metro', 'Groceries', -84.12],
-  ];
-  const BUDGETS = [['Groceries', 527.88, 700], ['Dining out', 238.40, 250], ['Transport', 0, 120], ['Utilities', 0, 110], ['Subscriptions', 27.61, 60]];
-  const bdLines = document.getElementById('bd-lines');
-  bdLines.innerHTML = CSV.map(c => `<div class="bd-line">${c[0]}</div>`).join('');
-  const bdLineEls = [...bdLines.children];
-  const bdBud = document.getElementById('bd-budgets');
-  bdBud.innerHTML = BUDGETS.map(([n]) => `<div class="bd-b"><span>${n}</span><span></span><div class="bar"><b></b></div></div>`).join('');
-  const bdBudEls = [...bdBud.children];
-  const bdTx = document.getElementById('bd-tx');
-  let bdDone = -1;
-  function bdScene(p) {
-    const done = Math.floor(seg(p, .1, .8) * CSV.length + 1e-6);
-    bdLineEls.forEach((el, i) => {
-      el.classList.toggle('done', i < done);
-      el.classList.toggle('cur', i === done && p > .08 && done < CSV.length);
-    });
-    document.getElementById('bd-count').textContent = `${done} / ${CSV.length}`;
-    if (done !== bdDone) {
-      bdTx.innerHTML = CSV.slice(0, done).reverse().map(([, n, cat, a]) =>
-        `<div class="bd-t"><span>${n}<small>${cat}</small></span><span class="${a > 0 ? 'in' : ''}">${a > 0 ? '+' : '−'}${Math.abs(a).toFixed(2)}</span></div>`).join('');
-      bdDone = done;
-    }
-    let spent = 0, budget = 0;
-    BUDGETS.forEach(([n, base, b], k) => {
-      const s = base - CSV.slice(0, done).filter(c => c[2] === n).reduce((t, c) => t + c[3], 0);
-      spent += s; budget += b;
-      const el = bdBudEls[k];
-      const over = s > b && p >= .8;
-      el.classList.toggle('over', over);
-      el.children[1].textContent = over ? `Over by ${money(s - b)}` : `${money(s)} / ${money(b)}`;
-      el.querySelector('b').style.width = Math.min(100, s / b * 100).toFixed(1) + '%';
-    });
-    document.getElementById('bd-left').textContent = `${money(budget - spent)} left`;
-  }
-
-  /* Tesla */
-  const MED = [49.8, 49.8, 49.6, 49.6, 49.4, 49.4, 49.1, 48.9, 48.9, 48.9, 48.6, 48.6, 48.4, 48.2, 48.2, 48.0, 47.9, 47.9, 47.6, 47.6, 47.4, 47.5, 47.3, 47.3, 47.1, 47.0, 47.0, 46.9, 46.9, 46.9];
-  const MATCH = [31, 31, 32, 32, 33, 32, 32, 33, 34, 34, 33, 33, 34, 35, 35, 34, 34, 35, 36, 35, 35, 36, 36, 35, 36, 36, 37, 36, 37, 37];
-  const EVENTS = [
-    [3, 'new', 'NEW', '2023 Long Range AWD', '$46,900'],
-    [9, 'drop', 'DROP', '2024 Performance', '−$1,200'],
-    [14, 'sold', 'SOLD', '2022 Performance', 'after 6 days'],
-    [19, 'drop', 'DROP', '2023 Long Range AWD', '−$2,000'],
-    [24, 'new', 'NEW', '2023 RWD', '$39,990'],
-    [27, 'alert', 'MATCH', 'Model 3 LR · 5,000 km', 'email sent'],
-  ];
-  const day0 = new Date(2026, 8, 9);
-  const fmtDay = d => new Date(day0.getTime() + d * 864e5).toLocaleDateString('en-CA', { month: 'short', day: 'numeric' });
-  const tsChart = document.getElementById('ts-chart');
-  const TW = 720, TH = 160, tlo = 46.4, thi = 50.2;
-  const tx = i => i * TW / (MED.length - 1);
-  const ty = v => 8 + (thi - v) * (TH - 8) / (thi - tlo);
-  const tPts = MED.map((v, i) => `${tx(i).toFixed(1)},${ty(v).toFixed(1)}`).join(' ');
-  tsChart.innerHTML = [50, 49, 48, 47].map(v => `<line class="g" x1="0" x2="${TW}" y1="${ty(v)}" y2="${ty(v)}"/><text class="t" x="780" y="${ty(v) + 4}" text-anchor="end">$${v}k</text>`).join('')
-    + `<polyline points="${tPts}" fill="none" stroke="var(--line)" stroke-width="2"/>`
-    + `<polyline id="ts-line" points="${tPts}" fill="none" stroke="var(--tsl)" stroke-width="2.5" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>`
-    + `<line id="ts-scrub" x1="0" x2="0" y1="0" y2="${TH}" stroke="var(--tsl)" stroke-width="1" stroke-dasharray="3 3" opacity=".5"/>`
-    + `<circle id="ts-dot" r="5" fill="var(--tsl)" cx="0" cy="${ty(MED[0])}"/>`
-    + `<text class="t" x="0" y="${TH + 22}">${fmtDay(0)}</text><text class="t" x="${TW}" y="${TH + 22}" text-anchor="end">${fmtDay(29)}</text>`;
-  tsChart.setAttribute('viewBox', `0 0 780 ${TH + 28}`);
-  document.getElementById('ts-log').innerHTML = EVENTS.map(([d, cls, tag, car, note]) =>
-    `<div class="ts-ev"><em class="${cls}">${tag}</em><span>${car} · ${note}</span><span>${fmtDay(d)}</span></div>`).join('');
-  const tsEvEls = [...document.getElementById('ts-log').children];
-  function tsScene(p) {
-    const t = seg(p, .04, .94);
-    const f = t * (MED.length - 1);
-    const i = Math.floor(f), j = Math.min(MED.length - 1, i + 1);
-    const med = lerp(MED[i], MED[j], f - i);
-    document.getElementById('ts-line').setAttribute('stroke-dashoffset', (1 - t).toFixed(4));
-    const x = tx(f);
-    document.getElementById('ts-scrub').setAttribute('x1', x); document.getElementById('ts-scrub').setAttribute('x2', x);
-    document.getElementById('ts-dot').setAttribute('cx', x); document.getElementById('ts-dot').setAttribute('cy', ty(med));
-    document.getElementById('ts-date').textContent = fmtDay(Math.round(f));
-    document.getElementById('ts-med').textContent = money(Math.round(med * 10) * 100);
-    document.getElementById('ts-match').textContent = MATCH[Math.round(f)];
-    document.getElementById('ts-snap').textContent = Math.round(t * 29 * 24).toLocaleString('en-CA');
-    tsEvEls.forEach((el, k) => el.classList.toggle('on', f >= EVENTS[k][0]));
-  }
-
-  /* CGM */
-  const GV = [];
-  for (let i = 0; i < 72; i++) {
-    const t = i / 71;
-    let v = 6.1 + .7 * Math.sin(t * 6.2) + .25 * Math.sin(t * 23);
-    v += 4.6 * Math.exp(-Math.pow((t - .42) / .07, 2));
-    v -= 1.5 * Math.exp(-Math.pow((t - .82) / .05, 2));
-    GV.push(+v.toFixed(1));
-  }
-  GV[71] = 6.4; GV[70] = 6.3; GV[69] = 6.3;
-  const cgChart = document.getElementById('cg-chart');
-  const CW = 520, CH = 220, clo = 2, chi = 14;
-  const cy = v => CH - (v - clo) * CH / (chi - clo);
-  const cx = i => i * CW / 71;
-  const rangeCol = v => v < 3.9 ? 'var(--bad)' : v > 10 ? 'var(--warn)' : 'var(--cgm)';
-  cgChart.innerHTML = `<rect x="0" y="${cy(10)}" width="${CW}" height="${cy(3.9) - cy(10)}" fill="var(--cgm-tint)"/>`
-    + [3.9, 10].map(v => `<line class="g" x1="0" x2="${CW}" y1="${cy(v)}" y2="${cy(v)}" stroke-dasharray="3 4"/><text class="t" x="-8" y="${cy(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`).join('')
-    + GV.map((v, i) => `<circle cx="${cx(i).toFixed(1)}" cy="${cy(v).toFixed(1)}" r="3" fill="${rangeCol(v)}" opacity="0"/>`).join('')
-    + `<circle id="cg-head" r="7" fill="none" stroke="var(--cgm)" stroke-width="2"/>`
-    + ['10:00', '12:00', '14:00', '16:00'].map((t, i) => `<text class="t" x="${(CW * i / 3).toFixed(0)}" y="${CH + 24}" text-anchor="${i === 0 ? 'start' : i === 3 ? 'end' : 'middle'}">${t}</text>`).join('');
-  const cgDots = [...cgChart.querySelectorAll('circle[opacity]')];
-  const timeAt = i => { const m = 600 + i * 5; return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, '0')}`; };
-  function cgScene(p) {
-    const idx = Math.round(seg(p, .04, .94) * 71);
-    cgDots.forEach((d, i) => d.setAttribute('opacity', i <= idx ? 1 : 0));
-    const v = GV[idx];
-    const prev = GV[Math.max(0, idx - 3)];
-    const slope = (v - prev) / 15;
-    const [arrow, label] = slope > .06 ? ['↑', 'Rising fast'] : slope > .025 ? ['↗', 'Rising'] : slope < -.06 ? ['↓', 'Falling fast'] : slope < -.025 ? ['↘', 'Falling'] : ['→', 'Steady'];
-    const col = rangeCol(v);
-    document.getElementById('cg-val').textContent = v.toFixed(1);
-    document.getElementById('cg-val').style.color = col;
-    document.getElementById('cg-arrow').textContent = arrow;
-    document.getElementById('cg-tlabel').textContent = label;
-    document.getElementById('cg-time').textContent = `Reading at ${timeAt(idx)} · Dexcom`;
-    document.querySelectorAll('.cg-mirror').forEach(m => { m.textContent = `${v.toFixed(1)} ${arrow}`; m.style.color = col; });
-    const seen = GV.slice(0, idx + 1);
-    document.getElementById('cg-tir').textContent = Math.round(seen.filter(x => x >= 3.9 && x <= 10).length / seen.length * 100) + '%';
-    const head = document.getElementById('cg-head');
-    head.setAttribute('cx', cx(idx)); head.setAttribute('cy', cy(v)); head.setAttribute('stroke', col);
-  }
-
-  const SCENES = { iv: ivScene, usa: usaScene, biz: bizScene, ls: lsScene, bd: bdScene, ts: tsScene, cg: cgScene };
-  const sceneEls = [...document.querySelectorAll('.scene')];
-  const lastP = new Map();
-  function updateScenes(force) {
-    const vh = window.innerHeight;
-    sceneEls.forEach(sc => {
-      const r = sc.getBoundingClientRect();
-      if (!force && (r.bottom < -vh || r.top > vh * 2)) return;
-      const total = sc.offsetHeight - vh;
-      const p = reduced ? 1 : (total > 0 ? clamp01(-r.top / total) : 1);
-      if (!force && lastP.get(sc) === p) return;
-      lastP.set(sc, p);
-      sc.style.setProperty('--p', p.toFixed(4));
-      sc.querySelectorAll('.beats li').forEach((li, k, all) => {
-        const at = +li.dataset.at, next = all[k + 1] ? +all[k + 1].dataset.at : 2;
-        li.classList.toggle('on', p >= at && p < next);
-        li.classList.toggle('past', p >= next);
-      });
-      SCENES[sc.dataset.scene](p);
-    });
-  }
-  const pcs = [...document.querySelectorAll('.pc')];
-  function heroParallax() {
-    if (reduced) return;
-    const y = Math.min(window.scrollY, 1000);
-    pcs.forEach(el => { el.style.translate = `0 ${(-y * el.dataset.d).toFixed(1)}px`; });
-  }
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; updateScenes(); heroParallax(); });
-  }, { passive: true });
-  window.addEventListener('resize', () => { fitStages(); updateScenes(true); });
-  fitStages();
-  updateScenes(true);
+  // Each comparison starts on the old site and eases to a 50/50 split the first time it comes into view
+  [makeCompare('usa-cmp'), makeCompare('biz-cmp')].forEach((c, k) => {
+    const el = document.getElementById(['usa-cmp', 'biz-cmp'][k]);
+    c.set(reduced ? .5 : 1);
+    if (reduced || !('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return;
+      io.disconnect();
+      const t0 = performance.now(), D = 1400;
+      const tick = now => {
+        if (c.user !== null) return;
+        const t = Math.min(1, (now - t0) / D);
+        c.set(1 - .5 * ease(t));
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      setTimeout(() => requestAnimationFrame(tick), 250);
+    }, { threshold: .45 });
+    io.observe(el);
+  });
 
   /* ---------- Routing ---------- */
   const views = [...document.querySelectorAll('[data-view]')];
@@ -1768,7 +1296,7 @@ img { max-width: 100%; }
       views.forEach(v => { v.hidden = v.dataset.view !== next; });
       current = next;
       window.scrollTo({ top: 0, behavior: 'instant' });
-      fitMocks(); fitStages(); updateScenes(true);
+      fitMocks(); onScroll();
     }
     if (next === 'home') {
       const el = id && id !== 'top' && document.getElementById(id);
