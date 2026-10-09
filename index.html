@@ -1404,7 +1404,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
     }
     g.globalAlpha = 1;
-    if (a.tip) glow(Math.round(a.x + a.dir * 15), Math.round(a.y - 4), .9);
+    if (a.tip && !a.drag) drawPointer(a.x + a.dir * 12 - (a.dir < 0 ? 16 : 0), a.y - 18);
     if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), now < a.thinkUntil ? null : a.say, a.y, now);
   }
 
@@ -1525,6 +1525,19 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
+      if (a.drag) {
+        const s = partState.get(a.drag), pr = a.drag.getBoundingClientRect();
+        const d = clamp01((now - s.t0) / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
+        const cx = pr.left + (pr.width - 1) * de, cy = pr.top + (pr.height - 1) * de;
+        drawPointer(cx, cy);
+        a.dir = -1; a.x = cx + 22; a.y = cy + 30; a.speed2 = 60; a.phase += 70 * dt;
+        if (d >= 1) {
+          s.dragger = null; a.drag = null; a.part = null; a.job = null; a.tip = false;
+          a.state = 'build'; a.buildEnd = now + 420; a.buildMs = 0; a.afterBuild = c => assign(c);
+        }
+        drawSprite(a, now);
+        continue;
+      }
       if (a.state === 'walk' || a.state === 'leave') {
         // Arrive steering: accelerate toward the target, ease out as it gets close
         const [tx, ty] = targetOf(a);
@@ -1576,7 +1589,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     }
     g.globalAlpha = 1;
     const printing = parts.some(p => { const s = partState.get(p); return s.t0 && now - s.t0 < s.total + 200; });
-    const busy = printing || agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
+    const busy = printing || agents.some(a => a.drag || a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
@@ -1595,9 +1608,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     return !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) || p.querySelector(':scope > img, :scope > .shot');
   }
   function radiusOf(p, w) {
-    const src = p.querySelector(':scope > img, :scope > .shot') || p;
-    const v = getComputedStyle(src).borderTopLeftRadius;
-    return v.includes('%') ? parseFloat(v) / 100 * w : parseFloat(v) || 0;
+    const px = el => { const v = getComputedStyle(el).borderTopLeftRadius; return v.includes('%') ? parseFloat(v) / 100 * w : parseFloat(v) || 0; };
+    const own = px(p);
+    if (own) return own;
+    const img = p.querySelector(':scope > img, :scope > .shot');
+    return img ? px(img) : 0;
   }
   function startPart(p) {
     const s = partState.get(p);
@@ -1605,7 +1620,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const r = p.getBoundingClientRect();
     s.card = !!isCard(p);
     const half = s.card ? r.width + r.height : r.width;
-    s.draw = Math.max(420, Math.min(1050, half / 1.25));  // ms to close the outline
+    s.draw = Math.max(480, Math.min(1000, Math.hypot(r.width, r.height) / 1.6));  // ms to drag the frame corner to corner
     s.total = s.draw + 1300;
     s.t0 = performance.now();
     wake();
@@ -1648,6 +1663,14 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     gr.addColorStop(1, 'rgba(217, 119, 87, 0)');
     g.fillStyle = gr; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill();
   }
+  // A pixel mouse pointer, tip at (x, y)
+  const POINTER = ['X.......', 'XX......', 'XWX.....', 'XWWX....', 'XWWWX...', 'XWWWWX..', 'XWWWWWX.', 'XWWWWWWX', 'XWWWXXXX', 'XWXWX...', 'XX.XWX..', 'X...XWX.', '.....XX.'];
+  function drawPointer(x, y, alpha = 1) {
+    g.globalAlpha = alpha;
+    POINTER.forEach((row, ry) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c === '.') continue; g.fillStyle = c === 'X' ? '#1D1D1F' : '#FFFFFF'; g.fillRect(Math.round(x) + i * 2, Math.round(y) + ry * 2, 2, 2); } });
+    g.globalAlpha = 1;
+  }
+  const SEL = '10, 132, 255';
   function drawParts(now) {
     parts.forEach(p => {
       const s = partState.get(p);
@@ -1655,39 +1678,45 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       const r = p.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) return;
       const t = now - s.t0;
-      const d = clamp01(t / s.draw), de = 1 - Math.pow(1 - d, 2);
+      const d = clamp01(t / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
       if (d >= 1) light(p);
-      const fade = 1 - clamp01((t - s.draw - 450) / 500);
+      const fade = 1 - clamp01((t - s.draw - 380) / 420);
+      const x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1;
+      const w = Math.max(2, W * de), hh = Math.max(2, H * de);
+      const rad = Math.min(radiusOf(p, W) * de, w / 2, hh / 2);
       g.save();
-      g.lineWidth = 1.25; g.lineCap = 'round';
-      g.strokeStyle = `rgba(217, 119, 87, ${(.75 * fade).toFixed(3)})`;
-      if (!s.card) {
-        const y = Math.round(r.bottom + 8) + .5, w = Math.min(r.width, 560);
-        g.beginPath(); g.moveTo(r.left, y); g.lineTo(r.left + w * de, y); g.stroke();
-        if (d < 1) glow(r.left + w * de, y);
-      } else {
-        const x = r.left + .5, y = r.top + .5, w = r.width - 1, h = r.height - 1;
-        const rad = Math.min(radiusOf(p, w), w / 2, h / 2);
-        const per = 2 * (w + h) - (8 - 2 * Math.PI) * rad;
-        const a = per * de / 2;
-        // Two pens leave the top-left corner in opposite directions and meet at the far corner
-        g.setLineDash([a, Math.max(0, per - 2 * a), a]);
-        g.beginPath();
-        g.roundRect ? g.roundRect(x, y, w, h, rad) : g.rect(x, y, w, h);
-        g.stroke();
-        g.setLineDash([]);
-        if (d < 1) { const [ax, ay] = along(x, y, w, h, rad, a); const [bx, by] = along(x, y, w, h, rad, per - a); glow(ax, ay); glow(bx, by); }
-        // Light: a soft sheen sweeps across the new surface
-        const lt = clamp01((t - s.draw) / 700);
-        if (lt > 0 && lt < 1) {
-          const band = Math.max(140, w * .35), cx = x - band + lt * (w + band * 2);
-          g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, rad) : g.rect(x, y, w, h); g.clip();
-          const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
-          sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
-          sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
-          sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          g.fillStyle = sh; g.fillRect(x, y, w, h);
-        }
+      // Light: once the frame is set, a soft sheen sweeps across the new surface
+      const lt = clamp01((t - s.draw) / 700);
+      if (s.card && lt > 0 && lt < 1) {
+        g.save();
+        g.beginPath(); g.roundRect ? g.roundRect(x, y, W, H, Math.min(radiusOf(p, W), W / 2, H / 2)) : g.rect(x, y, W, H); g.clip();
+        const band = Math.max(140, W * .35), cx = x - band + lt * (W + band * 2);
+        const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
+        sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
+        sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
+        sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
+        g.fillStyle = sh; g.fillRect(x, y, W, H);
+        g.restore();
+      }
+      if (fade > 0) {
+        // The selection frame, dragged out from the top-left corner
+        g.globalAlpha = fade;
+        g.fillStyle = `rgba(${SEL}, .05)`;
+        g.strokeStyle = `rgba(${SEL}, .95)`; g.lineWidth = 1.5;
+        g.beginPath(); g.roundRect ? g.roundRect(x, y, w, hh, rad) : g.rect(x, y, w, hh); g.fill(); g.stroke();
+        // Corner handles
+        [[x, y], [x + w, y], [x, y + hh], [x + w, y + hh]].forEach(([hx, hy]) => {
+          g.fillStyle = '#FFFFFF'; g.fillRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
+          g.strokeStyle = `rgb(${SEL})`; g.lineWidth = 1.25; g.strokeRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
+        });
+        // Size label under the frame
+        const label = `${Math.round(w)} × ${Math.round(hh)}`;
+        g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif';
+        const lw = g.measureText(label).width + 12, lx = x + w / 2 - lw / 2, ly = Math.min(VH - 22, y + hh + 9);
+        g.fillStyle = `rgb(${SEL})`;
+        g.beginPath(); g.roundRect ? g.roundRect(lx, ly, lw, 18, 4) : g.rect(lx, ly, lw, 18); g.fill();
+        g.fillStyle = '#FFFFFF'; g.textBaseline = 'middle'; g.fillText(label, lx + 6, ly + 9.5);
+        if (d < 1 && !s.dragger) drawPointer(x + w, y + hh, fade);   // no builder on it: the pointer drags alone
       }
       g.restore();
     });
@@ -1695,6 +1724,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
   const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20 && r.left < VW - 40 && r.right > 40; };
   function unclaim(h) {
+    if (h.drag) { partState.get(h.drag).dragger = null; h.drag = null; }   // the frame finishes on its own
     const p = h.job;
     if (p && !partState.get(p).t0) partState.get(p).claimed = null;
     h.job = null; h.part = null; h.tip = false;
@@ -1714,16 +1744,10 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     h.job = p; h.part = null;
     h.el = p; h.ox = 0; h.oy = -2; h.speed = 760; h.buildMs = 0; h.state = 'walk'; h.carry = null;
     h.onArrive = a => {
-      // Start the pen at this corner and walk the top edge with it
+      // Grab the top-left corner and drag the frame out to the far corner
       const s = startPart(p);
-      const r = p.getBoundingClientRect();
-      const topShare = s.card ? r.width / (r.width + r.height) : 1;
-      a.part = p; a.tip = true; a.ox = 1; a.speed = Math.max(260, r.width / (s.draw * topShare / 1000)); a.state = 'walk';
-      a.onArrive = b => {
-        b.part = null; b.job = null; b.tip = false;
-        b.state = 'build'; b.buildEnd = performance.now() + 420; b.buildMs = 0;
-        b.afterBuild = c => assign(c);
-      };
+      s.dragger = a;
+      a.drag = p; a.part = p; a.tip = true; a.state = 'drag';
     };
   }
   function staffSections() {
@@ -1939,7 +1963,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
-        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: true, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
+        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: true, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
         if (k === 0) say(a, 'Building the page…', 1800);
         const t0 = performance.now() + k * 140;
         const fade = () => { a.alpha = Math.min(1, (performance.now() - t0) / 200); if (a.alpha < 1) requestAnimationFrame(fade); else { a.tx = x1; a.state = 'walk'; } };
