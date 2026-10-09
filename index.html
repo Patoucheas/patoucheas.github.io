@@ -305,7 +305,9 @@ img { max-width: 100%; }
 .mk-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .mk-table th { text-align: left; font-weight: 500; color: var(--faint); font-size: 11.5px; padding: 0 8px 8px 0; }
 .mk-table td { padding: 8px 8px 8px 0; border-top: 1px solid var(--line); white-space: nowrap; }
-.mk-table td.r, .mk-table th.r { text-align: right; padding-right: 0; }
+.mk-table td.r, .mk-table th.r { text-align: right; }
+.mk-table td:last-child, .mk-table th:last-child { padding-right: 0; }
+.mk-table .sub { font-size: 11px; color: var(--faint); margin-top: 1px; }
 .tag-new { font-size: 10px; font-weight: 700; color: var(--m); background: var(--m-tint); padding: 1px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: .04em; }
 .mk-svg { display: block; width: 100%; height: auto; }
 .mk-svg .g { stroke: var(--line); stroke-width: 1; }
@@ -1842,8 +1844,8 @@ img { max-width: 100%; }
               <text class="t" x="0" y="${ch + 18}">Sep 9</text><text class="t" x="${cw - 40}" y="${ch + 18}" text-anchor="end">Oct 8</text>
             </svg></div>
           <div class="mk-card"><table class="mk-table">
-            <thead><tr><th>Year</th><th>Trim</th><th>Odometer</th><th>Location</th><th class="r">Price</th></tr></thead>
-            <tbody>${rows.map(([y, t, o, p, l, n]) => `<tr><td>${y}</td><td>${t}${n ? '<span class="tag-new">NEW</span>' : ''}</td><td>${o}</td><td>${l}</td><td class="r">${p}</td></tr>`).join('')}</tbody>
+            <thead><tr><th>Year</th><th>Car</th><th class="r">Odometer</th><th class="r">Price</th></tr></thead>
+            <tbody>${rows.map(([y, t, o, p, l, n]) => `<tr><td>${y}</td><td>${t}${n ? '<span class="tag-new">NEW</span>' : ''}<div class="sub">${l}</div></td><td class="r">${o}</td><td class="r">${p}</td></tr>`).join('')}</tbody>
           </table></div>
         </div>
       </div></div>`;
