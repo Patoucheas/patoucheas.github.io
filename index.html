@@ -297,6 +297,7 @@ html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .12em; f
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; filter: none; transition: opacity .5s var(--ease-apple), filter .7s var(--ease-apple), translate .7s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
+html.crew-hover, html.crew-hover * { cursor: pointer !important; }
 html.js [data-part]:not(.lit) { clip-path: inset(0 100% 0 0); }
 html.js [data-part].lit { animation: surface-in .5s var(--ease-apple) both; }
 @keyframes surface-in { from { opacity: 0; } }
@@ -598,15 +599,15 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   <section class="hx" id="top">
     <div class="wrap">
       <p class="hx-eyebrow hx-later">Kirk Patoucheas · Product designer and frontend engineer</p>
-      <h1 class="hx-title">AI-first. By design.</h1>
+      <h1 class="hx-title" data-say="We built that headline. You saw.|Letter by letter.|Three of us. Zero typos.">AI-first. By design.</h1>
       <p class="hx-sub hx-later" style="--d: .1s">I design and build software with AI at every step, from the first sketch to production code. It's not a shortcut I hide. It's how one person ships a whole platform.</p>
       <div class="hx-cta hx-later" style="--d: .2s"><a class="btn" href="#work">See the work</a><a class="lnk" href="#how">How I work</a></div>
     </div>
     <div class="wrap">
       <div class="lineup" data-zoom>
-        <div class="lu-browser"><div class="browser" data-part><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
-        <div class="lu-phone l" data-par=".05" data-part><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
-        <div class="lu-phone r" data-par=".09" data-part><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
+        <div class="lu-browser"><div class="browser" data-part data-say="Kirk built all of this.|Every screen is his.|Look closer. It is real."><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
+        <div class="lu-phone l" data-par=".05" data-part data-say="His gym app. He uses it daily.|More on this one below."><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
+        <div class="lu-phone r" data-par=".09" data-part data-say="It remembers your last set.|180 for 8. Show-off."><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </section>
@@ -628,9 +629,9 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         <p>AI is part of every step of how I work, from research to production code. What it changes is how much one person can design, build and test. Taste, architecture and the final call stay with me.</p>
       </header>
       <div class="how-grid">
-        <div class="how-card" data-part><h3>Explore more, faster.</h3><p>I prototype in real code instead of static mockups, so I can try several directions and keep the one that feels right.</p></div>
-        <div class="how-card" data-part style="--d: .08s"><h3>Build with agents.</h3><p>Claude Code and Codex work alongside me. I set the architecture and the rules, review every change, and keep the tests green.</p></div>
-        <div class="how-card" data-part style="--d: .16s"><h3>Ship with judgment.</h3><p>AI drafts. I decide. The interactions, the edge cases and the details are where I spend the time it saves.</p></div>
+        <div class="how-card" data-part data-say="Real code beats mockups.|Three ideas. One keeper."><h3>Explore more, faster.</h3><p>I prototype in real code instead of static mockups, so I can try several directions and keep the one that feels right.</p></div>
+        <div class="how-card" data-part style="--d: .08s" data-say="That is us. The agents.|He reviews everything. Everything.|Tests stay green. Or else."><h3>Build with agents.</h3><p>Claude Code and Codex work alongside me. I set the architecture and the rules, review every change, and keep the tests green.</p></div>
+        <div class="how-card" data-part style="--d: .16s" data-say="We draft. He decides.|The details are his."><h3>Ship with judgment.</h3><p>AI drafts. I decide. The interactions, the edge cases and the details are where I spend the time it saves.</p></div>
       </div>
       <p class="how-note" data-reveal>This site was designed and built the same way. The little builders you see around the page are a nod to that.</p>
     </div>
@@ -644,7 +645,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         <p>On Intelevents AI I owned the whole product surface, from the marketing site to the dashboards, lead tables, pipeline, AI ranking views, CRM integrations, and email and calendar booking. That meant the design decisions, the frontend architecture, and every detail in between.</p>
         <a class="lnk" href="#intelevents">See how I built it</a>
       </header>
-      <div class="media media-live" data-part data-zoom>
+      <div class="media media-live" data-part data-zoom data-say="Best lead on top. Always.|Every score has a reason.|Call Priya first.">
         <button class="replay" id="iv-replay" type="button">Replay</button>
         <div class="live-fit" id="iv-fit" role="img" aria-label="Intelevents AI lead table: leads arrive in scan order, get an AI score out of 10, then re-sort by rank with a reason for the top lead"><div class="live-inner">
 <div class="iv-card">
@@ -673,10 +674,10 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     </div>
     <div class="car" data-carousel>
       <div class="car-track" tabindex="0" aria-label="Design decisions on Intelevents AI">
-        <figure class="car-card" data-part><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
-        <figure class="car-card" data-part style="--d: .08s"><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
-        <figure class="car-card" data-part style="--d: .16s"><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
-        <figure class="car-card" data-part style="--d: .24s"><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
+        <figure class="car-card" data-part data-say="No black box. Reasons included.|He made the AI explain itself."><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .08s" data-say="Works without Wi-Fi.|Show floors have bad signal."><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .16s" data-say="Ranked, and it stays ranked.|Drag a card. Order holds."><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .24s" data-say="One history per lead.|Every touch, one timeline."><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
       </div>
       <div class="wrap car-nav"><button type="button" data-prev aria-label="Previous">&#8249;</button><button type="button" data-next aria-label="Next">&#8250;</button></div>
     </div>
@@ -690,7 +691,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         <p>I redesigned and rebuilt every public ExpoTools site, replacing dated WordPress themes with fast, modern pages built to convert. Drag the handle to compare.</p>
       </header>
       <div class="cmp-list">
-        <div class="cmp-card" data-part>
+        <div class="cmp-card" data-part data-say="Drag the handle. Brace yourself.|Before: stock WordPress.|Same company. New site.">
           <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotoolsusa.com</span></div>
             <div class="cmp" id="usa-cmp" style="--x: 1">
               <div class="cmp-layer"><img src="assets/work/usa-new-full.jpg" width="1440" height="5535" alt="The redesigned ExpoTools USA site" draggable="false" loading="lazy"></div>
@@ -703,7 +704,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
           </div>
           <div class="cmp-meta"><b>ExpoTools USA</b><span>From a stock WordPress theme to a custom site built for consultation requests.</span><a class="lnk" href="https://www.expotoolsusa.com/" target="_blank" rel="noopener">Visit</a></div>
         </div>
-        <div class="cmp-card" data-part>
+        <div class="cmp-card" data-part data-say="That layout was a decade old.|Drag it. Watch the years go.">
           <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotools.biz</span></div>
             <div class="cmp" id="biz-cmp" style="--x: 1">
               <div class="cmp-layer"><img src="assets/work/biz-new-full.jpg" width="1440" height="3821" alt="The redesigned ExpoTools.biz site" draggable="false" loading="lazy"></div>
@@ -722,7 +723,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
   <section class="sec" id="lastset-home">
     <div class="wrap">
-      <div class="ls-band" data-part>
+      <div class="ls-band" data-part data-say="He logs every set with this.|It tells you what to lift next.|Do not skip leg day.">
         <span class="ey" data-reveal>Personal · iPhone app</span>
         <h2 data-reveal style="--d: .06s">LastSet</h2>
         <p data-reveal style="--d: .12s">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
@@ -744,15 +745,15 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         <p>Self-hosted projects that started as my own problems.</p>
       </header>
       <div class="bento">
-        <a class="tile2 wide" href="#tesla" style="--acc: var(--tsl)" data-part>
+        <a class="tile2 wide" href="#tesla" style="--acc: var(--tsl)" data-part data-say="An email saved him $30k.|It found the car. He bought it.">
           <div class="t-copy"><span class="ey">Tesla Inventory Tracker</span><h3>$30,000 saved.</h3><p>It emailed me the moment the right used Model 3 went live near me: 5,000 km, with Full Self-Driving already included.</p><span class="lnk">Read the story</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inventory.local</span></div><div class="mock" data-mock="tesla" aria-hidden="true"></div></div></div>
         </a>
-        <a class="tile2" href="#cgm" style="--acc: var(--cgm)" data-part>
+        <a class="tile2" href="#cgm" style="--acc: var(--cgm)" data-part data-say="Three screens. One number.|Even on the bedroom wall.">
           <div class="t-copy"><span class="ey">CGM Display Hub</span><h3>Three screens. One number.</h3><p>My blood sugar on my Mac's menu bar and on Arduino displays at my desk and on my bedroom wall.</p><span class="lnk">Learn more</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>cgm.local</span></div><div class="mock" data-mock="cgm" aria-hidden="true"></div></div></div>
         </a>
-        <a class="tile2" href="#budgy" style="--acc: var(--bud); --d: .08s" data-part>
+        <a class="tile2" href="#budgy" style="--acc: var(--bud); --d: .08s" data-part data-say="Works offline. Syncs later.|His budget. His server.">
           <div class="t-copy"><span class="ey">Budgy</span><h3>One budget, every device.</h3><p>A web portal and an offline-first iPhone app on one Postgres model, running on my own server.</p><span class="lnk">Learn more</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>budgy.local</span></div><div class="mock" data-mock="budgy" aria-hidden="true"></div></div></div>
         </a>
@@ -761,7 +762,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <section class="sec alt" id="about">
-    <div class="wrap about2" data-part>
+    <div class="wrap about2" data-part data-say="This part is all human.|Design and code. Both him.">
       <h2>I care how software feels as much as how it works.</h2>
       <p>I'm a frontend engineer at ExpoTools in Montréal, where I own most of the product surface: dashboards, design tooling, integrations and AI features. I usually end up doing both the design and the build. Outside work it's cars, hardware and home automation, mostly to find out how they work.</p>
       <ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Angular</li><li>SwiftUI</li><li>Claude Code</li><li>Codex</li><li>Product design</li></ul>
@@ -770,7 +771,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
   <section class="sec" id="contact">
     <div class="wrap">
-      <div class="contact2" data-part>
+      <div class="contact2" data-part data-say="LinkedIn is fastest.|Go on. Say hi.|He replies. I checked.">
         <h2>Let's build something.</h2>
         <p>The best way to reach me is LinkedIn.</p>
         <div class="row"><a class="btn" href="https://www.linkedin.com/in/patoucheas/" target="_blank" rel="noopener">Message me on LinkedIn</a><a class="lnk" href="https://github.com/Patoucheas" target="_blank" rel="noopener">GitHub</a></div>
@@ -1527,6 +1528,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     }
 
     drawParts(now);
+    drawChecks(now);
 
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
@@ -1587,7 +1589,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         }
       } else {
         a.speed2 = 0;
-        if (a.foreman) { const [tx, ty] = targetOf(a); if (Math.hypot(tx - a.x, ty - a.y) > 4) a.state = 'walk'; }   // keeps up as you scroll
+        if (a.foreman) {
+          const [tx, ty] = targetOf(a); if (Math.hypot(tx - a.x, ty - a.y) > 4 && a.state !== 'sleep') a.state = 'walk';   // keeps up as you scroll
+          if (a.state === 'sleep' && Math.random() < dt * 1.1) dusts.push({ x: a.x + a.dir * 10, y: a.y - SH - 2, vx: 10 + Math.random() * 8, vy: -26, life: 1.3, z: true });
+          if (a.state === 'idle' && now - movedAt < 1500 && Math.abs(mx - a.x) > 40) a.dir = Math.sign(mx - a.x);   // watches your cursor
+        }
         else if (a.el) { const [tx, ty] = targetOf(a); a.x = tx; a.y = ty; }
         if (a.state === 'build' && now >= a.buildEnd) { a.state = 'idle'; const f = a.afterBuild; a.afterBuild = null; f && f(a); }
       }
@@ -1607,15 +1613,15 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     }
     for (let k = dusts.length - 1; k >= 0; k--) {
       const s = dusts[k];
-      s.vy += 40 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      s.vy += (s.z ? -6 : 40) * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
       if (s.life <= 0) { dusts.splice(k, 1); continue; }
-      g.globalAlpha = s.life / .7 * .7; g.fillStyle = s.z ? '#86868B' : '#B9B9BE';
+      g.globalAlpha = Math.min(1, s.life / .7) * .7; g.fillStyle = s.z ? '#86868B' : '#B9B9BE';
       if (s.z) { g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif'; g.fillText('z', s.x, s.y); }
       else g.fillRect(Math.round(s.x), Math.round(s.y), 3, 3);
     }
     g.globalAlpha = 1;
     const printing = parts.some(p => { const s = partState.get(p); return s.t0 && now - s.t0 < s.total + 200; });
-    const busy = printing || agents.some(a => a.drag || a.state === 'fly' || a.state === 'descend' || a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
+    const busy = printing || agents.some(a => a.drag || a.state === 'fly' || a.state === 'descend' || a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || checks.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
@@ -1814,18 +1820,19 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
 
   /* The foreman: taps the section pill when you move to a new section, then takes a post inside it and keeps busy */
   const STOPS = [
-    { id: 'top', line: 'Scroll down. I will show you around.' },
-    { id: 'how', line: 'We are the crew. Kirk is the architect.' },
-    { id: 'work', line: 'Kirk designed every screen of this.' },
-    { id: 'sites', line: 'Drag the handle. The old sites were rough.' },
-    { id: 'lastset-home', line: 'Kirk logs his workouts with this.' },
-    { id: 'side', line: 'He built these for himself.' },
-    { id: 'about', line: 'This part is all human.' },
-    { id: 'contact', line: 'Say hi. He replies fast.' },
+    { id: 'top', line: 'Scroll down. I will show you around.', hi: ['Hi. I run this crew.', 'Scroll. I will keep up.', 'Hover things. I know stuff.'] },
+    { id: 'how', line: 'We are the crew. Kirk is the architect.', hi: ['He sets the rules. We follow.', 'I have read every one of his PRs.', 'Yes, I am an agent too.'] },
+    { id: 'work', line: 'Kirk designed every screen of this.', hi: ['Hover a card. I will explain.', 'Design and code. One person.', 'Ask me about the ranking.'] },
+    { id: 'sites', line: 'Drag the handle. The old sites were rough.', hi: ['Go on. Drag it.', 'The before is painful.', 'These close real deals.'] },
+    { id: 'lastset-home', line: 'Kirk logs his workouts with this.', hi: ['I cannot lift. No arms.', 'He hits the gym. I hit deploy.'] },
+    { id: 'side', line: 'He built these for himself.', hi: ['All self-hosted. In his house.', 'Click one. They are good.'] },
+    { id: 'about', line: 'This part is all human.', hi: ['I did not write this part.', 'He cares about the details.'] },
+    { id: 'contact', line: 'Say hi. He replies fast.', hi: ['Last stop. Thanks for scrolling.', 'Message him. I will wait.'] },
   ];
   const chipFor = id => document.querySelector(`.secnav a[data-chip="${id}"]`);
   let stop = -1, post = null, phase = 'post';
   const saidAt = {};
+  let talkedAt = 0, touchedAt = 0;   // last time he spoke, last time you interacted with him or the page
   function makeForeman(a) {
     foreman = a;
     a.foreman = true; a.hat = null; a.speed = 560; a.buildMs = 0; a.carry = null; a.intro = false;
@@ -1853,7 +1860,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   }
   function sayLine(k) {
     const now = performance.now();
-    if (!saidAt[k] || now - saidAt[k] > 6000) { saidAt[k] = now; say(foreman, STOPS[k].line, 2600, 300); }
+    if (!saidAt[k] || now - saidAt[k] > 6000) { saidAt[k] = now; talkedAt = now; say(foreman, STOPS[k].line, 2600, 300); }
   }
   function goPost(k, speak) {
     const el = bestPost(k);
@@ -1908,20 +1915,146 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       if (first || !chipFor(STOPS[k].id)) goPost(k, true); else tap(k);
       return;
     }
-    if (phase === 'post') {
+    if (phase === 'post' && !wellInView(post)) {
       const el = bestPost(k);
       if (el && el !== post) goPost(k, false);
     }
   }
-  // Keep busy at the post: set a block down, check the work, or hop
+  // Everything in the current section he can walk to and look at
+  const wellInView = el => { if (!el || !el.isConnected) return false; const r = el.getBoundingClientRect(); const vis = Math.min(r.bottom, VH) - Math.max(r.top, CHROME() + 30); return vis > Math.min(140, r.height * .5) && r.right > 0 && r.left < VW; };
+  function spots(k) {
+    const sec = document.getElementById(STOPS[k].id);
+    if (!sec) return [];
+    const els = k === 0 ? [document.querySelector('.hx-title'), ...sec.querySelectorAll('[data-part]')] : [...sec.querySelectorAll('[data-part]')];
+    return els.filter(el => el && wellInView(el) && (!partState.has(el) || partState.get(el).done || el.classList.contains('hx-title')));
+  }
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  const lastLine = new Map();
+  function lineFor(el) {
+    const lines = (el.dataset.say || '').split('|').filter(Boolean);
+    if (!lines.length) return '';
+    let s = pick(lines);
+    if (lines.length > 1 && s === lastLine.get(el)) s = lines[(lines.indexOf(s) + 1) % lines.length];
+    lastLine.set(el, s);
+    return s;
+  }
+
+  // Inspect: a quick design-tool selection around the thing he is looking at
+  const checks = [];
+  function inspect(el) {
+    checks.push({ el, t0: performance.now() });
+    wake();
+  }
+  function drawChecks(now) {
+    for (let k = checks.length - 1; k >= 0; k--) {
+      const c = checks[k], t = now - c.t0;
+      if (t > 1300) { checks.splice(k, 1); continue; }
+      const r = c.el.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > VH) continue;
+      const pop = easeOut(clamp01(t / 180)), fade = 1 - clamp01((t - 850) / 450);
+      const grow = (1 - pop) * 6;
+      const x = r.left - 4 - grow + .5, y = r.top - 4 - grow + .5, w = r.width + 8 + grow * 2, hh = r.height + 8 + grow * 2;
+      const rad = Math.min(radiusOf(c.el, r.width) + 4, w / 2, hh / 2);
+      g.save();
+      g.globalAlpha = fade * pop;
+      g.strokeStyle = `rgba(${SEL}, .9)`; g.lineWidth = 1.5;
+      g.beginPath(); g.roundRect ? g.roundRect(x, y, w, hh, rad) : g.rect(x, y, w, hh); g.stroke();
+      [[x, y], [x + w, y], [x, y + hh], [x + w, y + hh]].forEach(([hx, hy]) => {
+        g.fillStyle = '#FFFFFF'; g.fillRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
+        g.strokeStyle = `rgb(${SEL})`; g.lineWidth = 1.25; g.strokeRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
+      });
+      g.restore();
+    }
+  }
+
+  // Walk to a spot, select it, maybe say something about it
+  let visitT = 0;
+  function visit(el, talk) {
+    if (!foreman || phase !== 'post') return;
+    post = el;
+    const title = el.classList.contains('hx-title');
+    const r = el.getBoundingClientRect();
+    // Stand on the top edge, on whichever side is closer, or under the headline
+    const side = foreman.x < r.left + r.width / 2 ? .12 : .88;
+    foreman.el = el; foreman.fromBottom = title; foreman.oy = title ? 10 : -2; foreman.dx = 0;
+    foreman.ox = title ? (side < .5 ? 0 : 1) : side;
+    foreman.state = 'walk'; foreman.speed = 520;
+    const id = ++visitT;
+    foreman.onArrive = a => {
+      if (id !== visitT || phase !== 'post') return;
+      a.dir = a.ox > .5 ? -1 : 1;    // face into the thing he is looking at
+      a.tip = true; a.state = 'build'; a.buildEnd = performance.now() + 900; a.buildMs = 0;
+      a.afterBuild = b => { b.tip = false; };
+      inspect(el);
+      const now = performance.now();
+      if (talk || now - talkedAt > 9000) { const s = lineFor(el); if (s) { talkedAt = now; say(a, s, 2600, 250); } }
+    };
+    wake();
+  }
+
+  // Pointer: he looks at you, answers when hovered, and does not like being poked
+  let mx = -1, my = -1, movedAt = 0, hovering = false, hoverAt = 0, pokes = [];
+  const onForeman = (x, y) => foreman && foreman.alpha > 0 && Math.abs(x - foreman.x) < SW / 2 + 6 && y > foreman.y - SH - 8 + foreman.jump && y < foreman.y + 6;
+  const POKE = ['Ow.', 'Hey!', 'I am on the clock.', 'Rude.', 'That tickles.', 'I bruise easily.'];
+  function wakeUp() {
+    if (foreman && foreman.state === 'sleep') { foreman.state = 'idle'; hop(foreman, 220); talkedAt = performance.now(); say(foreman, pick(['I was not sleeping.', 'Huh? I am up.', 'Just resting my eyes.']), 2200); }
+  }
+  window.addEventListener('pointermove', e => {
+    mx = e.clientX; my = e.clientY; movedAt = touchedAt = performance.now();
+    if (!CREW || !foreman) return;
+    wakeUp();
+    const on = e.pointerType === 'mouse' && onForeman(mx, my);
+    if (on !== hovering) {
+      hovering = on;
+      document.documentElement.classList.toggle('crew-hover', on);
+      const now = performance.now();
+      if (on && phase === 'post' && now - hoverAt > 1200) {
+        hoverAt = now; talkedAt = now;
+        foreman.dir = Math.sign(mx - foreman.x) || foreman.dir;
+        say(foreman, pick(STOPS[stop] ? STOPS[stop].hi : ['Hi.']), 2400, 200);
+      }
+    }
+  }, { passive: true });
+  window.addEventListener('click', e => {
+    if (!CREW || !onForeman(e.clientX, e.clientY)) return;
+    e.preventDefault(); e.stopPropagation();
+    const now = performance.now();
+    touchedAt = talkedAt = now;
+    wakeUp();
+    pokes = pokes.filter(t => now - t < 4000); pokes.push(now);
+    hop(foreman, 260); dust(foreman.x, foreman.y);
+    foreman.dir = Math.sign(e.clientX - foreman.x) || foreman.dir;
+    if (pokes.length >= 4) {
+      pokes = [];
+      say(foreman, 'Fine. I will work over there.', 2200);
+      const others = spots(stop).filter(el => el !== post);
+      if (others.length && phase === 'post') setTimeout(() => visit(pick(others), false), 500);
+    } else say(foreman, POKE[(pokes.length - 1 + Math.floor(Math.random() * 2)) % POKE.length], 1600);
+  }, true);
+
+  // Hover a part for a moment and he walks over to tell you about it
+  if (finePointer) document.querySelectorAll('[data-say]').forEach(el => {
+    let tm = 0;
+    el.addEventListener('pointerenter', () => { clearTimeout(tm); tm = setTimeout(() => { if (foreman && phase === 'post' && (!partState.has(el) || partState.get(el).done || el.classList.contains('hx-title'))) { touchedAt = performance.now(); visit(el, true); } }, 450); });
+    el.addEventListener('pointerleave', () => clearTimeout(tm));
+  });
+  ['scroll', 'keydown'].forEach(ev => window.addEventListener(ev, () => { touchedAt = performance.now(); wakeUp(); }, { passive: true }));
+
+  // Keep busy in the section: walk to another part and check it, look around, or doze off when left alone
   setInterval(() => {
     if (!foreman || phase !== 'post' || foreman.state !== 'idle' || homeView.hidden) return;
-    const pick = Math.random();
-    if (pick < .45) { foreman.tip = true; foreman.state = 'build'; foreman.buildEnd = performance.now() + 700; foreman.afterBuild = a => { a.tip = false; }; }
-    else if (pick < .75) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = performance.now() + 500; }
+    const now = performance.now();
+    if (now - touchedAt > 30000) { foreman.state = 'sleep'; foreman.sayUntil = 0; wake(); return; }
+    if (hovering || now - touchedAt < 5000) return;   // stay put while you are looking at something
+    if (now - movedAt < 2500 && mx >= 0) { foreman.dir = Math.sign(mx - foreman.x) || foreman.dir; }   // keep an eye on you
+    const roll = Math.random();
+    const others = spots(stop).filter(el => el !== post);
+    if (others.length && roll < .55) visit(pick(others), false);
+    else if (roll < .75 && post) { foreman.tip = true; foreman.state = 'build'; foreman.buildEnd = now + 800; foreman.afterBuild = a => { a.tip = false; }; inspect(post); }
+    else if (roll < .9) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = now + 600; }
     else hop(foreman, 170);
     wake();
-  }, 3400);
+  }, 2600);
 
   let crewTick = false;
   window.addEventListener('scroll', () => {
