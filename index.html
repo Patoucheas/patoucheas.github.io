@@ -291,13 +291,14 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .secnav a.tapped { animation: chip-tap .4s var(--ease-apple); }
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
-.hx-title .word { display: inline-block; white-space: nowrap; border-radius: 6px; background: linear-gradient(rgba(10, 132, 255, .15), rgba(10, 132, 255, .15)) no-repeat 0 0 / var(--selw, 0%) 100%; transition: opacity .3s; }
-.hx-title .word:not(.sel) { background-size: 0% 100%; transition: background-size .45s var(--ease-apple); }
+.hx-title .word { display: inline-block; white-space: nowrap; background: linear-gradient(rgba(255, 59, 48, .9), rgba(255, 59, 48, .9)) no-repeat 0 100% / var(--selw, 0%) 2px; }
+.hx-title .word:not(.sel) { background-size: 0% 2px; transition: background-size .45s var(--ease-apple); }
 html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .12em; filter: blur(10px); }
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; filter: none; transition: opacity .5s var(--ease-apple), filter .7s var(--ease-apple), translate .7s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
 html.js [data-part]:not(.lit) { clip-path: inset(0 100% 0 0); }
+html.js [data-part].lit:not(.focused) { clip-path: inset(-2px -2px calc((1 - var(--sw, 0)) * 100%) -2px); }
 html.js [data-part].lit { animation: surface-in .5s var(--ease-apple) both; }
 @keyframes surface-in { from { opacity: 0; } }
 html.js [data-part].lit > * { filter: blur(12px); opacity: 0; translate: 0 10px; }
@@ -1527,15 +1528,12 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       const a = agents[k];
       if (a.drag) {
         const s = partState.get(a.drag), pr = a.drag.getBoundingClientRect();
-        const d = clamp01((now - s.t0) / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
-        const cx = pr.left + (pr.width - 1) * de, cy = pr.top + (pr.height - 1) * de;
-        drawPointer(cx, cy);
-        a.dir = -1; a.x = cx + 24; a.y = cy + 18; a.speed2 = 60; a.phase += 70 * dt;   // left arm on the pointer's tail
-        if (d >= 1) {
+        a.x = pr.left - 31; a.y = pr.top + 6; a.dir = 1; a.speed2 = 0;
+        drawSprite(a, now);
+        if (now - s.t0 >= s.draw) {
           s.dragger = null; a.drag = null; a.part = null; a.job = null; a.tip = false;
           a.state = 'build'; a.buildEnd = now + 420; a.buildMs = 0; a.afterBuild = c => assign(c);
         }
-        drawSprite(a, now);
         continue;
       }
       if (a.state === 'walk' || a.state === 'leave') {
@@ -1620,8 +1618,9 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const r = p.getBoundingClientRect();
     s.card = !!isCard(p);
     const half = s.card ? r.width + r.height : r.width;
-    s.draw = Math.max(480, Math.min(1000, Math.hypot(r.width, r.height) / 1.6));  // ms to drag the frame corner to corner
-    s.total = s.draw + 1300;
+    s.beam = 320; s.sweep = Math.max(520, Math.min(1200, r.height / .8));
+    s.draw = s.beam + s.sweep;   // ms: the beam crosses the top, then sweeps down
+    s.total = s.draw + 900;
     s.t0 = performance.now();
     wake();
     return s;
@@ -1632,7 +1631,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     s.lit = true;
     [...p.children].forEach((c, i) => c.style.setProperty('--i', i));
     p.classList.add('lit');
-    setTimeout(() => { p.classList.add('focused'); s.done = true; p.dispatchEvent(new CustomEvent('built')); }, 160);
+  }
+  function focusPart(p) {
+    const s = partState.get(p);
+    if (s.done) return;
+    s.done = true; p.classList.add('focused'); p.dispatchEvent(new CustomEvent('built'));
   }
 
   // Point at distance L along a rounded rectangle, clockwise from the top-left (after the corner)
@@ -1670,55 +1673,43 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     POINTER.forEach((row, ry) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c === '.') continue; g.fillStyle = c === 'X' ? '#FFFFFF' : '#1D1D1F'; g.fillRect(Math.round(x) + i, Math.round(y) + ry, 1, 1); } });
     g.globalAlpha = 1;
   }
-  const SEL = '10, 132, 255';
+  // A small yellow laser level; its emitter sits on the card's top-left corner
+  function drawLevel(x, y, alpha = 1) {
+    g.globalAlpha = alpha;
+    g.fillStyle = '#F2C14E'; g.fillRect(x, y, 14, 8);
+    g.fillStyle = '#1D1D1F'; g.fillRect(x + 2, y + 2, 6, 3);
+    g.fillStyle = '#FF3B30'; g.fillRect(x + 12, y + 3, 2, 2);
+    g.fillStyle = '#8E8E93'; g.fillRect(x + 3, y + 8, 2, 2); g.fillRect(x + 9, y + 8, 2, 2);
+    g.globalAlpha = 1;
+  }
+  function beam(x1, y1, x2, y2, alpha) {
+    g.save();
+    g.strokeStyle = `rgba(255, 59, 48, ${(.95 * alpha).toFixed(3)})`; g.lineWidth = 1.5;
+    g.shadowColor = `rgba(255, 59, 48, ${(.8 * alpha).toFixed(3)})`; g.shadowBlur = 8;
+    g.beginPath(); g.moveTo(x1, y1); g.lineTo(x2, y2); g.stroke();
+    g.restore();
+  }
   function drawParts(now) {
     parts.forEach(p => {
       const s = partState.get(p);
       if (!s.t0 || now - s.t0 > s.total) return;
       const r = p.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) return;
-      const t = now - s.t0;
-      const d = clamp01(t / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
-      if (d >= 1) light(p);
-      const fade = 1 - clamp01((t - s.draw - 380) / 420);
-      const x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1;
-      const w = Math.max(2, W * de), hh = Math.max(2, H * de);
-      const rad = Math.min(radiusOf(p, W) * de, w / 2, hh / 2);
-      g.save();
-      // Light: once the frame is set, a soft sheen sweeps across the new surface
-      const lt = clamp01((t - s.draw) / 700);
-      if (s.card && lt > 0 && lt < 1) {
-        g.save();
-        g.beginPath(); g.roundRect ? g.roundRect(x, y, W, H, Math.min(radiusOf(p, W), W / 2, H / 2)) : g.rect(x, y, W, H); g.clip();
-        const band = Math.max(140, W * .35), cx = x - band + lt * (W + band * 2);
-        const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
-        sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
-        sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        g.fillStyle = sh; g.fillRect(x, y, W, H);
-        g.restore();
+      const t = now - s.t0, fade = 1 - clamp01((t - s.draw - 150) / 350);
+      if (fade <= 0) return;
+      drawLevel(Math.round(r.left) - 14, Math.round(r.top) - 4, fade);
+      if (t < s.beam) {
+        const b = 1 - Math.pow(1 - t / s.beam, 3);
+        beam(r.left, r.top, r.left + r.width * b, r.top, 1);
+      } else {
+        light(p);
+        // The beam sweeps down; the part appears above it
+        const sw = clamp01((t - s.beam) / s.sweep), se = sw * sw * (3 - 2 * sw);
+        p.style.setProperty('--sw', se.toFixed(4));
+        const y = r.top + r.height * se;
+        if (sw < 1) beam(r.left, y, r.right, y, 1);
+        else { focusPart(p); beam(r.left, r.bottom, r.right, r.bottom, fade); }
       }
-      if (fade > 0) {
-        // The selection frame, dragged out from the top-left corner
-        g.globalAlpha = fade;
-        g.fillStyle = `rgba(${SEL}, .05)`;
-        g.strokeStyle = `rgba(${SEL}, .95)`; g.lineWidth = 1.5;
-        g.beginPath(); g.roundRect ? g.roundRect(x, y, w, hh, rad) : g.rect(x, y, w, hh); g.fill(); g.stroke();
-        // Corner handles
-        [[x, y], [x + w, y], [x, y + hh], [x + w, y + hh]].forEach(([hx, hy]) => {
-          g.fillStyle = '#FFFFFF'; g.fillRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
-          g.strokeStyle = `rgb(${SEL})`; g.lineWidth = 1.25; g.strokeRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
-        });
-        // Size label under the frame
-        const label = `${Math.round(w)} × ${Math.round(hh)}`;
-        g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif';
-        const lw = g.measureText(label).width + 12, lx = x + w / 2 - lw / 2, ly = Math.min(VH - 22, y + hh + 9);
-        g.fillStyle = `rgb(${SEL})`;
-        g.beginPath(); g.roundRect ? g.roundRect(lx, ly, lw, 18, 4) : g.rect(lx, ly, lw, 18); g.fill();
-        g.fillStyle = '#FFFFFF'; g.textBaseline = 'middle'; g.fillText(label, lx + 6, ly + 9.5);
-        if (d < 1 && !s.dragger) drawPointer(x + w, y + hh, fade);   // no builder on it: the pointer drags alone
-      }
-      g.restore();
     });
   }
 
