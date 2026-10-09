@@ -89,7 +89,9 @@ img { max-width: 100%; }
 .kicker { font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--acc, var(--muted)); }
 
 /* Phone screenshots */
-.shot { display: block; width: 100%; height: auto; aspect-ratio: 1206 / 2622; max-width: 100%; border-radius: 16.5% / 7.6%; background: var(--surface); box-shadow: var(--shadow); }
+.shot { display: block; width: 100%; height: auto; aspect-ratio: 1206 / 2622; max-width: 100%; border-radius: 16.5% / 7.6%; background: var(--surface); clip-path: inset(2.5px round 16.5% / 7.6%); }
+/* clip-path trims the capture's dark edge pixels, which also clips box-shadow, so phones cast their shadow from the wrapper */
+.lu-phone, .ls-phones > div, .ls-stage > div, .lock-shot { filter: drop-shadow(0 26px 30px rgba(0, 0, 0, .22)); }
 
 /* Browser frame for web work */
 .browser { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); }
@@ -158,7 +160,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .media .browser { border-radius: 14px 14px 0 0; border-bottom: 0; }
 
 .car { margin-top: clamp(40px, 5vw, 64px); }
-.car-track { --gut: max(clamp(16px, 4.5vw, 48px), calc((100% - 1180px) / 2 + 48px)); display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); padding: 4px var(--gut) 8px; scrollbar-width: none; }
+.car-track { --gut: max(clamp(16px, 4.5vw, 48px), calc((100% - 1180px) / 2 + 48px)); display: flex; gap: 20px; overflow-x: auto; overflow-y: hidden; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--gut); padding: 4px var(--gut) 8px; scrollbar-width: none; }
 .car-track::-webkit-scrollbar { display: none; }
 .car-card { flex: 0 0 clamp(280px, 31vw, 400px); scroll-snap-align: start; background: var(--alt); border-radius: 28px; overflow: hidden; display: flex; flex-direction: column; margin: 0; }
 .sec.alt .car-card { background: var(--bg); }
@@ -670,10 +672,10 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     </div>
     <div class="car" data-carousel>
       <div class="car-track" tabindex="0" aria-label="Design decisions on Intelevents AI">
-        <figure class="car-card" data-reveal><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .08s"><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .16s"><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .24s"><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
+        <figure class="car-card" data-part><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .08s"><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .16s"><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
+        <figure class="car-card" data-part style="--d: .24s"><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
       </div>
       <div class="wrap car-nav"><button type="button" data-prev aria-label="Previous">&#8249;</button><button type="button" data-next aria-label="Next">&#8250;</button></div>
     </div>
@@ -774,7 +776,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       </div>
     </div>
   </section>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Designed and built by me, with AI. Builder crew inspired by <a href="https://www.samuelrizzon.dev/" target="_blank" rel="noopener">Samuel Rizzon</a>.</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <!-- ================= Intelevents AI ================= -->
@@ -860,7 +862,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <div class="wrap"><a class="next-proj" href="#lastset"><span class="muted">Next project</span><b>LastSet →</b></a></div>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <!-- ================= LastSet ================= -->
@@ -989,7 +991,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <div class="wrap"><a class="next-proj" href="#tesla"><span class="muted">Next project</span><b>Tesla Inventory Tracker →</b></a></div>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <!-- ================= Budgy ================= -->
@@ -1046,7 +1048,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <div class="wrap"><a class="next-proj" href="#intelevents"><span class="muted">Next project</span><b>Intelevents AI →</b></a></div>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <!-- ================= Tesla ================= -->
@@ -1108,7 +1110,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <div class="wrap"><a class="next-proj" href="#cgm"><span class="muted">Next project</span><b>CGM Display Hub →</b></a></div>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <!-- ================= CGM ================= -->
@@ -1197,7 +1199,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   </section>
 
   <div class="wrap"><a class="next-proj" href="#budgy"><span class="muted">Next project</span><b>Budgy →</b></a></div>
-  <footer class="wrap foot"><span>Kirk Patoucheas · Montréal</span><span>Prototype v0.13</span></footer>
+  <footer class="wrap foot"><span>Kirk Patoucheas</span><span>Designed and built by me, with AI.</span></footer>
 </main>
 
 <script>
@@ -1691,7 +1693,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     });
   }
 
-  const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20; };
+  const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20 && r.left < VW - 40 && r.right > 40; };
   function unclaim(h) {
     const p = h.job;
     if (p && !partState.get(p).t0) partState.get(p).claimed = null;
