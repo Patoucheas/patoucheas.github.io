@@ -290,18 +290,23 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
 .hx-title .word { display: inline-block; white-space: nowrap; }
-html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .22em; }
-html.js .hx-title .ch.on { opacity: 1; translate: 0 0; transition: opacity .3s, translate .55s var(--ease-apple); }
+html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .12em; filter: blur(10px); }
+html.js .hx-title .ch.on { opacity: 1; translate: 0 0; filter: none; transition: opacity .5s var(--ease-apple), filter .7s var(--ease-apple), translate .7s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
-html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
+html.js [data-part]:not(.lit) { clip-path: inset(0 100% 0 0); }
+html.js [data-part].lit { animation: surface-in .5s var(--ease-apple) both; }
+@keyframes surface-in { from { opacity: 0; } }
+html.js [data-part].lit > * { filter: blur(12px); opacity: 0; translate: 0 10px; }
+html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; transition: filter .75s var(--ease-apple) calc(var(--i, 0) * 70ms), opacity .6s var(--ease-apple) calc(var(--i, 0) * 70ms), translate .8s var(--ease-apple) calc(var(--i, 0) * 70ms); }
 .media-live { position: relative; padding-bottom: clamp(20px, 5vw, 64px); }
 .live-fit { position: relative; width: 100%; aspect-ratio: 760 / 520; max-width: 100%; }
 .live-inner { position: absolute; top: 0; left: 0; width: 760px; height: 520px; transform-origin: 0 0; transform: scale(var(--s, 1)); }
 .replay { position: absolute; top: 16px; right: 16px; z-index: 2; font: inherit; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--pill); color: var(--on-pill); cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   html.js .hx-title .ch, html.js .hx-later { opacity: 1; translate: none; }
-  html.js [data-part] { clip-path: none; }
+  html.js [data-part] { clip-path: none; animation: none; }
+  html.js [data-part] > * { filter: none !important; opacity: 1 !important; translate: none !important; }
 }
 
 /* ---------- Case study template ---------- */
@@ -596,9 +601,9 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
     </div>
     <div class="wrap">
       <div class="lineup" data-zoom>
-        <div class="lu-browser"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
-        <div class="lu-phone l" data-par=".05"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
-        <div class="lu-phone r" data-par=".09"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
+        <div class="lu-browser"><div class="browser" data-part><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
+        <div class="lu-phone l" data-par=".05" data-part><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
+        <div class="lu-phone r" data-par=".09" data-part><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
       </div>
     </div>
   </section>
@@ -1329,6 +1334,8 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
   });
 
   /* ---------- The crew: small pixel agents that build the page ---------- */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (!location.hash) window.scrollTo(0, 0);
   const lerp = (a, b, t) => a + (b - a) * t;
   const seg = (p, a, b) => clamp01((p - a) / (b - a));
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -1395,10 +1402,12 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
     }
     g.globalAlpha = 1;
+    if (a.tip) glow(Math.round(a.x + a.dir * 15), Math.round(a.y - 4), .9);
     if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), now < a.thinkUntil ? null : a.say, a.y, now);
   }
 
-  const CHROME = () => { const pills = document.querySelector('.secnav-in'); const r = pills && !pills.closest('[hidden]') ? pills.getBoundingClientRect() : null; return Math.max(60, r && r.bottom > 0 ? r.bottom + 6 : 60); };
+  // How much of the top of the screen the nav covers, counting the pills only once they are stuck under it
+  const CHROME = () => { const pills = document.querySelector('.secnav-in'); const r = pills && !pills.closest('[hidden]') ? pills.getBoundingClientRect() : null; return r && r.top < 80 && r.bottom > 0 ? Math.max(60, r.bottom + 6) : 60; };
   function drawBubble(x, y, text, feet, now) {
     g.font = '600 12px -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif';
     const w = text === null ? 46 : Math.ceil(g.measureText(text).width) + 18, h = 24;
@@ -1510,7 +1519,7 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       g.restore();
     }
 
-    drawCells(now);
+    drawParts(now);
 
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
@@ -1524,7 +1533,6 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
         a.vx += (wx - a.vx) * k2; a.vy += (wy - a.vy) * k2;
         a.x += a.vx * dt; a.y += a.vy * dt;
         a.speed2 = Math.hypot(a.vx, a.vy);
-        if (a.part) { const pr = a.part.getBoundingClientRect(); setB(a.part, clamp01((a.x - pr.left) / pr.width)); feed(a, now); }
         a.phase += a.speed2 * dt;
         if (Math.abs(a.vx) > 24) a.dir = Math.sign(a.vx);
         if (a.state === 'leave' && (a.x < -36 || a.x > VW + 36)) { agents.splice(k, 1); continue; }
@@ -1556,7 +1564,6 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       g.fillStyle = d.color;
       g.fillRect(Math.round(lerp(d.x0, d.x1, p) + (12 - s) / 2 - squash / 2), Math.round(lerp(d.y0, d.y1, p) + (12 - s) + squash), Math.round(s + squash), Math.round(s - squash));
     }
-    drawStreams(now);
     for (let k = dusts.length - 1; k >= 0; k--) {
       const s = dusts[k];
       s.vy += 40 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
@@ -1566,88 +1573,136 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       else g.fillRect(Math.round(s.x), Math.round(s.y), 3, 3);
     }
     g.globalAlpha = 1;
-    const printing = parts.some(p => { const s = partState.get(p); return s.b > 0 && (!s.done || now - s.resolveAt < 600); });
-    const busy = printing || streams.length || agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
+    const printing = parts.some(p => { const s = partState.get(p); return s.t0 && now - s.t0 < s.total + 200; });
+    const busy = printing || agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
-  /* Section crews: helpers print each part. A grid of blocks fills in behind the builder, then dissolves into the real content. */
+  /* Section crews: a builder draws each part's outline, light sweeps across its surface, then its contents come into focus */
   const HELPER_HAT = '#C7C7CC';
-  const CELL = 12, LAG = 120;                         // block size and how far the fill trails the builder
-  const CELL_TONES = ['#E3E3E8', '#DADAE0', '#EAEAEE'];
   const parts = [...document.querySelectorAll('[data-part]')];
-  const partState = new Map(parts.map(p => [p, { b: 0, claimed: null, done: false, seenAt: 0, auto: false, resolveAt: 0 }]));
+  const partState = new Map(parts.map(p => [p, { t0: 0, total: 0, draw: 0, card: false, claimed: null, done: false, seenAt: 0, lit: false }]));
   const crews = new Map();
-  const streams = [];                                 // blocks travelling from a builder down into the part
-  const hash = (c, r) => { const x = Math.sin(c * 127.1 + r * 311.7) * 43758.5453; return x - Math.floor(x); };
-  function setB(p, b) {
-    const s = partState.get(p);
-    if (b <= s.b) return;
-    s.b = Math.min(1, b);
-    if (s.b >= 1 && !s.done) {
-      s.done = true; s.resolveAt = performance.now();
-      p.classList.add('built');                       // the real content sits under the blocks while they dissolve
-      p.dispatchEvent(new CustomEvent('built'));
-    }
-  }
-  if (!CREW) parts.forEach(p => { const s = partState.get(p); s.b = 1; s.done = true; p.classList.add('built'); });
+  const homeView = document.querySelector('[data-view="home"]');
+  if (!CREW) parts.forEach(p => p.classList.add('lit', 'focused'));
+  if (window.__crew) Object.assign(window.__crew, { parts, partState, crews });
 
-  // Draw the block grid for every part that is being printed or dissolving
-  function drawCells(now) {
+  // A part with its own surface gets an outline; a plain text block gets an underline
+  function isCard(p) {
+    const cs = getComputedStyle(p);
+    return !/rgba\(0, 0, 0, 0\)|transparent/.test(cs.backgroundColor) || p.querySelector(':scope > img, :scope > .shot');
+  }
+  function radiusOf(p, w) {
+    const src = p.querySelector(':scope > img, :scope > .shot') || p;
+    const v = getComputedStyle(src).borderTopLeftRadius;
+    return v.includes('%') ? parseFloat(v) / 100 * w : parseFloat(v) || 0;
+  }
+  function startPart(p) {
+    const s = partState.get(p);
+    if (s.t0) return s;
+    const r = p.getBoundingClientRect();
+    s.card = !!isCard(p);
+    const half = s.card ? r.width + r.height : r.width;
+    s.draw = Math.max(420, Math.min(1050, half / 1.25));  // ms to close the outline
+    s.total = s.draw + 1300;
+    s.t0 = performance.now();
+    wake();
+    return s;
+  }
+  function light(p) {
+    const s = partState.get(p);
+    if (s.lit) return;
+    s.lit = true;
+    [...p.children].forEach((c, i) => c.style.setProperty('--i', i));
+    p.classList.add('lit');
+    setTimeout(() => { p.classList.add('focused'); s.done = true; p.dispatchEvent(new CustomEvent('built')); }, 160);
+  }
+
+  // Point at distance L along a rounded rectangle, clockwise from the top-left (after the corner)
+  function along(x, y, w, h, rad, L) {
+    const top = w - 2 * rad, side = h - 2 * rad, arc = Math.PI * rad / 2;
+    const segs = [
+      ['l', x + rad, y, 1, 0, top], ['a', x + w - rad, y + rad, -Math.PI / 2, 0, arc],
+      ['l', x + w, y + rad, 0, 1, side], ['a', x + w - rad, y + h - rad, 0, Math.PI / 2, arc],
+      ['l', x + w - rad, y + h, -1, 0, top], ['a', x + rad, y + h - rad, Math.PI / 2, Math.PI, arc],
+      ['l', x, y + h - rad, 0, -1, side], ['a', x + rad, y + rad, Math.PI, Math.PI * 1.5, arc],
+    ];
+    for (const sgm of segs) {
+      const len = sgm[5];
+      if (L <= len || sgm === segs[segs.length - 1]) {
+        const t = len ? Math.min(1, L / len) : 0;
+        if (sgm[0] === 'l') return [sgm[1] + sgm[3] * t * len, sgm[2] + sgm[4] * t * len];
+        const ang = sgm[3] + (sgm[4] - sgm[3]) * t;
+        return [sgm[1] + Math.cos(ang) * rad, sgm[2] + Math.sin(ang) * rad];
+      }
+      L -= len;
+    }
+    return [x + rad, y];
+  }
+  function glow(x, y, a = 1) {
+    const gr = g.createRadialGradient(x, y, 0, x, y, 9);
+    gr.addColorStop(0, `rgba(255, 255, 255, ${a})`);
+    gr.addColorStop(.35, `rgba(217, 119, 87, ${.85 * a})`);
+    gr.addColorStop(1, 'rgba(217, 119, 87, 0)');
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, 9, 0, Math.PI * 2); g.fill();
+  }
+  function drawParts(now) {
     parts.forEach(p => {
       const s = partState.get(p);
-      if (s.b <= 0) return;
-      const dissolve = s.done ? clamp01((now - s.resolveAt) / 520) : 0;
-      if (s.done && dissolve >= 1) return;
+      if (!s.t0 || now - s.t0 > s.total) return;
       const r = p.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) return;
-      const cols = Math.ceil(r.width / CELL), rows = Math.ceil(r.height / CELL);
-      const front = s.b * (r.width + LAG);
-      const r0 = Math.max(0, Math.floor((CHROME() - r.top) / CELL)), r1 = Math.min(rows, Math.ceil((VH - r.top) / CELL));
-      for (let c = 0; c < cols; c++) {
-        const fill = s.done ? 1 : clamp01((front - c * CELL) / LAG);
-        if (fill <= 0) break;
-        const filled = Math.floor(fill * rows);
-        for (let rr = r0; rr < Math.min(r1, filled); rr++) {
-          if (s.done && hash(c, rr) < dissolve) continue;
-          g.fillStyle = CELL_TONES[(c * 7 + rr * 13) % 3];
-          g.fillRect(Math.round(r.left + c * CELL) + 1, Math.round(r.top + rr * CELL) + 1, CELL - 2, CELL - 2);
+      const t = now - s.t0;
+      const d = clamp01(t / s.draw), de = 1 - Math.pow(1 - d, 2);
+      if (d >= 1) light(p);
+      const fade = 1 - clamp01((t - s.draw - 450) / 500);
+      g.save();
+      g.lineWidth = 1.25; g.lineCap = 'round';
+      g.strokeStyle = `rgba(217, 119, 87, ${(.75 * fade).toFixed(3)})`;
+      if (!s.card) {
+        const y = Math.round(r.bottom + 8) + .5, w = Math.min(r.width, 560);
+        g.beginPath(); g.moveTo(r.left, y); g.lineTo(r.left + w * de, y); g.stroke();
+        if (d < 1) glow(r.left + w * de, y);
+      } else {
+        const x = r.left + .5, y = r.top + .5, w = r.width - 1, h = r.height - 1;
+        const rad = Math.min(radiusOf(p, w), w / 2, h / 2);
+        const per = 2 * (w + h) - (8 - 2 * Math.PI) * rad;
+        const a = per * de / 2;
+        // Two pens leave the top-left corner in opposite directions and meet at the far corner
+        g.setLineDash([a, Math.max(0, per - 2 * a), a]);
+        g.beginPath();
+        g.roundRect ? g.roundRect(x, y, w, h, rad) : g.rect(x, y, w, h);
+        g.stroke();
+        g.setLineDash([]);
+        if (d < 1) { const [ax, ay] = along(x, y, w, h, rad, a); const [bx, by] = along(x, y, w, h, rad, per - a); glow(ax, ay); glow(bx, by); }
+        // Light: a soft sheen sweeps across the new surface
+        const lt = clamp01((t - s.draw) / 700);
+        if (lt > 0 && lt < 1) {
+          const band = Math.max(140, w * .35), cx = x - band + lt * (w + band * 2);
+          g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, rad) : g.rect(x, y, w, h); g.clip();
+          const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
+          sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
+          sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
+          sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
+          g.fillStyle = sh; g.fillRect(x, y, w, h);
         }
       }
+      g.restore();
     });
   }
-  // A builder on a part streams blocks down to the front of the fill
-  function feed(a, now) {
-    if (!a.part || Math.random() > .55) return;
-    const r = a.part.getBoundingClientRect(), s = partState.get(a.part);
-    const front = s.b * (r.width + LAG);
-    const col = Math.max(0, Math.floor((a.x - r.left) / CELL));
-    const fill = clamp01((front - col * CELL) / LAG);
-    const ty = Math.min(r.bottom, r.top + Math.max(1, fill * r.height));
-    streams.push({ x0: a.x + (Math.random() - .5) * 6, y0: a.y - 6, x1: a.x + (Math.random() - .5) * 18, y1: ty, t0: now, dur: 160 + Math.random() * 120 });
-  }
-  function drawStreams(now) {
-    for (let k = streams.length - 1; k >= 0; k--) {
-      const s = streams[k], p = (now - s.t0) / s.dur;
-      if (p >= 1) { streams.splice(k, 1); continue; }
-      g.fillStyle = 'rgba(217, 119, 87, .9)';
-      g.fillRect(Math.round(lerp(s.x0, s.x1, p)), Math.round(lerp(s.y0, s.y1, p * p)), 4, 4);
-    }
-  }
 
-  const homeView = document.querySelector('[data-view="home"]');
   const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20; };
   function unclaim(h) {
     const p = h.job;
-    if (p && !partState.get(p).done) partState.get(p).claimed = null;
-    h.job = null; h.part = null;
+    if (p && !partState.get(p).t0) partState.get(p).claimed = null;
+    h.job = null; h.part = null; h.tip = false;
   }
   function retire(h) { unclaim(h); const set = crews.get(h.section); set && set.delete(h); leave(h); }
   function assign(h) {
     const sec = h.section;
-    const p = parts.find(q => q.closest('section') === sec && !partState.get(q).done && !partState.get(q).claimed && partInView(q));
+    const p = parts.find(q => q.closest('section') === sec && !partState.get(q).t0 && !partState.get(q).claimed && partInView(q));
     if (!p) {
-      const left = parts.some(q => q.closest('section') === sec && !partState.get(q).done);
+      const left = parts.some(q => q.closest('section') === sec && !partState.get(q).t0);
       if (!left) return retire(h);
       h.waiting = true; h.state = 'idle';
       return;
@@ -1655,15 +1710,16 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
     h.waiting = false;
     partState.get(p).claimed = h;
     h.job = p; h.part = null;
-    h.el = p; h.ox = 0; h.oy = -2; h.speed = 760; h.buildMs = 0; h.state = 'walk';
+    h.el = p; h.ox = 0; h.oy = -2; h.speed = 760; h.buildMs = 0; h.state = 'walk'; h.carry = null;
     h.onArrive = a => {
-      // Print along the top edge; the fill trails the builder across the part
-      const w = p.getBoundingClientRect().width;
-      a.part = p; a.ox = 1; a.speed = Math.max(340, w / 1.15); a.state = 'walk';
+      // Start the pen at this corner and walk the top edge with it
+      const s = startPart(p);
+      const r = p.getBoundingClientRect();
+      const topShare = s.card ? r.width / (r.width + r.height) : 1;
+      a.part = p; a.tip = true; a.ox = 1; a.speed = Math.max(260, r.width / (s.draw * topShare / 1000)); a.state = 'walk';
       a.onArrive = b => {
-        setB(p, 1);
-        b.part = null; b.job = null;
-        b.state = 'build'; b.buildEnd = performance.now() + 320; b.buildMs = 0;
+        b.part = null; b.job = null; b.tip = false;
+        b.state = 'build'; b.buildEnd = performance.now() + 420; b.buildMs = 0;
         b.afterBuild = c => assign(c);
       };
     };
@@ -1673,12 +1729,13 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
     const now = performance.now();
     const sections = [...new Set(parts.map(p => p.closest('section')))];
     sections.forEach(sec => {
+      if (sec.classList.contains('hx') && !introDone) return;   // the hero image waits for the headline
       const set = crews.get(sec) || new Set();
       crews.set(sec, set);
       const r = sec.getBoundingClientRect();
       if (!(r.top < VH && r.bottom > 0)) { [...set].forEach(retire); return; }
       set.forEach(h => { if (h.job && !h.part && !partInView(h.job)) { unclaim(h); assign(h); } else if (h.waiting) assign(h); });
-      const open = parts.filter(q => q.closest('section') === sec && !partState.get(q).done && !partState.get(q).claimed && partInView(q));
+      const open = parts.filter(q => q.closest('section') === sec && !partState.get(q).t0 && !partState.get(q).claimed && partInView(q));
       open.forEach(q => { const s = partState.get(q); if (!s.seenAt) s.seenAt = now; });
       const want = Math.min(2, open.length);
       while (set.size < want && agents.length < 10) {
@@ -1695,14 +1752,11 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       if (a.foreman || (a.y > -160 && a.y < VH + 160)) continue;
       unclaim(a); crews.forEach(s => s.delete(a)); agents.splice(k, 1);
     }
-    // Safety net: anything left waiting on screen too long prints itself
+    // Safety net: anything left waiting on screen too long draws itself
     parts.forEach(p => {
       const s = partState.get(p);
-      if (s.done || s.claimed || s.auto || !s.seenAt || now - s.seenAt < 2600 || !partInView(p)) return;
-      s.auto = true;
-      const t0 = performance.now(), from = s.b;
-      const tick = t => { const k = clamp01((t - t0) / 900); setB(p, from + (1 - from) * k); wake(); if (k < 1) requestAnimationFrame(tick); };
-      requestAnimationFrame(tick);
+      if (s.t0 || s.claimed || !s.seenAt || now - s.seenAt < 2600 || !partInView(p)) return;
+      startPart(p);
     });
   }
 
@@ -1811,7 +1865,7 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
   setInterval(() => {
     if (!foreman || phase !== 'post' || foreman.state !== 'idle' || homeView.hidden) return;
     const pick = Math.random();
-    if (pick < .45) { foreman.carry = BLOCKS[Math.floor(Math.random() * BLOCKS.length)]; foreman.state = 'build'; foreman.buildEnd = performance.now() + 700; foreman.afterBuild = a => place(a); }
+    if (pick < .45) { foreman.tip = true; foreman.state = 'build'; foreman.buildEnd = performance.now() + 700; foreman.afterBuild = a => { a.tip = false; }; }
     else if (pick < .75) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = performance.now() + 500; }
     else hop(foreman, 170);
     wake();
@@ -1854,11 +1908,9 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
     letters.forEach(s => s.classList.add('on'));
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
-    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; if (i === 0) makeForeman(a); else leave(a); });
-    try { sessionStorage.setItem('crewIntro', '1'); } catch (e) {}
+    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; if (i === 0) makeForeman(a); else leave(a); });
   }
-  let seen = false;
-  try { seen = sessionStorage.getItem('crewIntro') === '1'; } catch (e) {}
+  const seen = false;   // every load builds the page again from the top
   if (!CREW || !title || seen || window.scrollY > 200) {
     finishIntro();
     if (CREW && !foreman) makeForeman(spawn({ x: VW - 60, y: VH - 24, state: 'idle', buildMs: 0 }));
@@ -1885,14 +1937,14 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
-        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: BLOCKS[k], speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
+        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: true, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
         if (k === 0) say(a, 'Building the page…', 1800);
         const t0 = performance.now() + k * 140;
         const fade = () => { a.alpha = Math.min(1, (performance.now() - t0) / 200); if (a.alpha < 1) requestAnimationFrame(fade); else { a.tx = x1; a.state = 'walk'; } };
         setTimeout(fade, k * 140);
         const watch = () => {
           if (introDone) return;
-          idx.forEach(i => { if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) { letters[i].classList.add('on'); if (Math.random() < .2) dust(rects[i].left + rects[i].width / 2, rects[i].bottom); } });
+          idx.forEach(i => { if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) { letters[i].classList.add('on'); } });
           if (idx.every(i => letters[i].classList.contains('on'))) {
             a.carry = null;
             if (letters.every(s => s.classList.contains('on'))) setTimeout(finishIntro, 350);
@@ -1963,7 +2015,7 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
       const D = 8200, t0 = performance.now();
       let helper = null;
       if (CREW && agents.length < 8) {
-        helper = spawn({ x: VW + 30, y: fit.getBoundingClientRect().top + 120, el: rowEls[0].querySelector('.iv-rank'), ox: 1.4, oy: 14, carry: '#34C759', speed: 700, buildMs: 0, hat: HELPER_HAT });
+        helper = spawn({ x: VW + 30, y: fit.getBoundingClientRect().top + 120, el: rowEls[0].querySelector('.iv-rank'), ox: 1.4, oy: 14, carry: null, tip: true, speed: 700, buildMs: 0, hat: HELPER_HAT });
       }
       const tick = now => {
         const p = Math.min(1, (now - t0) / D);
@@ -1971,7 +2023,7 @@ html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
         if (helper && p < .5) {
           const i = Math.min(LEADS.length - 1, Math.floor(Math.max(0, p - .08) / .055));
           const target = rowEls[i].querySelector('.iv-rank');
-          if (helper.el !== target) { if (helper.el) place(helper); helper.carry = '#34C759'; helper.el = target; helper.state = 'walk'; wake(); }
+          if (helper.el !== target) { helper.el = target; helper.state = 'walk'; wake(); }
         } else if (helper && p >= .5 && !helper.sorted) {
           helper.sorted = true; helper.carry = null;
         } else if (helper && p >= .8 && !helper.done) {
