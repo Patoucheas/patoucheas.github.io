@@ -284,7 +284,9 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 
 
 /* ---------- The crew ---------- */
-.crew { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 12; }
+.crew { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 16; }
+@keyframes chip-tap { 0% { transform: scale(1); } 35% { transform: scale(.88); } 100% { transform: scale(1); } }
+.secnav a.tapped { animation: chip-tap .4s var(--ease-apple); }
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
 .hx-title .word { display: inline-block; white-space: nowrap; }
@@ -292,7 +294,7 @@ html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .22em; }
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; transition: opacity .3s, translate .55s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
-html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) * 100%) -4px -4px); }
+html.js [data-part]:not(.built) { clip-path: inset(0 100% 0 0); }
 .media-live { position: relative; padding-bottom: clamp(20px, 5vw, 64px); }
 .live-fit { position: relative; width: 100%; aspect-ratio: 760 / 520; max-width: 100%; }
 .live-inner { position: absolute; top: 0; left: 0; width: 760px; height: 520px; transform-origin: 0 0; transform: scale(var(--s, 1)); }
@@ -1236,7 +1238,8 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
   function updateChips() {
     let active = -1;
     chipTargets.forEach((s, k) => { if (s && s.getBoundingClientRect().top < window.innerHeight * .4) active = k; });
-    chipLinks.forEach((a, k) => a.classList.toggle('on', k === active));
+    if (window.crewChips && active !== -1) window.crewChips(chipLinks, active);
+    else chipLinks.forEach((a, k) => a.classList.toggle('on', k === active));
   }
 
   let ticking = false;
@@ -1507,15 +1510,7 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
       g.restore();
     }
 
-    // A faint guide line marks the edge a builder is building up to
-    agents.forEach(a => {
-      if (!a.part) return;
-      const pr = a.part.getBoundingClientRect();
-      g.save();
-      g.strokeStyle = 'rgba(217, 119, 87, .4)'; g.lineWidth = 1; g.setLineDash([3, 4]);
-      g.beginPath(); g.moveTo(Math.round(a.x) + .5, pr.top); g.lineTo(Math.round(a.x) + .5, Math.min(VH, pr.bottom)); g.stroke();
-      g.restore();
-    });
+    drawCells(now);
 
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
@@ -1529,7 +1524,7 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
         a.vx += (wx - a.vx) * k2; a.vy += (wy - a.vy) * k2;
         a.x += a.vx * dt; a.y += a.vy * dt;
         a.speed2 = Math.hypot(a.vx, a.vy);
-        if (a.part) { const pr = a.part.getBoundingClientRect(); setB(a.part, clamp01((a.x - pr.left) / pr.width)); }
+        if (a.part) { const pr = a.part.getBoundingClientRect(); setB(a.part, clamp01((a.x - pr.left) / pr.width)); feed(a, now); }
         a.phase += a.speed2 * dt;
         if (Math.abs(a.vx) > 24) a.dir = Math.sign(a.vx);
         if (a.state === 'leave' && (a.x < -36 || a.x > VW + 36)) { agents.splice(k, 1); continue; }
@@ -1561,6 +1556,7 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
       g.fillStyle = d.color;
       g.fillRect(Math.round(lerp(d.x0, d.x1, p) + (12 - s) / 2 - squash / 2), Math.round(lerp(d.y0, d.y1, p) + (12 - s) + squash), Math.round(s + squash), Math.round(s - squash));
     }
+    drawStreams(now);
     for (let k = dusts.length - 1; k >= 0; k--) {
       const s = dusts[k];
       s.vy += 40 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
@@ -1570,23 +1566,75 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
       else g.fillRect(Math.round(s.x), Math.round(s.y), 3, 3);
     }
     g.globalAlpha = 1;
-    const busy = agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
+    const printing = parts.some(p => { const s = partState.get(p); return s.b > 0 && (!s.done || now - s.resolveAt < 600); });
+    const busy = printing || streams.length || agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
     raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
-  /* Section crews: helpers build each part of a section. A part only appears up to where its builder has walked. */
+  /* Section crews: helpers print each part. A grid of blocks fills in behind the builder, then dissolves into the real content. */
   const HELPER_HAT = '#C7C7CC';
+  const CELL = 12, LAG = 120;                         // block size and how far the fill trails the builder
+  const CELL_TONES = ['#E3E3E8', '#DADAE0', '#EAEAEE'];
   const parts = [...document.querySelectorAll('[data-part]')];
-  const partState = new Map(parts.map(p => [p, { b: 0, claimed: null, done: false, seenAt: 0, auto: false }]));
+  const partState = new Map(parts.map(p => [p, { b: 0, claimed: null, done: false, seenAt: 0, auto: false, resolveAt: 0 }]));
   const crews = new Map();
+  const streams = [];                                 // blocks travelling from a builder down into the part
+  const hash = (c, r) => { const x = Math.sin(c * 127.1 + r * 311.7) * 43758.5453; return x - Math.floor(x); };
   function setB(p, b) {
     const s = partState.get(p);
     if (b <= s.b) return;
     s.b = Math.min(1, b);
-    p.style.setProperty('--b', s.b.toFixed(4));
-    if (s.b >= 1 && !s.done) { s.done = true; p.classList.add('built'); p.dispatchEvent(new CustomEvent('built')); }
+    if (s.b >= 1 && !s.done) {
+      s.done = true; s.resolveAt = performance.now();
+      p.classList.add('built');                       // the real content sits under the blocks while they dissolve
+      p.dispatchEvent(new CustomEvent('built'));
+    }
   }
-  if (!CREW) parts.forEach(p => setB(p, 1));
+  if (!CREW) parts.forEach(p => { const s = partState.get(p); s.b = 1; s.done = true; p.classList.add('built'); });
+
+  // Draw the block grid for every part that is being printed or dissolving
+  function drawCells(now) {
+    parts.forEach(p => {
+      const s = partState.get(p);
+      if (s.b <= 0) return;
+      const dissolve = s.done ? clamp01((now - s.resolveAt) / 520) : 0;
+      if (s.done && dissolve >= 1) return;
+      const r = p.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > VH) return;
+      const cols = Math.ceil(r.width / CELL), rows = Math.ceil(r.height / CELL);
+      const front = s.b * (r.width + LAG);
+      const r0 = Math.max(0, Math.floor((CHROME() - r.top) / CELL)), r1 = Math.min(rows, Math.ceil((VH - r.top) / CELL));
+      for (let c = 0; c < cols; c++) {
+        const fill = s.done ? 1 : clamp01((front - c * CELL) / LAG);
+        if (fill <= 0) break;
+        const filled = Math.floor(fill * rows);
+        for (let rr = r0; rr < Math.min(r1, filled); rr++) {
+          if (s.done && hash(c, rr) < dissolve) continue;
+          g.fillStyle = CELL_TONES[(c * 7 + rr * 13) % 3];
+          g.fillRect(Math.round(r.left + c * CELL) + 1, Math.round(r.top + rr * CELL) + 1, CELL - 2, CELL - 2);
+        }
+      }
+    });
+  }
+  // A builder on a part streams blocks down to the front of the fill
+  function feed(a, now) {
+    if (!a.part || Math.random() > .55) return;
+    const r = a.part.getBoundingClientRect(), s = partState.get(a.part);
+    const front = s.b * (r.width + LAG);
+    const col = Math.max(0, Math.floor((a.x - r.left) / CELL));
+    const fill = clamp01((front - col * CELL) / LAG);
+    const ty = Math.min(r.bottom, r.top + Math.max(1, fill * r.height));
+    streams.push({ x0: a.x + (Math.random() - .5) * 6, y0: a.y - 6, x1: a.x + (Math.random() - .5) * 18, y1: ty, t0: now, dur: 160 + Math.random() * 120 });
+  }
+  function drawStreams(now) {
+    for (let k = streams.length - 1; k >= 0; k--) {
+      const s = streams[k], p = (now - s.t0) / s.dur;
+      if (p >= 1) { streams.splice(k, 1); continue; }
+      g.fillStyle = 'rgba(217, 119, 87, .9)';
+      g.fillRect(Math.round(lerp(s.x0, s.x1, p)), Math.round(lerp(s.y0, s.y1, p * p)), 4, 4);
+    }
+  }
+
   const homeView = document.querySelector('[data-view="home"]');
   const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20; };
   function unclaim(h) {
@@ -1601,24 +1649,22 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
     if (!p) {
       const left = parts.some(q => q.closest('section') === sec && !partState.get(q).done);
       if (!left) return retire(h);
-      h.waiting = true; h.state = 'idle';           // wait at the last spot for the next part to scroll in
+      h.waiting = true; h.state = 'idle';
       return;
     }
     h.waiting = false;
     partState.get(p).claimed = h;
     h.job = p; h.part = null;
     h.el = p; h.ox = 0; h.oy = -2; h.speed = 760; h.buildMs = 0; h.state = 'walk';
-    if (!h.carry) h.carry = BLOCKS[(parts.indexOf(p) + 2) % BLOCKS.length];
     h.onArrive = a => {
-      // Walk the top edge; the part is revealed exactly up to the builder
+      // Print along the top edge; the fill trails the builder across the part
       const w = p.getBoundingClientRect().width;
-      a.part = p; a.ox = 1; a.speed = Math.max(380, w / .8); a.state = 'walk';
+      a.part = p; a.ox = 1; a.speed = Math.max(340, w / 1.15); a.state = 'walk';
       a.onArrive = b => {
         setB(p, 1);
         b.part = null; b.job = null;
-        place(b);
-        b.state = 'build'; b.buildEnd = performance.now() + 360; b.buildMs = 0;
-        b.afterBuild = c => { c.carry = BLOCKS[(parts.indexOf(p) + 3) % BLOCKS.length]; assign(c); };
+        b.state = 'build'; b.buildEnd = performance.now() + 320; b.buildMs = 0;
+        b.afterBuild = c => assign(c);
       };
     };
   }
@@ -1630,8 +1676,7 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
       const set = crews.get(sec) || new Set();
       crews.set(sec, set);
       const r = sec.getBoundingClientRect();
-      const visible = r.top < VH && r.bottom > 0;
-      if (!visible) { [...set].forEach(retire); return; }
+      if (!(r.top < VH && r.bottom > 0)) { [...set].forEach(retire); return; }
       set.forEach(h => { if (h.job && !h.part && !partInView(h.job)) { unclaim(h); assign(h); } else if (h.waiting) assign(h); });
       const open = parts.filter(q => q.closest('section') === sec && !partState.get(q).done && !partState.get(q).claimed && partInView(q));
       open.forEach(q => { const s = partState.get(q); if (!s.seenAt) s.seenAt = now; });
@@ -1650,29 +1695,30 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
       if (a.foreman || (a.y > -160 && a.y < VH + 160)) continue;
       unclaim(a); crews.forEach(s => s.delete(a)); agents.splice(k, 1);
     }
-    // Safety net: anything left waiting on screen too long builds itself
+    // Safety net: anything left waiting on screen too long prints itself
     parts.forEach(p => {
       const s = partState.get(p);
       if (s.done || s.claimed || s.auto || !s.seenAt || now - s.seenAt < 2600 || !partInView(p)) return;
       s.auto = true;
       const t0 = performance.now(), from = s.b;
-      const tick = t => { const k = clamp01((t - t0) / 700); setB(p, from + (1 - from) * easeOut(k)); if (k < 1) requestAnimationFrame(tick); };
+      const tick = t => { const k = clamp01((t - t0) / 900); setB(p, from + (1 - from) * k); wake(); if (k < 1) requestAnimationFrame(tick); };
       requestAnimationFrame(tick);
     });
   }
 
-  /* The foreman: the hero's builder walks to whichever section you are on, up or down, and is the only one who talks */
+  /* The foreman: taps the section pill when you move to a new section, then takes a post inside it and keeps busy */
   const STOPS = [
-    { id: 'top', sel: '.hx-title', ox: 1, oy: 10, bottom: true, line: 'Scroll down. I will show you around.' },
-    { id: 'how', sel: '#how .sh', ox: 1, dx: 48, oy: -4, line: 'We are the crew. Kirk is the architect.' },
-    { id: 'work', sel: '#work .sh', ox: 1, dx: 48, oy: -4, line: 'Kirk designed every screen of this.' },
-    { id: 'sites', sel: '#sites .sh', ox: 1, dx: 48, oy: -4, line: 'Drag the handle. The old sites were rough.' },
-    { id: 'lastset-home', sel: '#lastset-home .ls-band', ox: .93, oy: -2, line: 'Kirk logs his workouts with this.' },
-    { id: 'side', sel: '#side .sh', ox: 1, dx: 48, oy: -4, line: 'He built these for himself.' },
-    { id: 'about', sel: '#about .about2', ox: .96, oy: -4, line: 'This part is all human.' },
-    { id: 'contact', sel: '#contact .contact2', ox: .92, oy: -2, line: 'Say hi. He replies fast.' },
+    { id: 'top', line: 'Scroll down. I will show you around.' },
+    { id: 'how', line: 'We are the crew. Kirk is the architect.' },
+    { id: 'work', line: 'Kirk designed every screen of this.' },
+    { id: 'sites', line: 'Drag the handle. The old sites were rough.' },
+    { id: 'lastset-home', line: 'Kirk logs his workouts with this.' },
+    { id: 'side', line: 'He built these for himself.' },
+    { id: 'about', line: 'This part is all human.' },
+    { id: 'contact', line: 'Say hi. He replies fast.' },
   ];
-  let stop = -1;
+  const chipFor = id => document.querySelector(`.secnav a[data-chip="${id}"]`);
+  let stop = -1, post = null, phase = 'post';
   const saidAt = {};
   function makeForeman(a) {
     foreman = a;
@@ -1685,25 +1731,92 @@ html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) *
     STOPS.forEach((s, i) => { const sec = document.getElementById(s.id); if (sec && sec.getBoundingClientRect().top < VH * .5) k = i; });
     return k;
   }
+  // The part of the section that is most in view: that is where he stands
+  function bestPost(k) {
+    const sec = document.getElementById(STOPS[k].id);
+    if (!sec) return null;
+    const cands = k === 0 ? [document.querySelector('.hx-title'), document.querySelector('.lineup')] : [...sec.querySelectorAll('[data-part]')];
+    let best = null, area = 0;
+    cands.forEach(el => {
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const vis = Math.max(0, Math.min(r.bottom, VH) - Math.max(r.top, CHROME() + 30)) * r.width;
+      if (vis > area) { area = vis; best = el; }
+    });
+    return best;
+  }
+  function sayLine(k) {
+    const now = performance.now();
+    if (!saidAt[k] || now - saidAt[k] > 6000) { saidAt[k] = now; say(foreman, STOPS[k].line, 2600, 300); }
+  }
+  function goPost(k, speak) {
+    const el = bestPost(k);
+    if (!el) return;
+    post = el; phase = 'post';
+    foreman.el = el; foreman.ox = el.classList.contains('hx-title') ? 1 : .86; foreman.oy = el.classList.contains('hx-title') ? 10 : -2;
+    foreman.fromBottom = el.classList.contains('hx-title'); foreman.dx = el.classList.contains('hx-title') ? 0 : 0;
+    foreman.state = 'walk'; foreman.speed = 560;
+    foreman.onArrive = speak ? (() => sayLine(k)) : null;
+    wake();
+  }
+  // Tap the pill: walk under it, hop up into it, the pill switches, then head into the section
+  let pendingChip = -1;
+  window.crewChips = (links, active) => {
+    if (!foreman || foreman.alpha === 0) { links.forEach((a, i) => a.classList.toggle('on', i === active)); return; }
+    pendingChip = active;
+  };
+  function tap(k) {
+    const chip = chipFor(STOPS[k].id);
+    if (!chip) { goPost(k, true); return; }
+    const row = chip.parentElement;
+    const cr = chip.getBoundingClientRect();
+    if (cr.left < 0 || cr.right > VW) row.scrollTo({ left: chip.offsetLeft - VW / 2 + cr.width / 2, behavior: 'smooth' });
+    phase = 'tap';
+    foreman.sayUntil = 0;
+    foreman.el = chip; foreman.ox = .5; foreman.oy = SH + 8; foreman.fromBottom = true; foreman.dx = 0;
+    foreman.state = 'walk'; foreman.speed = 640;
+    const done = setTimeout(() => finishTap(k, chip), 2200);   // never hold the pill hostage
+    foreman.onArrive = a => {
+      clearTimeout(done);
+      hop(a, 240);
+      setTimeout(() => finishTap(k, chip), 140);
+    };
+    wake();
+  }
+  function finishTap(k, chip) {
+    if (phase !== 'tap') return;
+    document.querySelectorAll('.secnav a').forEach(a => a.classList.toggle('on', a === chip));
+    chip.classList.remove('tapped'); void chip.offsetWidth; chip.classList.add('tapped');
+    sayLine(k);
+    setTimeout(() => { if (phase === 'tap' && stop === k) goPost(k, false); }, 650);
+  }
   function guide() {
     if (!foreman) return;
     if (homeView.hidden) { foreman.alpha = 0; return; }
     foreman.alpha = 1;
     const k = currentStop();
-    if (k === stop) return;
-    stop = k;
-    const s = STOPS[k];
-    const el = document.querySelector(s.sel);
-    if (!el) return;
-    foreman.el = el; foreman.ox = s.ox; foreman.oy = s.oy; foreman.dx = s.dx || 0; foreman.fromBottom = !!s.bottom;
-    foreman.sayUntil = 0;   // a line belongs to its section; it does not travel with him
-    foreman.state = 'walk'; foreman.speed = 560;
-    foreman.onArrive = a => {
-      const now = performance.now();
-      if (!saidAt[k] || now - saidAt[k] > 6000) { saidAt[k] = now; say(a, s.line, 2600, 320); }
-    };
-    wake();
+    if (k !== stop) {
+      const first = stop === -1;
+      stop = k;
+      foreman.sayUntil = 0;
+      if (first || !chipFor(STOPS[k].id)) goPost(k, true); else tap(k);
+      return;
+    }
+    if (phase === 'post') {
+      const el = bestPost(k);
+      if (el && el !== post) goPost(k, false);
+    }
   }
+  // Keep busy at the post: set a block down, check the work, or hop
+  setInterval(() => {
+    if (!foreman || phase !== 'post' || foreman.state !== 'idle' || homeView.hidden) return;
+    const pick = Math.random();
+    if (pick < .45) { foreman.carry = BLOCKS[Math.floor(Math.random() * BLOCKS.length)]; foreman.state = 'build'; foreman.buildEnd = performance.now() + 700; foreman.afterBuild = a => place(a); }
+    else if (pick < .75) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = performance.now() + 500; }
+    else hop(foreman, 170);
+    wake();
+  }, 3400);
+
   let crewTick = false;
   window.addEventListener('scroll', () => {
     if (crewTick) return;
