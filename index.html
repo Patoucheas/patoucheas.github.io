@@ -291,8 +291,8 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .secnav a.tapped { animation: chip-tap .4s var(--ease-apple); }
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
-.hx-title .word { display: inline-block; white-space: nowrap; border-radius: 6px; background: linear-gradient(rgba(10, 132, 255, .15), rgba(10, 132, 255, .15)) no-repeat 0 0 / var(--selw, 0%) 100%; transition: opacity .3s; }
-.hx-title .word:not(.sel) { background-size: 0% 100%; transition: background-size .45s var(--ease-apple); }
+.hx-title .word { display: inline-block; white-space: nowrap; background: linear-gradient(rgba(29, 29, 31, .5), rgba(29, 29, 31, .5)) no-repeat 0 100% / var(--selw, 0%) 2px; }
+.hx-title .word:not(.sel) { background-size: 0% 2px; transition: background-size .45s var(--ease-apple); }
 html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .12em; filter: blur(10px); }
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; filter: none; transition: opacity .5s var(--ease-apple), filter .7s var(--ease-apple), translate .7s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
@@ -1405,6 +1405,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
     }
     g.globalAlpha = 1;
+    if (a.pencil) drawPencil(a.x - a.dir * 13, a.y - 13, a.x - a.dir * 24, a.y - 6);   // leaning back to the underline it trails
     if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), now < a.thinkUntil ? null : a.say, a.y, now);
   }
 
@@ -1526,16 +1527,20 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
       if (a.drag) {
-        const s = partState.get(a.drag), pr = a.drag.getBoundingClientRect();
-        const d = clamp01((now - s.t0) / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
-        const cx = pr.left + (pr.width - 1) * de, cy = pr.top + (pr.height - 1) * de;
-        drawPointer(cx, cy);
-        a.dir = -1; a.x = cx + 24; a.y = cy + 18; a.speed2 = 60; a.phase += 70 * dt;   // left arm on the pointer's tail
+        const s = partState.get(a.drag);
+        const d = clamp01((now - s.t0) / s.draw), de = d * d * (3 - 2 * d);
+        const pen = penAt(a.drag, s, de);
+        // Stand just ahead of the tip on the outside of the line, and lean the pencil back to it
+        const tx = s.card ? -pen.ny : 1, ty = s.card ? pen.nx : 0;
+        const cx = pen.x + tx * 22 + pen.nx * 16, cy = pen.y + ty * 22 + pen.ny * 16;
+        a.x = cx; a.y = cy + SH / 2;
+        a.dir = pen.x < cx ? -1 : 1; a.speed2 = 60; a.phase += 70 * dt;
+        drawSprite(a, now);
+        drawPencil(cx - tx * 13 - pen.nx * 2, cy - ty * 13 + 3, pen.x, pen.y);
         if (d >= 1) {
           s.dragger = null; a.drag = null; a.part = null; a.job = null; a.tip = false;
           a.state = 'build'; a.buildEnd = now + 420; a.buildMs = 0; a.afterBuild = c => assign(c);
         }
-        drawSprite(a, now);
         continue;
       }
       if (a.state === 'walk' || a.state === 'leave') {
@@ -1620,7 +1625,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const r = p.getBoundingClientRect();
     s.card = !!isCard(p);
     const half = s.card ? r.width + r.height : r.width;
-    s.draw = Math.max(480, Math.min(1000, Math.hypot(r.width, r.height) / 1.6));  // ms to drag the frame corner to corner
+    s.draw = Math.max(600, Math.min(1400, (s.card ? 2 * (r.width + r.height) : r.width) / 1.8));  // ms to sketch the outline
     s.total = s.draw + 1300;
     s.t0 = performance.now();
     wake();
@@ -1670,55 +1675,66 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     POINTER.forEach((row, ry) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c === '.') continue; g.fillStyle = c === 'X' ? '#FFFFFF' : '#1D1D1F'; g.fillRect(Math.round(x) + i, Math.round(y) + ry, 1, 1); } });
     g.globalAlpha = 1;
   }
-  const SEL = '10, 132, 255';
+  // Where the tool tip is on a part at progress de, and which way is outward
+  function penAt(p, s, de) {
+    const r = p.getBoundingClientRect();
+    if (!s.card) { const W = Math.min(r.width, 560); return { x: r.left + W * de, y: r.bottom + 8, nx: 0, ny: 1 }; }
+    const x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1, rad = Math.min(radiusOf(p, W), W / 2, H / 2);
+    const per = 2 * (W + H) - (8 - 2 * Math.PI) * rad;
+    const [px, py] = along(x, y, W, H, rad, per * de);
+    const dl = Math.abs(px - x), dr = Math.abs(px - (x + W)), dt = Math.abs(py - y), db = Math.abs(py - (y + H)), m = Math.min(dl, dr, dt, db);
+    const [nx, ny] = m === dt ? [0, -1] : m === dr ? [1, 0] : m === db ? [0, 1] : [-1, 0];
+    return { x: px, y: py, nx, ny };
+  }
+  function sheen(p, t, s) {
+    const lt = clamp01((t - s.draw) / 700);
+    if (!s.card || lt <= 0 || lt >= 1) return;
+    const r = p.getBoundingClientRect(), x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1;
+    g.save();
+    g.beginPath(); g.roundRect ? g.roundRect(x, y, W, H, Math.min(radiusOf(p, W), W / 2, H / 2)) : g.rect(x, y, W, H); g.clip();
+    const band = Math.max(140, W * .35), cx = x - band + lt * (W + band * 2);
+    const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
+    sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
+    sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
+    sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    g.fillStyle = sh; g.fillRect(x, y, W, H);
+    g.restore();
+  }
+  // A small white pencil from the builder's hand to the line it is drawing
+  function drawPencil(hx, hy, tx, ty, alpha = 1) {
+    const dx = tx - hx, dy = ty - hy, len = Math.hypot(dx, dy) || 1, ux = dx / len, uy = dy / len;
+    const bx = tx - ux * 5, by = ty - uy * 5;
+    g.save(); g.globalAlpha = alpha; g.lineCap = 'round';
+    g.strokeStyle = '#1D1D1F'; g.lineWidth = 5; g.beginPath(); g.moveTo(hx, hy); g.lineTo(bx, by); g.stroke();
+    g.strokeStyle = '#FFFFFF'; g.lineWidth = 3; g.beginPath(); g.moveTo(hx, hy); g.lineTo(bx, by); g.stroke();
+    g.strokeStyle = '#8E8E93'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(bx, by); g.lineTo(tx, ty); g.stroke();
+    g.restore();
+  }
   function drawParts(now) {
     parts.forEach(p => {
       const s = partState.get(p);
       if (!s.t0 || now - s.t0 > s.total) return;
       const r = p.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) return;
-      const t = now - s.t0;
-      const d = clamp01(t / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
+      const t = now - s.t0, d = clamp01(t / s.draw), de = d * d * (3 - 2 * d);
       if (d >= 1) light(p);
+      sheen(p, t, s);
       const fade = 1 - clamp01((t - s.draw - 380) / 420);
-      const x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1;
-      const w = Math.max(2, W * de), hh = Math.max(2, H * de);
-      const rad = Math.min(radiusOf(p, W) * de, w / 2, hh / 2);
+      if (fade <= 0) return;
       g.save();
-      // Light: once the frame is set, a soft sheen sweeps across the new surface
-      const lt = clamp01((t - s.draw) / 700);
-      if (s.card && lt > 0 && lt < 1) {
-        g.save();
-        g.beginPath(); g.roundRect ? g.roundRect(x, y, W, H, Math.min(radiusOf(p, W), W / 2, H / 2)) : g.rect(x, y, W, H); g.clip();
-        const band = Math.max(140, W * .35), cx = x - band + lt * (W + band * 2);
-        const sh = g.createLinearGradient(cx - band, 0, cx + band, 0);
-        sh.addColorStop(0, 'rgba(255, 255, 255, 0)');
-        sh.addColorStop(.5, `rgba(255, 255, 255, ${(.55 * Math.sin(lt * Math.PI)).toFixed(3)})`);
-        sh.addColorStop(1, 'rgba(255, 255, 255, 0)');
-        g.fillStyle = sh; g.fillRect(x, y, W, H);
-        g.restore();
-      }
-      if (fade > 0) {
-        // The selection frame, dragged out from the top-left corner
-        g.globalAlpha = fade;
-        g.fillStyle = `rgba(${SEL}, .05)`;
-        g.strokeStyle = `rgba(${SEL}, .95)`; g.lineWidth = 1.5;
-        g.beginPath(); g.roundRect ? g.roundRect(x, y, w, hh, rad) : g.rect(x, y, w, hh); g.fill(); g.stroke();
-        // Corner handles
-        [[x, y], [x + w, y], [x, y + hh], [x + w, y + hh]].forEach(([hx, hy]) => {
-          g.fillStyle = '#FFFFFF'; g.fillRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
-          g.strokeStyle = `rgb(${SEL})`; g.lineWidth = 1.25; g.strokeRect(Math.round(hx) - 3.5, Math.round(hy) - 3.5, 7, 7);
-        });
-        // Size label under the frame
-        const label = `${Math.round(w)} × ${Math.round(hh)}`;
-        g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif';
-        const lw = g.measureText(label).width + 12, lx = x + w / 2 - lw / 2, ly = Math.min(VH - 22, y + hh + 9);
-        g.fillStyle = `rgb(${SEL})`;
-        g.beginPath(); g.roundRect ? g.roundRect(lx, ly, lw, 18, 4) : g.rect(lx, ly, lw, 18); g.fill();
-        g.fillStyle = '#FFFFFF'; g.textBaseline = 'middle'; g.fillText(label, lx + 6, ly + 9.5);
-        if (d < 1 && !s.dragger) drawPointer(x + w, y + hh, fade);   // no builder on it: the pointer drags alone
+      g.strokeStyle = `rgba(29, 29, 31, ${(.55 * fade).toFixed(3)})`; g.lineWidth = 1.5; g.lineCap = 'round';
+      if (!s.card) {
+        const W = Math.min(r.width, 560), y = Math.round(r.bottom + 8) + .5;
+        g.beginPath(); g.moveTo(r.left, y); g.lineTo(r.left + W * de, y); g.stroke();
+      } else {
+        // One continuous pencil stroke around the card, clockwise from the top-left corner
+        const x = r.left + .5, y = r.top + .5, W = r.width - 1, H = r.height - 1, rad = Math.min(radiusOf(p, W), W / 2, H / 2);
+        const per = 2 * (W + H) - (8 - 2 * Math.PI) * rad;
+        g.setLineDash([per * de, per]);
+        g.beginPath(); g.roundRect ? g.roundRect(x, y, W, H, rad) : g.rect(x, y, W, H); g.stroke();
       }
       g.restore();
+      if (d < 1 && !s.dragger) { const pen = penAt(p, s, de); drawPencil(pen.x + pen.nx * 16 + 6, pen.y + pen.ny * 16 - 6, pen.x, pen.y, fade); }
     });
   }
 
@@ -1935,7 +1951,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     title && title.querySelectorAll('.word').forEach(w => setTimeout(() => w.classList.remove('sel'), 300));
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
-    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; if (i === 0) makeForeman(a); else leave(a); });
+    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; a.pencil = false; if (i === 0) makeForeman(a); else leave(a); });
   }
   const seen = false;   // every load builds the page again from the top
   if (!CREW || !title || seen || window.scrollY > 200) {
@@ -1969,7 +1985,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
-        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: false, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
+        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: false, pencil: true, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
         if (k === 0) say(a, 'Building the page…', 1800);
         const t0 = performance.now() + k * 140;
         const fade = () => { a.alpha = Math.min(1, (performance.now() - t0) / 200); if (a.alpha < 1) requestAnimationFrame(fade); else { a.tx = x1; a.state = 'walk'; } };
@@ -1979,7 +1995,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
           idx.forEach(i => {
             // Drag-select: the highlight grows across the word with the builder
             const word = letters[i].parentElement, wr = word.getBoundingClientRect();
-            if (a.x >= wr.left - 10) { word.classList.add('sel'); word.style.setProperty('--selw', (clamp01((a.x - wr.left + 6) / wr.width) * 100).toFixed(1) + '%'); }
+            if (a.x >= wr.left + 12) { word.classList.add('sel'); word.style.setProperty('--selw', (clamp01((a.x - 24 - wr.left) / wr.width) * 100).toFixed(1) + '%'); }
             if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) {
               letters[i].classList.add('on');
               if ([...word.children].every(c => c.classList.contains('on'))) setTimeout(() => word.classList.remove('sel'), 420);
