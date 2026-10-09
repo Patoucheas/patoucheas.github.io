@@ -307,7 +307,10 @@ img { max-width: 100%; }
 .mk-table td { padding: 8px 8px 8px 0; border-top: 1px solid var(--line); white-space: nowrap; }
 .mk-table td.r, .mk-table th.r { text-align: right; }
 .mk-table td:last-child, .mk-table th:last-child { padding-right: 0; }
-.mk-table .sub { font-size: 11px; color: var(--faint); margin-top: 1px; }
+.mk-table .sub { font-size: 11px; color: var(--faint); margin-top: 2px; }
+.mk-ts { gap: 14px; }
+.mk-ts .mk-table th { padding-bottom: 10px; }
+.mk-ts .mk-table td { padding-block: 11px; }
 .tag-new { font-size: 10px; font-weight: 700; color: var(--m); background: var(--m-tint); padding: 1px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: .04em; }
 .mk-svg { display: block; width: 100%; height: auto; }
 .mk-svg .g { stroke: var(--line); stroke-width: 1; }
@@ -1818,9 +1821,8 @@ img { max-width: 100%; }
       ['2024', 'Performance', '12,100 km', '$54,500', 'Montréal', false],
       ['2022', 'Long Range AWD', '51,900 km', '$38,400', 'Brossard', false],
       ['2023', 'RWD', '33,050 km', '$39,990', 'Québec City', true],
-      ['2024', 'Long Range AWD', '9,800 km', '$52,200', 'Ottawa', false],
     ];
-    const cw = 330, ch = 130;
+    const cw = 300, ch = 176;
     return `<div class="mk" style="--m: var(--tsl); --m-tint: var(--tsl-tint)">
       <aside class="mk-side"><span class="mk-logo"><i></i>Inventory</span>
         <nav class="mk-nav"><span class="on">Dashboard</span><span>Snapshots</span><span>Tracking settings</span></nav>
@@ -1834,18 +1836,18 @@ img { max-width: 100%; }
           <div class="mk-card"><div class="mk-k">Last successful poll</div><div class="mk-v">14:00</div><div class="mk-d">Cooldown: none</div></div>
           <div class="mk-card"><div class="mk-k">Email alerts</div><div class="mk-v">3 active</div><div class="mk-d">1 match today</div></div>
         </div>
-        <div class="mk-cols" style="grid-template-columns: 360px 1fr">
+        <div class="mk-cols mk-ts" style="grid-template-columns: 316px 1fr">
           <div class="mk-card"><h5>Median price <em>30 days</em></h5>
             <div class="mk-v" style="font-size: 18px">$46,900 <span class="mk-d down" style="display: inline">−$2,900</span></div>
-            <svg class="mk-svg" viewBox="0 0 ${cw} ${ch + 22}" style="margin-top: 8px">
+            <svg class="mk-svg" viewBox="0 0 ${cw} ${ch + 22}" style="margin-top: 14px">
               ${[50, 48, 46].map(v => { const y = ch - (v - 45.5) * ch / 5; return `<line class="g" x1="0" x2="${cw - 34}" y1="${y}" y2="${y}"/><text class="t" x="${cw}" y="${y + 4}" text-anchor="end">$${v}k</text>`; }).join('')}
               <polyline points="${svgLine(med, cw - 40, ch, 45.5, 50.5)}" fill="none" stroke="var(--tsl)" stroke-width="2" stroke-linejoin="round"/>
               <circle cx="${cw - 40}" cy="${ch - (46.9 - 45.5) * ch / 5}" r="4" fill="var(--tsl)"/>
               <text class="t" x="0" y="${ch + 18}">Sep 9</text><text class="t" x="${cw - 40}" y="${ch + 18}" text-anchor="end">Oct 8</text>
             </svg></div>
           <div class="mk-card"><table class="mk-table">
-            <thead><tr><th>Year</th><th>Car</th><th class="r">Odometer</th><th class="r">Price</th></tr></thead>
-            <tbody>${rows.map(([y, t, o, p, l, n]) => `<tr><td>${y}</td><td>${t}${n ? '<span class="tag-new">NEW</span>' : ''}<div class="sub">${l}</div></td><td class="r">${o}</td><td class="r">${p}</td></tr>`).join('')}</tbody>
+            <thead><tr><th>Listing</th><th class="r">Odometer</th><th class="r">Price</th></tr></thead>
+            <tbody>${rows.map(([y, t, o, p, l, n]) => `<tr><td>${y} ${t}${n ? '<span class="tag-new">NEW</span>' : ''}<div class="sub">${l}</div></td><td class="r">${o}</td><td class="r">${p}</td></tr>`).join('')}</tbody>
           </table></div>
         </div>
       </div></div>`;
