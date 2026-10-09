@@ -292,16 +292,14 @@ html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .22em; }
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; transition: opacity .3s, translate .55s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
 html.js.intro-done .hx-later { opacity: 1; translate: 0 0; transition: opacity 1s var(--ease-apple) var(--d, 0s), translate 1.1s var(--ease-apple) var(--d, 0s); }
-html.js [data-build] { clip-path: inset(0 100% 0 0); }
-html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s var(--ease-apple); }
-.tile2.agent-built .t-vis { transform: translateY(-8px); }
+html.js [data-part]:not(.built) { clip-path: inset(-4px calc((1 - var(--b, 0)) * 100%) -4px -4px); }
 .media-live { position: relative; padding-bottom: clamp(20px, 5vw, 64px); }
 .live-fit { position: relative; width: 100%; aspect-ratio: 760 / 520; max-width: 100%; }
 .live-inner { position: absolute; top: 0; left: 0; width: 760px; height: 520px; transform-origin: 0 0; transform: scale(var(--s, 1)); }
 .replay { position: absolute; top: 16px; right: 16px; z-index: 2; font: inherit; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 999px; border: 0; background: var(--pill); color: var(--on-pill); cursor: pointer; }
 @media (prefers-reduced-motion: reduce) {
   html.js .hx-title .ch, html.js .hx-later { opacity: 1; translate: none; }
-  html.js [data-build] { clip-path: none; }
+  html.js [data-part] { clip-path: none; }
 }
 
 /* ---------- Case study template ---------- */
@@ -595,7 +593,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       <div class="hx-cta hx-later" style="--d: .2s"><a class="btn" href="#work">See the work</a><a class="lnk" href="#how">How I work</a></div>
     </div>
     <div class="wrap">
-      <div class="lineup" data-zoom data-agent-say="I helped build both of these.">
+      <div class="lineup" data-zoom>
         <div class="lu-browser"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inteleventsai.com</span></div><img src="assets/work/iv-hero.jpg" alt=""></div></div>
         <div class="lu-phone l" data-par=".05"><img class="shot only-light" src="assets/lastset/home-populated-light.jpg" alt="" loading="lazy"></div>
         <div class="lu-phone r" data-par=".09"><img class="shot only-light" src="assets/lastset/returning-workout-light.jpg" alt="" loading="lazy"></div>
@@ -614,15 +612,15 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec" id="how" style="padding-bottom: 0">
     <div class="wrap">
-      <header class="sh" data-build>
+      <header class="sh" data-part>
         <span class="ey">How I work</span>
         <h2>AI-first doesn't mean hands-off.</h2>
         <p>AI is part of every step of how I work, from research to production code. What it changes is how much one person can design, build and test. Taste, architecture and the final call stay with me.</p>
       </header>
       <div class="how-grid">
-        <div class="how-card" data-reveal data-agent-say="Prototyping in real code."><h3>Explore more, faster.</h3><p>I prototype in real code instead of static mockups, so I can try several directions and keep the one that feels right.</p></div>
-        <div class="how-card" data-reveal style="--d: .08s" data-agent-say="That is me. Hi."><h3>Build with agents.</h3><p>Claude Code and Codex work alongside me. I set the architecture and the rules, review every change, and keep the tests green.</p></div>
-        <div class="how-card" data-reveal style="--d: .16s" data-agent-say="Kirk makes the final call."><h3>Ship with judgment.</h3><p>AI drafts. I decide. The interactions, the edge cases and the details are where I spend the time it saves.</p></div>
+        <div class="how-card" data-part><h3>Explore more, faster.</h3><p>I prototype in real code instead of static mockups, so I can try several directions and keep the one that feels right.</p></div>
+        <div class="how-card" data-part style="--d: .08s"><h3>Build with agents.</h3><p>Claude Code and Codex work alongside me. I set the architecture and the rules, review every change, and keep the tests green.</p></div>
+        <div class="how-card" data-part style="--d: .16s"><h3>Ship with judgment.</h3><p>AI drafts. I decide. The interactions, the edge cases and the details are where I spend the time it saves.</p></div>
       </div>
       <p class="how-note" data-reveal>This site was designed and built the same way. The little builders you see around the page are a nod to that.</p>
     </div>
@@ -630,13 +628,13 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec" id="work" style="--acc: var(--iv)">
     <div class="wrap">
-      <header class="sh" data-build>
+      <header class="sh" data-part>
         <span class="ey">At ExpoTools</span>
         <h2>I designed and built an AI platform. Every screen of it.</h2>
         <p>On Intelevents AI I owned the whole product surface, from the marketing site to the dashboards, lead tables, pipeline, AI ranking views, CRM integrations, and email and calendar booking. That meant the design decisions, the frontend architecture, and every detail in between.</p>
         <a class="lnk" href="#intelevents">See how I built it</a>
       </header>
-      <div class="media media-live" data-zoom data-agent-say="This is the lead table Kirk designed.">
+      <div class="media media-live" data-part data-zoom>
         <button class="replay" id="iv-replay" type="button">Replay</button>
         <div class="live-fit" id="iv-fit" role="img" aria-label="Intelevents AI lead table: leads arrive in scan order, get an AI score out of 10, then re-sort by rank with a reason for the top lead"><div class="live-inner">
 <div class="iv-card">
@@ -665,10 +663,10 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     </div>
     <div class="car" data-carousel>
       <div class="car-track" tabindex="0" aria-label="Design decisions on Intelevents AI">
-        <figure class="car-card" data-reveal data-agent-say="Every score ships with a reason."><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .08s" data-agent-say="Offline is a designed state."><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .16s" data-agent-say="Rank survives the handoff."><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
-        <figure class="car-card" data-reveal style="--d: .24s" data-agent-say="One timeline per lead."><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
+        <figure class="car-card" data-reveal><div class="car-img"><img src="assets/work/iv-ai.jpg" alt="Leads scored against a company profile, each with a reason" loading="lazy"></div><figcaption><b>Making AI trustworthy.</b> I designed every score to come with a plain-language reason, so sales teams act on it instead of second-guessing it.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .08s"><div class="car-img"><img src="assets/work/iv-lead.jpg" alt="Offline lead capture on a phone" loading="lazy"></div><figcaption><b>Designing for the show floor.</b> Two-tap capture, and an offline state that's designed rather than treated as an error, because hall Wi-Fi always fails.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .16s"><div class="car-img"><img src="assets/work/iv-pipe.jpg" alt="Pipeline board of ranked leads" loading="lazy"></div><figcaption><b>Keeping priorities intact.</b> I carried the AI rank from the lead table into the kanban pipeline, so the order survives the handoff.</figcaption></figure>
+        <figure class="car-card" data-reveal style="--d: .24s"><div class="car-img"><img src="assets/work/iv-activity.jpg" alt="A lead's activity timeline" loading="lazy"></div><figcaption><b>One history per lead.</b> I built a single timeline that pulls the badge scan, Gmail and Outlook emails, and booked meetings into one place.</figcaption></figure>
       </div>
       <div class="wrap car-nav"><button type="button" data-prev aria-label="Previous">&#8249;</button><button type="button" data-next aria-label="Next">&#8250;</button></div>
     </div>
@@ -676,13 +674,13 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec alt" id="sites" style="--acc: var(--iv)">
     <div class="wrap">
-      <header class="sh" data-build>
+      <header class="sh" data-part>
         <span class="ey">Redesigned and rebuilt</span>
         <h2>From WordPress to six-figure deals.</h2>
         <p>I redesigned and rebuilt every public ExpoTools site, replacing dated WordPress themes with fast, modern pages built to convert. Drag the handle to compare.</p>
       </header>
       <div class="cmp-list">
-        <div class="cmp-card" data-reveal data-agent-say="Old on the left. Drag the handle.">
+        <div class="cmp-card" data-part>
           <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotoolsusa.com</span></div>
             <div class="cmp" id="usa-cmp" style="--x: 1">
               <div class="cmp-layer"><img src="assets/work/usa-new-full.jpg" width="1440" height="5535" alt="The redesigned ExpoTools USA site" draggable="false" loading="lazy"></div>
@@ -695,7 +693,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
           </div>
           <div class="cmp-meta"><b>ExpoTools USA</b><span>From a stock WordPress theme to a custom site built for consultation requests.</span><a class="lnk" href="https://www.expotoolsusa.com/" target="_blank" rel="noopener">Visit</a></div>
         </div>
-        <div class="cmp-card" data-reveal data-agent-say="Old on the left. Drag the handle.">
+        <div class="cmp-card" data-part>
           <div class="browser site-frame"><div class="browser-bar"><i></i><i></i><i></i><span>expotools.biz</span></div>
             <div class="cmp" id="biz-cmp" style="--x: 1">
               <div class="cmp-layer"><img src="assets/work/biz-new-full.jpg" width="1440" height="3821" alt="The redesigned ExpoTools.biz site" draggable="false" loading="lazy"></div>
@@ -714,7 +712,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec" id="lastset-home">
     <div class="wrap">
-      <div class="ls-band" data-agent-say="Logging set 3 of 3…">
+      <div class="ls-band" data-part>
         <span class="ey" data-reveal>Personal · iPhone app</span>
         <h2 data-reveal style="--d: .06s">LastSet</h2>
         <p data-reveal style="--d: .12s">A strength-training companion that remembers your last set and tells you exactly what to lift next.</p>
@@ -730,21 +728,21 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec" id="side" style="padding-top: 0">
     <div class="wrap">
-      <header class="sh" data-build>
+      <header class="sh" data-part>
         <span class="ey">Personal</span>
         <h2>Tools I built for myself, and use every day.</h2>
         <p>Self-hosted projects that started as my own problems.</p>
       </header>
       <div class="bento">
-        <a class="tile2 wide" href="#tesla" style="--acc: var(--tsl)" data-reveal data-agent-say="New match near Montréal!">
+        <a class="tile2 wide" href="#tesla" style="--acc: var(--tsl)" data-part>
           <div class="t-copy"><span class="ey">Tesla Inventory Tracker</span><h3>$30,000 saved.</h3><p>It emailed me the moment the right used Model 3 went live near me: 5,000 km, with Full Self-Driving already included.</p><span class="lnk">Read the story</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>inventory.local</span></div><div class="mock" data-mock="tesla" aria-hidden="true"></div></div></div>
         </a>
-        <a class="tile2" href="#cgm" style="--acc: var(--cgm)" data-reveal data-agent-say="6.4 and steady.">
+        <a class="tile2" href="#cgm" style="--acc: var(--cgm)" data-part>
           <div class="t-copy"><span class="ey">CGM Display Hub</span><h3>Three screens. One number.</h3><p>My blood sugar on my Mac's menu bar and on Arduino displays at my desk and on my bedroom wall.</p><span class="lnk">Learn more</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>cgm.local</span></div><div class="mock" data-mock="cgm" aria-hidden="true"></div></div></div>
         </a>
-        <a class="tile2" href="#budgy" style="--acc: var(--bud); --d: .08s" data-reveal data-agent-say="Dining out is over budget.">
+        <a class="tile2" href="#budgy" style="--acc: var(--bud); --d: .08s" data-part>
           <div class="t-copy"><span class="ey">Budgy</span><h3>One budget, every device.</h3><p>A web portal and an offline-first iPhone app on one Postgres model, running on my own server.</p><span class="lnk">Learn more</span></div>
           <div class="t-vis"><div class="browser"><div class="browser-bar"><i></i><i></i><i></i><span>budgy.local</span></div><div class="mock" data-mock="budgy" aria-hidden="true"></div></div></div>
         </a>
@@ -753,7 +751,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
   </section>
 
   <section class="sec alt" id="about">
-    <div class="wrap about2" data-reveal>
+    <div class="wrap about2" data-part>
       <h2>I care how software feels as much as how it works.</h2>
       <p>I'm a frontend engineer at ExpoTools in Montréal, where I own most of the product surface: dashboards, design tooling, integrations and AI features. I usually end up doing both the design and the build. Outside work it's cars, hardware and home automation, mostly to find out how they work.</p>
       <ul><li>Next.js</li><li>React</li><li>TypeScript</li><li>Angular</li><li>SwiftUI</li><li>Claude Code</li><li>Codex</li><li>Product design</li></ul>
@@ -762,7 +760,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
 
   <section class="sec" id="contact">
     <div class="wrap">
-      <div class="contact2" data-reveal data-agent-say="He replies faster than I compile.">
+      <div class="contact2" data-part>
         <h2>Let's build something.</h2>
         <p>The best way to reach me is LinkedIn.</p>
         <div class="row"><a class="btn" href="https://www.linkedin.com/in/patoucheas/" target="_blank" rel="noopener">Message me on LinkedIn</a><a class="lnk" href="https://github.com/Patoucheas" target="_blank" rel="noopener">GitHub</a></div>
@@ -1332,7 +1330,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
   const seg = (p, a, b) => clamp01((p - a) / (b - a));
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const CREW = !reduced;
-  let companion = null;
+  let foreman = null;
 
   const crewCanvas = document.createElement('canvas');
   crewCanvas.className = 'crew';
@@ -1385,7 +1383,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         let c = row[a.dir < 0 ? 10 - i : i];
         if (c === '.') continue;
         if (c === 'E' && blink && a.state !== 'sleep') c = 'B';
-        g.fillStyle = COL[c];
+        g.fillStyle = c === 'H' && a.hat ? a.hat : COL[c];
         g.fillRect(x0 + i * PX, y0 + ry * PX + (a.state === 'sleep' && c === 'E' ? 2 : 0), PX, a.state === 'sleep' && c === 'E' ? 1 : PX);
       }
     }
@@ -1441,11 +1439,13 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     return a;
   }
   function targetOf(a) {
+    let tx = a.tx, ty = a.ty;
     if (a.el) {
       const r = a.el.getBoundingClientRect();
-      return [r.left + a.ox * r.width, r.top + a.oy];
+      tx = r.left + a.ox * r.width + (a.dx || 0); ty = (a.fromBottom ? r.bottom : r.top) + a.oy;
     }
-    return [a.tx, a.ty];
+    if (a.foreman) { tx = Math.max(24, Math.min(VW - 24, tx)); ty = Math.max(CHROME() + SH + 6, Math.min(VH - 8, ty)); }
+    return [tx, ty];
   }
   function say(a, text, ms = 2200, think = 0) {
     const now = performance.now();
@@ -1507,6 +1507,16 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       g.restore();
     }
 
+    // A faint guide line marks the edge a builder is building up to
+    agents.forEach(a => {
+      if (!a.part) return;
+      const pr = a.part.getBoundingClientRect();
+      g.save();
+      g.strokeStyle = 'rgba(217, 119, 87, .4)'; g.lineWidth = 1; g.setLineDash([3, 4]);
+      g.beginPath(); g.moveTo(Math.round(a.x) + .5, pr.top); g.lineTo(Math.round(a.x) + .5, Math.min(VH, pr.bottom)); g.stroke();
+      g.restore();
+    });
+
     for (let k = agents.length - 1; k >= 0; k--) {
       const a = agents[k];
       if (a.state === 'walk' || a.state === 'leave') {
@@ -1519,6 +1529,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         a.vx += (wx - a.vx) * k2; a.vy += (wy - a.vy) * k2;
         a.x += a.vx * dt; a.y += a.vy * dt;
         a.speed2 = Math.hypot(a.vx, a.vy);
+        if (a.part) { const pr = a.part.getBoundingClientRect(); setB(a.part, clamp01((a.x - pr.left) / pr.width)); }
         a.phase += a.speed2 * dt;
         if (Math.abs(a.vx) > 24) a.dir = Math.sign(a.vx);
         if (a.state === 'leave' && (a.x < -36 || a.x > VW + 36)) { agents.splice(k, 1); continue; }
@@ -1532,7 +1543,8 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         }
       } else {
         a.speed2 = 0;
-        if (a.el) { const [tx, ty] = targetOf(a); a.x = tx; a.y = ty; }
+        if (a.foreman) { const [tx, ty] = targetOf(a); if (Math.hypot(tx - a.x, ty - a.y) > 4) a.state = 'walk'; }   // keeps up as you scroll
+        else if (a.el) { const [tx, ty] = targetOf(a); a.x = tx; a.y = ty; }
         if (a.state === 'build' && now >= a.buildEnd) { a.state = 'idle'; const f = a.afterBuild; a.afterBuild = null; f && f(a); }
       }
       // Springy hop
@@ -1559,36 +1571,147 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     }
     g.globalAlpha = 1;
     const busy = agents.some(a => a.state === 'walk' || a.state === 'leave' || a.state === 'build' || a.jump) || dusts.length || drops.length || traces.length || agents.some(a => a.say && now < a.sayUntil);
-    raf = busy || companion ? requestAnimationFrame(frame) : 0;
+    raf = busy || foreman ? requestAnimationFrame(frame) : 0;
   }
 
-  /* Section builds: two builders carry blocks to each heading, set them down and underline it */
-  const builds = [...document.querySelectorAll('[data-build]')];
-  function build(el) {
-    if (el.classList.contains('in')) return;
-    const free = 8 - agents.length;
-    if (!CREW || free < 2) { el.classList.add('in'); return; }
-    const r = el.getBoundingClientRect();
-    const fromLeft = r.left + r.width / 2 > VW / 2 ? false : true;
-    let started = false;
-    const go = () => { if (!started) { started = true; el.classList.add('in'); } };
-    setTimeout(go, 1700);
-    [.12, .42].forEach((ox, i) => {
-      spawn({
-        x: fromLeft ? -30 - i * 40 : VW + 30 + i * 40, y: Math.max(60, Math.min(VH - 30, r.top - 2)),
-        el, ox, oy: -2, carry: BLOCKS[(i + builds.indexOf(el)) % BLOCKS.length], speed: 560 + i * 60,
-        onArrive: a => { go(); place(a); if (i === 0) trace(el.querySelector('h2') || el, 'line'); },
-        afterBuild: a => leave(a),
-      });
+  /* Section crews: helpers build each part of a section. A part only appears up to where its builder has walked. */
+  const HELPER_HAT = '#C7C7CC';
+  const parts = [...document.querySelectorAll('[data-part]')];
+  const partState = new Map(parts.map(p => [p, { b: 0, claimed: null, done: false, seenAt: 0, auto: false }]));
+  const crews = new Map();
+  function setB(p, b) {
+    const s = partState.get(p);
+    if (b <= s.b) return;
+    s.b = Math.min(1, b);
+    p.style.setProperty('--b', s.b.toFixed(4));
+    if (s.b >= 1 && !s.done) { s.done = true; p.classList.add('built'); p.dispatchEvent(new CustomEvent('built')); }
+  }
+  if (!CREW) parts.forEach(p => setB(p, 1));
+  const homeView = document.querySelector('[data-view="home"]');
+  const partInView = p => { const r = p.getBoundingClientRect(); return r.top < VH * .86 && r.bottom > CHROME() + 20; };
+  function unclaim(h) {
+    const p = h.job;
+    if (p && !partState.get(p).done) partState.get(p).claimed = null;
+    h.job = null; h.part = null;
+  }
+  function retire(h) { unclaim(h); const set = crews.get(h.section); set && set.delete(h); leave(h); }
+  function assign(h) {
+    const sec = h.section;
+    const p = parts.find(q => q.closest('section') === sec && !partState.get(q).done && !partState.get(q).claimed && partInView(q));
+    if (!p) {
+      const left = parts.some(q => q.closest('section') === sec && !partState.get(q).done);
+      if (!left) return retire(h);
+      h.waiting = true; h.state = 'idle';           // wait at the last spot for the next part to scroll in
+      return;
+    }
+    h.waiting = false;
+    partState.get(p).claimed = h;
+    h.job = p; h.part = null;
+    h.el = p; h.ox = 0; h.oy = -2; h.speed = 760; h.buildMs = 0; h.state = 'walk';
+    if (!h.carry) h.carry = BLOCKS[(parts.indexOf(p) + 2) % BLOCKS.length];
+    h.onArrive = a => {
+      // Walk the top edge; the part is revealed exactly up to the builder
+      const w = p.getBoundingClientRect().width;
+      a.part = p; a.ox = 1; a.speed = Math.max(380, w / .8); a.state = 'walk';
+      a.onArrive = b => {
+        setB(p, 1);
+        b.part = null; b.job = null;
+        place(b);
+        b.state = 'build'; b.buildEnd = performance.now() + 360; b.buildMs = 0;
+        b.afterBuild = c => { c.carry = BLOCKS[(parts.indexOf(p) + 3) % BLOCKS.length]; assign(c); };
+      };
+    };
+  }
+  function staffSections() {
+    if (!CREW || homeView.hidden) return;
+    const now = performance.now();
+    const sections = [...new Set(parts.map(p => p.closest('section')))];
+    sections.forEach(sec => {
+      const set = crews.get(sec) || new Set();
+      crews.set(sec, set);
+      const r = sec.getBoundingClientRect();
+      const visible = r.top < VH && r.bottom > 0;
+      if (!visible) { [...set].forEach(retire); return; }
+      set.forEach(h => { if (h.job && !h.part && !partInView(h.job)) { unclaim(h); assign(h); } else if (h.waiting) assign(h); });
+      const open = parts.filter(q => q.closest('section') === sec && !partState.get(q).done && !partState.get(q).claimed && partInView(q));
+      open.forEach(q => { const s = partState.get(q); if (!s.seenAt) s.seenAt = now; });
+      const want = Math.min(2, open.length);
+      while (set.size < want && agents.length < 10) {
+        const first = open[set.size] || open[0];
+        const fr = first.getBoundingClientRect();
+        const fromLeft = set.size % 2 === 0;
+        const h = spawn({ x: fromLeft ? -30 : VW + 30, y: Math.max(CHROME() + SH, Math.min(VH - 10, fr.top)), hat: HELPER_HAT, section: sec, buildMs: 0, state: 'idle' });
+        set.add(h);
+        assign(h);
+      }
+    });
+    for (let k = agents.length - 1; k >= 0; k--) {
+      const a = agents[k];
+      if (a.foreman || (a.y > -160 && a.y < VH + 160)) continue;
+      unclaim(a); crews.forEach(s => s.delete(a)); agents.splice(k, 1);
+    }
+    // Safety net: anything left waiting on screen too long builds itself
+    parts.forEach(p => {
+      const s = partState.get(p);
+      if (s.done || s.claimed || s.auto || !s.seenAt || now - s.seenAt < 2600 || !partInView(p)) return;
+      s.auto = true;
+      const t0 = performance.now(), from = s.b;
+      const tick = t => { const k = clamp01((t - t0) / 700); setB(p, from + (1 - from) * easeOut(k)); if (k < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
     });
   }
-  if (!CREW || !('IntersectionObserver' in window)) builds.forEach(el => el.classList.add('in'));
-  else {
-    // A fully clipped heading never counts as visible, so watch its container instead
-    const holder = new Map(builds.map(el => [el.parentElement, el]));
-    const bio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { bio.unobserve(e.target); build(holder.get(e.target)); } }), { rootMargin: '0px 0px -35% 0px' });
-    holder.forEach((el, parent) => bio.observe(parent));
+
+  /* The foreman: the hero's builder walks to whichever section you are on, up or down, and is the only one who talks */
+  const STOPS = [
+    { id: 'top', sel: '.hx-title', ox: 1, oy: 10, bottom: true, line: 'Scroll down. I will show you around.' },
+    { id: 'how', sel: '#how .sh', ox: 1, dx: 48, oy: -4, line: 'We are the crew. Kirk is the architect.' },
+    { id: 'work', sel: '#work .sh', ox: 1, dx: 48, oy: -4, line: 'Kirk designed every screen of this.' },
+    { id: 'sites', sel: '#sites .sh', ox: 1, dx: 48, oy: -4, line: 'Drag the handle. The old sites were rough.' },
+    { id: 'lastset-home', sel: '#lastset-home .ls-band', ox: .93, oy: -2, line: 'Kirk logs his workouts with this.' },
+    { id: 'side', sel: '#side .sh', ox: 1, dx: 48, oy: -4, line: 'He built these for himself.' },
+    { id: 'about', sel: '#about .about2', ox: .96, oy: -4, line: 'This part is all human.' },
+    { id: 'contact', sel: '#contact .contact2', ox: .92, oy: -2, line: 'Say hi. He replies fast.' },
+  ];
+  let stop = -1;
+  const saidAt = {};
+  function makeForeman(a) {
+    foreman = a;
+    a.foreman = true; a.hat = null; a.speed = 560; a.buildMs = 0; a.carry = null; a.intro = false;
+    stop = -1;
+    guide();
   }
+  function currentStop() {
+    let k = 0;
+    STOPS.forEach((s, i) => { const sec = document.getElementById(s.id); if (sec && sec.getBoundingClientRect().top < VH * .5) k = i; });
+    return k;
+  }
+  function guide() {
+    if (!foreman) return;
+    if (homeView.hidden) { foreman.alpha = 0; return; }
+    foreman.alpha = 1;
+    const k = currentStop();
+    if (k === stop) return;
+    stop = k;
+    const s = STOPS[k];
+    const el = document.querySelector(s.sel);
+    if (!el) return;
+    foreman.el = el; foreman.ox = s.ox; foreman.oy = s.oy; foreman.dx = s.dx || 0; foreman.fromBottom = !!s.bottom;
+    foreman.sayUntil = 0;   // a line belongs to its section; it does not travel with him
+    foreman.state = 'walk'; foreman.speed = 560;
+    foreman.onArrive = a => {
+      const now = performance.now();
+      if (!saidAt[k] || now - saidAt[k] > 6000) { saidAt[k] = now; say(a, s.line, 2600, 320); }
+    };
+    wake();
+  }
+  let crewTick = false;
+  window.addEventListener('scroll', () => {
+    if (crewTick) return;
+    crewTick = true;
+    requestAnimationFrame(() => { crewTick = false; guide(); staffSections(); });
+  }, { passive: true });
+  window.addEventListener('hashchange', () => setTimeout(() => { stop = -1; guide(); staffSections(); }, 60));
+  if (CREW) setInterval(() => { guide(); staffSections(); }, 450);
 
   /* Hero intro: three agents walk under the headline and set each letter */
   const title = document.querySelector('.hx-title');
@@ -1618,14 +1741,14 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
     letters.forEach(s => s.classList.add('on'));
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
-    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; if (i === 0 && finePointer) makeCompanion(a); else leave(a); });
+    agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; if (i === 0) makeForeman(a); else leave(a); });
     try { sessionStorage.setItem('crewIntro', '1'); } catch (e) {}
   }
   let seen = false;
   try { seen = sessionStorage.getItem('crewIntro') === '1'; } catch (e) {}
   if (!CREW || !title || seen || window.scrollY > 200) {
     finishIntro();
-    if (CREW && finePointer && !companion) makeCompanion(spawn({ x: VW - 60, y: VH - 24, state: 'idle', buildMs: 0 }));
+    if (CREW && !foreman) makeForeman(spawn({ x: VW - 60, y: VH - 24, state: 'idle', buildMs: 0 }));
   } else {
     if (skipBtn) skipBtn.hidden = false;
     if (skipBtn) skipBtn.addEventListener('click', finishIntro);
@@ -1668,94 +1791,6 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       }
     }, 450);
   }
-
-  /* Companion: follows the cursor once it settles, builds what you hover, and talks when clicked */
-  const QUIPS = [
-    'I write the boilerplate. Kirk does the taste.',
-    'Kirk said no to my first three drafts.',
-    'Tests are green. I checked twice.',
-    'I am one of several agents on this site.',
-    'Ship it? Kirk reviews it first.',
-    'I only work here because I am fast.',
-    'Hard hat stays on. Company policy.',
-  ];
-  let quip = 0;
-  function makeCompanion(a) {
-    companion = a;
-    a.companion = true; a.speed = 300; a.buildMs = 0; a.carry = null; a.el = null;
-    a.tx = Math.min(VW - 50, a.x + 40); a.ty = a.y; a.state = 'walk';
-    a.lastMove = performance.now();
-    wake();
-  }
-  let mouse = null, restTimer = 0, hoverTimer = 0, busyUntil = 0;
-  if (CREW && finePointer) {
-    window.addEventListener('mousemove', e => {
-      mouse = [e.clientX, e.clientY];
-      if (!companion) return;
-      if (companion.state === 'sleep' || companion.state === 'sit') { companion.state = 'idle'; hop(companion, 120); }
-      companion.lastMove = performance.now();
-      clearTimeout(restTimer);
-      restTimer = setTimeout(() => {
-        if (!companion || performance.now() < busyUntil || !mouse) return;
-        companion.el = null;
-        companion.tx = Math.max(24, Math.min(VW - 24, mouse[0] + 26));
-        companion.ty = Math.max(CHROME() + SH + 4, Math.min(VH - 6, mouse[1] + 34));
-        companion.state = 'walk'; wake();
-      }, 320);
-    }, { passive: true });
-
-    document.addEventListener('mouseover', e => {
-      const t = e.target.closest && e.target.closest('[data-agent-say]');
-      clearTimeout(hoverTimer);
-      if (!t || !companion) return;
-      hoverTimer = setTimeout(() => {
-        if (!t.matches(':hover')) return;
-        busyUntil = performance.now() + 3200;
-        const r = t.getBoundingClientRect();
-        companion.el = t; companion.ox = r.width > 360 ? .88 : .8; companion.oy = Math.min(r.height - 4, 22);
-        companion.buildMs = 1100; companion.carry = BLOCKS[quip % BLOCKS.length]; companion.speed = 720;
-        companion.state = 'walk';
-        companion.onArrive = a => { say(a, t.dataset.agentSay, 2400, 480); trace(t, 'frame', a.x); place(a); t.classList.add('agent-built'); t.dispatchEvent(new CustomEvent('agent-arrive')); };
-        companion.afterBuild = a => { a.buildMs = 0; a.speed = 300; setTimeout(() => t.classList.remove('agent-built'), 900); };
-        wake();
-      }, 450);
-    });
-
-    document.addEventListener('click', e => {
-      if (!companion) return;
-      if (Math.hypot(e.clientX - companion.x, e.clientY - (companion.y - SH / 2)) < 30) {
-        hop(companion, 190);
-        say(companion, QUIPS[quip++ % QUIPS.length], 2600, 260);
-      }
-    });
-
-    // Idle: sit after a while, then fall asleep
-    setInterval(() => {
-      if (!companion || companion.state === 'walk' || companion.state === 'build') return;
-      const idle = performance.now() - (companion.lastMove || 0);
-      if (idle > 26000 && companion.state !== 'sleep') { companion.state = 'sleep'; companion.el = null; }
-      else if (idle > 9000 && companion.state === 'idle') companion.state = 'sit';
-      if (companion.state === 'sleep' && Math.random() < .5) dusts.push({ x: companion.x + 10, y: companion.y - SH, vx: 10, vy: -28, life: .7, z: true });
-      wake();
-    }, 900);
-  }
-
-  /* Before/after cards: the companion gives the handle a nudge when it arrives */
-  document.querySelectorAll('.cmp-card').forEach(card => {
-    card.addEventListener('agent-arrive', () => {
-      const c = card.cmp;
-      if (!c || c.user !== null) return;
-      const start = performance.now();
-      const base = c.x ?? .5;
-      const tick = now => {
-        const t = (now - start) / 900;
-        if (t >= 1 || c.user !== null) { c.set(base); return; }
-        c.set(base + Math.sin(t * Math.PI * 2) * .08);
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-  });
 
   /* Live ranking: an agent delivers each AI score, then the list re-sorts */
   const LEADS = [
@@ -1815,8 +1850,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       const D = 8200, t0 = performance.now();
       let helper = null;
       if (CREW && agents.length < 8) {
-        helper = spawn({ x: VW + 30, y: fit.getBoundingClientRect().top + 120, el: rowEls[0].querySelector('.iv-rank'), ox: 1.4, oy: 14, carry: '#34C759', speed: 700, buildMs: 0 });
-        say(helper, 'Scoring leads…', 1800);
+        helper = spawn({ x: VW + 30, y: fit.getBoundingClientRect().top + 120, el: rowEls[0].querySelector('.iv-rank'), ox: 1.4, oy: 14, carry: '#34C759', speed: 700, buildMs: 0, hat: HELPER_HAT });
       }
       const tick = now => {
         const p = Math.min(1, (now - t0) / D);
@@ -1826,20 +1860,19 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
           const target = rowEls[i].querySelector('.iv-rank');
           if (helper.el !== target) { if (helper.el) place(helper); helper.carry = '#34C759'; helper.el = target; helper.state = 'walk'; wake(); }
         } else if (helper && p >= .5 && !helper.sorted) {
-          helper.sorted = true; helper.carry = null; say(helper, 'Re-sorting by rank', 1600);
+          helper.sorted = true; helper.carry = null;
         } else if (helper && p >= .8 && !helper.done) {
-          helper.done = true; say(helper, 'Every score comes with a reason.', 2400);
-          setTimeout(() => helper && leave(helper), 2400);
+          helper.done = true;
+          setTimeout(() => helper && leave(helper), 700);
         }
         if (p < 1) requestAnimationFrame(tick); else playing = false;
       };
       requestAnimationFrame(tick);
     }
     document.getElementById('iv-replay').addEventListener('click', play);
-    if ('IntersectionObserver' in window && !reduced) {
-      const pio = new IntersectionObserver(es => { if (es[0].isIntersecting) { pio.disconnect(); setTimeout(play, 300); } }, { threshold: .45 });
-      pio.observe(fit);
-    } else ivScene(1);
+    const liveCard = fit.closest('[data-part]');
+    if (CREW && liveCard) liveCard.addEventListener('built', () => setTimeout(play, 250), { once: true });
+    else ivScene(1);
   }
 
   /* ---------- Routing ---------- */
