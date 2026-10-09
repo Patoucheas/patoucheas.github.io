@@ -291,7 +291,8 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .secnav a.tapped { animation: chip-tap .4s var(--ease-apple); }
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
-.hx-title .word { display: inline-block; white-space: nowrap; }
+.hx-title .word { display: inline-block; white-space: nowrap; border-radius: 6px; background: linear-gradient(rgba(10, 132, 255, .15), rgba(10, 132, 255, .15)) no-repeat 0 0 / var(--selw, 0%) 100%; transition: opacity .3s; }
+.hx-title .word:not(.sel) { background-size: 0% 100%; transition: background-size .45s var(--ease-apple); }
 html.js .hx-title .ch { opacity: 0; display: inline-block; translate: 0 .12em; filter: blur(10px); }
 html.js .hx-title .ch.on { opacity: 1; translate: 0 0; filter: none; transition: opacity .5s var(--ease-apple), filter .7s var(--ease-apple), translate .7s var(--ease-apple); }
 html.js .hx-later { opacity: 0; translate: 0 24px; }
@@ -1404,7 +1405,6 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (moving ? step : 0), 12, 12);
     }
     g.globalAlpha = 1;
-    if (a.tip && !a.drag) drawPointer(a.x + a.dir * 12 - (a.dir < 0 ? 16 : 0), a.y - 18);
     if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), now < a.thinkUntil ? null : a.say, a.y, now);
   }
 
@@ -1530,7 +1530,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         const d = clamp01((now - s.t0) / s.draw), de = d < .5 ? 2 * d * d : 1 - Math.pow(-2 * d + 2, 2) / 2;
         const cx = pr.left + (pr.width - 1) * de, cy = pr.top + (pr.height - 1) * de;
         drawPointer(cx, cy);
-        a.dir = -1; a.x = cx + 22; a.y = cy + 30; a.speed2 = 60; a.phase += 70 * dt;
+        a.dir = -1; a.x = cx + 24; a.y = cy + 18; a.speed2 = 60; a.phase += 70 * dt;   // left arm on the pointer's tail
         if (d >= 1) {
           s.dragger = null; a.drag = null; a.part = null; a.job = null; a.tip = false;
           a.state = 'build'; a.buildEnd = now + 420; a.buildMs = 0; a.afterBuild = c => assign(c);
@@ -1667,7 +1667,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   const POINTER = ['X.......', 'XX......', 'XWX.....', 'XWWX....', 'XWWWX...', 'XWWWWX..', 'XWWWWWX.', 'XWWWWWWX', 'XWWWXXXX', 'XWXWX...', 'XX.XWX..', 'X...XWX.', '.....XX.'];
   function drawPointer(x, y, alpha = 1) {
     g.globalAlpha = alpha;
-    POINTER.forEach((row, ry) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c === '.') continue; g.fillStyle = c === 'X' ? '#1D1D1F' : '#FFFFFF'; g.fillRect(Math.round(x) + i * 2, Math.round(y) + ry * 2, 2, 2); } });
+    POINTER.forEach((row, ry) => { for (let i = 0; i < row.length; i++) { const c = row[i]; if (c === '.') continue; g.fillStyle = c === 'X' ? '#FFFFFF' : '#1D1D1F'; g.fillRect(Math.round(x) + i, Math.round(y) + ry, 1, 1); } });
     g.globalAlpha = 1;
   }
   const SEL = '10, 132, 255';
@@ -1932,6 +1932,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     if (introDone) return;
     introDone = true;
     letters.forEach(s => s.classList.add('on'));
+    title && title.querySelectorAll('.word').forEach(w => setTimeout(() => w.classList.remove('sel'), 300));
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
     agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; if (i === 0) makeForeman(a); else leave(a); });
@@ -1957,20 +1958,33 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         line.idx.push(i);
       });
       let segs = lines.map(l => l.idx);
-      if (segs.length === 1) { const all = segs[0], per = Math.ceil(all.length / 3); segs = [0, 1, 2].map(k => all.slice(k * per, (k + 1) * per)).filter(s => s.length); }
+      if (segs.length === 1) {
+        // One line: split by whole words so each builder selects its own words
+        const words = [...title.querySelectorAll('.word')].map(w => [...w.children].map(c => letters.indexOf(c)));
+        const per = Math.ceil(words.length / 3);
+        segs = [0, 1, 2].map(k => words.slice(k * per, (k + 1) * per).flat()).filter(s => s.length);
+      }
       setTimeout(finishIntro, 4200); // never leave the headline half-built
       for (let k = 0; k < segs.length; k++) {
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
-        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: true, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
+        const a = spawn({ x: x0, y: base, tx: x0, ty: base, intro: true, carry: null, tip: false, hat: k === 0 ? null : HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, alpha: 0 });
         if (k === 0) say(a, 'Building the page…', 1800);
         const t0 = performance.now() + k * 140;
         const fade = () => { a.alpha = Math.min(1, (performance.now() - t0) / 200); if (a.alpha < 1) requestAnimationFrame(fade); else { a.tx = x1; a.state = 'walk'; } };
         setTimeout(fade, k * 140);
         const watch = () => {
           if (introDone) return;
-          idx.forEach(i => { if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) { letters[i].classList.add('on'); } });
+          idx.forEach(i => {
+            // Drag-select: the highlight grows across the word with the builder
+            const word = letters[i].parentElement, wr = word.getBoundingClientRect();
+            if (a.x >= wr.left - 10) { word.classList.add('sel'); word.style.setProperty('--selw', (clamp01((a.x - wr.left + 6) / wr.width) * 100).toFixed(1) + '%'); }
+            if (!letters[i].classList.contains('on') && a.x >= rects[i].left + rects[i].width * .4) {
+              letters[i].classList.add('on');
+              if ([...word.children].every(c => c.classList.contains('on'))) setTimeout(() => word.classList.remove('sel'), 420);
+            }
+          });
           if (idx.every(i => letters[i].classList.contains('on'))) {
             a.carry = null;
             if (letters.every(s => s.classList.contains('on'))) setTimeout(finishIntro, 350);
