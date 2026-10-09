@@ -284,7 +284,7 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 
 
 /* ---------- The crew ---------- */
-.crew { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 40; }
+.crew { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 12; }
 .skip-intro { position: fixed; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); z-index: 41; font: inherit; font-size: 13px; padding: 8px 10px 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 86%, transparent); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--muted); cursor: pointer; display: flex; gap: 8px; align-items: center; }
 .skip-intro kbd { font: 600 11px var(--f-mono); padding: 1px 6px; border: 1px solid var(--line); border-radius: 5px; }
 .hx-title .word { display: inline-block; white-space: nowrap; }
@@ -1389,18 +1389,25 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
       g.fillRect(x0 + SW / 2 - 6, y0 - 14 + (a.state === 'walk' ? (Math.floor(now / 110) % 2) : 0), 12, 12);
     }
     g.globalAlpha = 1;
-    if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), a.say);
+    if (a.say && now < a.sayUntil) drawBubble(a.x, y0 - (a.carry ? 22 : 8), a.say, a.y);
   }
 
-  function drawBubble(x, y, text) {
+  const CHROME = () => { const pills = document.querySelector('.secnav-in'); const r = pills && !pills.closest('[hidden]') ? pills.getBoundingClientRect() : null; return Math.max(60, r && r.bottom > 0 ? r.bottom + 6 : 60); };
+  function drawBubble(x, y, text, feet) {
     g.font = '600 12px -apple-system, BlinkMacSystemFont, "Inter", "Helvetica Neue", Arial, sans-serif';
     const w = Math.ceil(g.measureText(text).width) + 18, h = 24;
-    const bx = Math.max(8, Math.min(VW - w - 8, x - w / 2)), by = Math.max(8, y - h - 6);
+    const bx = Math.max(8, Math.min(VW - w - 8, x - w / 2));
+    let by = y - h - 6;
+    const below = by < CHROME();
+    if (below) by = feet + 10;
     g.fillStyle = '#1D1D1F';
     g.beginPath();
     g.roundRect ? g.roundRect(bx, by, w, h, 8) : g.rect(bx, by, w, h);
     g.fill();
-    g.beginPath(); g.moveTo(x - 5, by + h); g.lineTo(x + 5, by + h); g.lineTo(x, by + h + 5); g.fill();
+    g.beginPath();
+    if (below) { g.moveTo(x - 5, by); g.lineTo(x + 5, by); g.lineTo(x, by - 5); }
+    else { g.moveTo(x - 5, by + h); g.lineTo(x + 5, by + h); g.lineTo(x, by + h + 5); }
+    g.fill();
     g.fillStyle = '#FFFFFF';
     g.textBaseline = 'middle';
     g.fillText(text, bx + 9, by + h / 2 + 1);
@@ -1609,7 +1616,7 @@ html.js [data-build].in { clip-path: inset(0 0 0 0); transition: clip-path 1.1s 
         if (!companion || performance.now() < busyUntil || !mouse) return;
         companion.el = null;
         companion.tx = Math.max(24, Math.min(VW - 24, mouse[0] + 26));
-        companion.ty = Math.max(SH + 10, Math.min(VH - 6, mouse[1] + 34));
+        companion.ty = Math.max(CHROME() + SH + 4, Math.min(VH - 6, mouse[1] + 34));
         companion.state = 'walk'; wake();
       }, 320);
     }, { passive: true });
