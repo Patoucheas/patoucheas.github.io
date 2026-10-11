@@ -1344,6 +1344,8 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   const seg = (p, a, b) => clamp01((p - a) / (b - a));
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const CREW = !reduced;
+  const SPEED = 2;                 // how fast the crew moves and works; speech bubbles keep their reading time
+  const T = ms => ms / SPEED;      // scale an action's duration by the crew speed
   let foreman = null;
 
   const crewCanvas = document.createElement('canvas');
@@ -1385,7 +1387,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const legs = moving ? LEGS[step] : LEGS[2];
     let bob = 0;
     if (moving) bob = -Math.round(Math.abs(Math.sin(a.phase / 8 * Math.PI)) * 1.5);
-    else if (a.state === 'build') bob = Math.round(Math.pow(Math.sin(now / 260), 2) * 2);   // slow nod while working
+    else if (a.state === 'build') bob = Math.round(Math.pow(Math.sin(now * SPEED / 260), 2) * 2);   // slow nod while working
     else if (a.state === 'idle') bob = Math.round(Math.sin(now / 900) * .6);                // gentle breathing
     const blink = a.state === 'sleep' || (now + a.seed) % 3800 < 110;
     const x0 = Math.round(a.x - SW / 2), y0 = Math.round(a.y - SH + bob + a.jump);
@@ -1469,7 +1471,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   function hop(a, power = 150) { a.jv = -power; }
   function flyAway(a, delay = 0) {
     a.el = null; a.carry = null; a.vy = 0; a.fx = a.x; a.sway = (Math.random() < .5 ? -1 : 1) * (10 + Math.random() * 8);
-    a.state = 'fly'; a.flyT0 = performance.now() + delay;
+    a.state = 'fly'; a.flyT0 = performance.now() + T(delay);
     wake();
   }
   function leave(a) {
@@ -1497,7 +1499,8 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   let raf = 0, last = 0;
   function wake() { if (!raf && CREW) { last = performance.now(); raf = requestAnimationFrame(frame); } }
   function frame(now) {
-    const dt = Math.min(.04, (now - last) / 1000); last = now;
+    const rdt = Math.min(.04, (now - last) / 1000); last = now;
+    const dt = rdt * SPEED;          // crew time; dust and particles below use real time (rdt)
     g.clearRect(0, 0, VW, VH);
 
     // Traces sit behind the builders
@@ -1536,14 +1539,14 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         // Float down to the baseline with a gentle sway, small puff on landing, then start walking
         if (a.fx == null) { a.fx = a.x; a.dT0 = now; }
         a.y += (a.ty - a.y) * Math.min(1, dt * 6);
-        a.x = a.fx + Math.sin((now - a.dT0) / 140) * 6 * clamp01((a.ty - a.y) / 120);
+        a.x = a.fx + Math.sin((now - a.dT0) * SPEED / 140) * 6 * clamp01((a.ty - a.y) / 120);
         if (Math.abs(a.ty - a.y) < 1.5) { a.y = a.ty; a.x = a.fx; a.fx = null; dust(a.x, a.y); a.state = 'walk'; a.tx = a.walkTo; }
         drawSprite(a, now);
         continue;
       }
       if (a.state === 'fly') {
         // Crouch, then lift off and float up and away with a gentle sway
-        const age = now - a.flyT0;
+        const age = (now - a.flyT0) * SPEED;
         if (age > 160) {
           a.vy = Math.max(-620, a.vy - 900 * dt); a.y += a.vy * dt;
           a.x = a.fx + Math.sin((age - 160) / 170) * a.sway;
@@ -1561,7 +1564,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         a.dir = -1; a.x = cx + 24; a.y = cy + 18; a.speed2 = 60; a.phase += 70 * dt;   // left arm on the pointer's tail
         if (d >= 1) {
           s.dragger = null; a.drag = null; a.part = null; a.job = null; a.tip = false;
-          a.state = 'build'; a.buildEnd = now + 420; a.buildMs = 0; a.afterBuild = c => assign(c);
+          a.state = 'build'; a.buildEnd = now + T(420); a.buildMs = 0; a.afterBuild = c => assign(c);
         }
         drawSprite(a, now);
         continue;
@@ -1583,7 +1586,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
           a.x = tx; a.y = ty; a.vx = a.vy = 0; a.speed2 = 0;
           if (a.state === 'leave') { agents.splice(k, 1); continue; }
           a.state = a.buildMs ? 'build' : 'idle';
-          a.buildEnd = now + a.buildMs;
+          a.buildEnd = now + T(a.buildMs);
           const arrive = a.onArrive; a.onArrive = null;
           arrive && arrive(a);
         }
@@ -1613,7 +1616,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     }
     for (let k = dusts.length - 1; k >= 0; k--) {
       const s = dusts[k];
-      s.vy += (s.z ? -6 : 40) * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.life -= dt;
+      s.vy += (s.z ? -6 : 40) * rdt; s.x += s.vx * rdt; s.y += s.vy * rdt; s.life -= rdt;
       if (s.life <= 0) { dusts.splice(k, 1); continue; }
       g.globalAlpha = Math.min(1, s.life / .7) * .7; g.fillStyle = s.z ? '#86868B' : '#B9B9BE';
       if (s.z) { g.font = '600 11px -apple-system, BlinkMacSystemFont, "Inter", sans-serif'; g.fillText('z', s.x, s.y); }
@@ -1652,7 +1655,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const r = p.getBoundingClientRect();
     s.card = !!isCard(p);
     const half = s.card ? r.width + r.height : r.width;
-    s.draw = Math.max(480, Math.min(1000, Math.hypot(r.width, r.height) / 1.6));  // ms to drag the frame corner to corner
+    s.draw = T(Math.max(480, Math.min(1000, Math.hypot(r.width, r.height) / 1.6)));  // ms to drag the frame corner to corner
     s.total = s.draw + 1300;
     s.t0 = performance.now();
     wake();
@@ -1888,11 +1891,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     foreman.sayUntil = 0;
     foreman.el = chip; foreman.ox = .5; foreman.oy = SH + 8; foreman.fromBottom = true; foreman.dx = 0;
     foreman.state = 'walk'; foreman.speed = 640;
-    const done = setTimeout(() => finishTap(k, chip), 2200);   // never hold the pill hostage
+    const done = setTimeout(() => finishTap(k, chip), T(2200));   // never hold the pill hostage
     foreman.onArrive = a => {
       clearTimeout(done);
       hop(a, 240);
-      setTimeout(() => finishTap(k, chip), 140);
+      setTimeout(() => finishTap(k, chip), T(140));
     };
     wake();
   }
@@ -1901,7 +1904,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     document.querySelectorAll('.secnav a').forEach(a => a.classList.toggle('on', a === chip));
     chip.classList.remove('tapped'); void chip.offsetWidth; chip.classList.add('tapped');
     sayLine(k);
-    setTimeout(() => { if (phase === 'tap' && stop === k) goPost(k, false); }, 650);
+    setTimeout(() => { if (phase === 'tap' && stop === k) goPost(k, false); }, T(650));
   }
   function guide() {
     if (!foreman) return;
@@ -1947,7 +1950,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
   }
   function drawChecks(now) {
     for (let k = checks.length - 1; k >= 0; k--) {
-      const c = checks[k], t = now - c.t0;
+      const c = checks[k], t = (now - c.t0) * SPEED;
       if (t > 1300) { checks.splice(k, 1); continue; }
       const r = c.el.getBoundingClientRect();
       if (r.bottom < 0 || r.top > VH) continue;
@@ -1983,7 +1986,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     foreman.onArrive = a => {
       if (id !== visitT || phase !== 'post') return;
       a.dir = a.ox > .5 ? -1 : 1;    // face into the thing he is looking at
-      a.tip = true; a.state = 'build'; a.buildEnd = performance.now() + 900; a.buildMs = 0;
+      a.tip = true; a.state = 'build'; a.buildEnd = performance.now() + T(900); a.buildMs = 0;
       a.afterBuild = b => { b.tip = false; };
       inspect(el);
       const now = performance.now();
@@ -2028,7 +2031,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
       pokes = [];
       say(foreman, 'Fine. I will work over there.', 2200);
       const others = spots(stop).filter(el => el !== post);
-      if (others.length && phase === 'post') setTimeout(() => visit(pick(others), false), 500);
+      if (others.length && phase === 'post') setTimeout(() => visit(pick(others), false), T(500));
     } else say(foreman, POKE[(pokes.length - 1 + Math.floor(Math.random() * 2)) % POKE.length], 1600);
   }, true);
 
@@ -2050,11 +2053,11 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     const roll = Math.random();
     const others = spots(stop).filter(el => el !== post);
     if (others.length && roll < .55) visit(pick(others), false);
-    else if (roll < .75 && post) { foreman.tip = true; foreman.state = 'build'; foreman.buildEnd = now + 800; foreman.afterBuild = a => { a.tip = false; }; inspect(post); }
-    else if (roll < .9) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = now + 600; }
+    else if (roll < .75 && post) { foreman.tip = true; foreman.state = 'build'; foreman.buildEnd = now + T(800); foreman.afterBuild = a => { a.tip = false; }; inspect(post); }
+    else if (roll < .9) { foreman.dir = -foreman.dir; foreman.state = 'build'; foreman.buildEnd = now + T(600); }
     else hop(foreman, 170);
     wake();
-  }, 2600);
+  }, T(2600));
 
   let crewTick = false;
   window.addEventListener('scroll', () => {
@@ -2095,7 +2098,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
     document.documentElement.classList.add('intro-done');
     if (skipBtn) skipBtn.hidden = true;
     agents.filter(a => a.intro).forEach((a, i) => { a.intro = false; a.tip = false; flyAway(a, i * 140); });
-    if (CREW && !foreman) setTimeout(() => { if (foreman) return; const tr = title ? title.getBoundingClientRect() : null; makeForeman(spawn({ x: VW + 30, y: tr ? tr.bottom + 12 : VH - 24, state: 'idle', buildMs: 0 })); }, 650);
+    if (CREW && !foreman) setTimeout(() => { if (foreman) return; const tr = title ? title.getBoundingClientRect() : null; makeForeman(spawn({ x: VW + 30, y: tr ? tr.bottom + 12 : VH - 24, state: 'idle', buildMs: 0 })); }, T(650));
   }
   const seen = false;   // every load builds the page again from the top
   if (!CREW || !title || seen || window.scrollY > 200) {
@@ -2124,15 +2127,15 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
         const per = Math.ceil(words.length / 3);
         segs = [0, 1, 2].map(k => words.slice(k * per, (k + 1) * per).flat()).filter(s => s.length);
       }
-      setTimeout(finishIntro, 4200); // never leave the headline half-built
+      setTimeout(finishIntro, T(4200)); // never leave the headline half-built
       for (let k = 0; k < segs.length; k++) {
         const idx = segs[k];
         const base = Math.max(...idx.map(i => rects[i].bottom)) + 6;
         const x0 = rects[idx[0]].left - 24, x1 = rects[idx[idx.length - 1]].right + 8;
         const a = spawn({ x: x0, y: -40, tx: x0, ty: base, intro: true, carry: null, tip: false, hat: HELPER_HAT, speed: Math.max(160, (x1 - x0) / 1.25), buildMs: 0, state: 'hold' });
         a.walkTo = x1;
-        setTimeout(() => { a.state = 'descend'; wake(); }, k * 140);
-        if (k === 0) setTimeout(() => say(a, 'Building the page…', 1800), 520);
+        setTimeout(() => { a.state = 'descend'; wake(); }, T(k * 140));
+        if (k === 0) setTimeout(() => say(a, 'Building the page…', 1800), T(520));
         const watch = () => {
           if (introDone) return;
           idx.forEach(i => {
@@ -2227,7 +2230,7 @@ html.js [data-part].focused > * { filter: none; opacity: 1; translate: 0 0; tran
           helper.sorted = true; helper.carry = null;
         } else if (helper && p >= .8 && !helper.done) {
           helper.done = true;
-          setTimeout(() => helper && leave(helper), 700);
+          setTimeout(() => helper && leave(helper), T(700));
         }
         if (p < 1) requestAnimationFrame(tick); else playing = false;
       };
