@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="How LastSet saves, backs up and deletes your training data.">
+  <title>LastSet Privacy Policy</title>
+  <style>
+    :root { color-scheme: light dark; --bg: #fff; --text: #1d1d1f; --muted: #606068; --line: #d2d2d7; --link: #2446e8; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.65 system-ui, -apple-system, sans-serif; }
+    main { max-width: 760px; margin: auto; padding: 48px 24px 72px; }
+    header { padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+    h1 { margin: 12px 0; font-size: clamp(32px, 6vw, 46px); line-height: 1.15; letter-spacing: -.03em; }
+    h2 { margin: 32px 0 10px; font-size: 23px; line-height: 1.3; }
+    p { margin: 12px 0; }
+    .brand { font-weight: 750; letter-spacing: -.02em; }
+    .date { color: var(--muted); font-size: 15px; }
+    a { color: var(--link); overflow-wrap: anywhere; }
+    a:focus-visible { outline: 2px solid var(--link); outline-offset: 4px; }
+    li { margin: 8px 0; }
+    footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); }
+    @media (prefers-color-scheme: dark) { :root { --bg: #111319; --text: #f5f5f7; --muted: #b3b4bd; --line: #363840; --link: #93a7ff; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="brand">LastSet</div>
+    <h1>Privacy Policy</h1>
+    <p class="date">Effective October 11, 2026</p>
+    <p>LastSet is operated by Kirk Patoucheas. This policy explains how the app handles your training data, including optional account backup when that feature is available.</p>
+  </header>
+
+  <h2>Training without an account</h2>
+  <p>You can use LastSet without signing in. Your workouts, programs, custom exercises, activities and preferences are saved on your device. Guest training data is uploaded only if you sign in and explicitly choose to import it.</p>
+
+  <h2>Optional accounts and cloud backup</h2>
+  <p>Signing in with Apple sends an Apple identity token and authorization code to LastSet's Supabase backend. The backend receives your Apple account identifier and any email address Apple supplies, including a private relay address when you use Hide My Email. LastSet does not receive your Apple password. The backend stores an encrypted Apple refresh token so it can revoke LastSet's authorization when you delete your account.</p>
+  <p>When account backup is enabled, LastSet stores the following under your account to back up completed work, restore your history and synchronize your devices:</p>
+  <ul>
+    <li>Finished and ended-and-saved workouts, their sets, entered weights and units, exercise snapshots, captured targets, notes and results.</li>
+    <li>Explicitly saved programs, custom exercises and activities.</li>
+    <li>Account preferences and synchronization information needed to reconcile changes and deletions.</li>
+  </ul>
+  <p>Sets are saved on your phone while you train. Unfinished workouts and program drafts remain local and are not uploaded as you edit them. Cloud recovery covers acknowledged uploads; it cannot recover an unfinished workout or a pending upload if you lose the device.</p>
+
+  <h2>Device-only information</h2>
+  <p>Rest timer state, Live Activity commands, HealthKit identifiers, heart-rate and energy values, and device appearance, haptic and notification preferences stay on the device in this version. If you enable a HealthKit feature, access requires Apple's separate permission. LastSet does not upload HealthKit identifiers, heart-rate or energy values to its workout backup.</p>
+  <p>Local diagnostic events are retained for 30 days. LastSet's sync diagnostics count requests, transferred bytes and pending uploads without logging workout payloads.</p>
+
+  <h2>Service providers and security</h2>
+  <p>LastSet uses Apple for sign-in and Supabase for authentication, database storage and server functions. Cloud requests use encrypted connections, and private training records are protected by account ownership rules. The initial databases are hosted in Canada Central; providers may process operational information in other locations. This is not a promise of Canada-only processing.</p>
+  <p>Providers may process technical information such as IP addresses, request timestamps and service logs to operate and secure their services. See <a href="https://www.apple.com/legal/privacy/">Apple's privacy information</a> and <a href="https://supabase.com/privacy">Supabase's privacy policy</a>. LastSet does not sell your training data or use it for advertising or cross-app tracking.</p>
+  <p>This policy page is hosted on GitHub Pages. GitHub logs visitors' IP addresses for security purposes, as described in its <a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection">Pages documentation</a>. This page adds no analytics scripts or advertising trackers.</p>
+
+  <h2>Retention and encrypted backups</h2>
+  <p>Training history and saved programs remain on your device and, if backed up, in your account until you delete them. Clearing cached files does not remove training history, drafts or pending uploads.</p>
+  <p>LastSet also makes encrypted database backups on the operator's Mac. The backup process retains the 14 most recent successful daily backups. Deleted information can remain in these encrypted copies until rotation runs; copies can remain longer when the Mac is unavailable or backups fail. Account deletions are recorded in a deletion ledger that must be honored during restoration. These backups are not an always-on recovery service.</p>
+
+  <h2>Your choices and deletion</h2>
+  <p>You can export your training data in Settings. You can sign out without deleting separately stored local data. Signed-in users can choose <strong>Delete training data everywhere</strong> or <strong>Delete account</strong>. Account deletion revokes LastSet's Sign in with Apple authorization and removes live authentication and application records. Separately saved guest data is unaffected and can be deleted locally.</p>
+  <p>Deleting cloud data cannot remotely erase another device. Other devices may retain local copies, including after they reconnect. Use the app's local deletion controls where available, or remove the app from a device to delete its local training database. Encrypted backup copies follow the retention policy above.</p>
+  <p>For privacy questions or help accessing, exporting or deleting your data, email <a href="mailto:kirksprojects@gmail.com">kirksprojects@gmail.com</a>. We may need to verify that a request concerns your account before acting on it.</p>
+
+  <h2>Changes to this policy</h2>
+  <p>We will update this page when LastSet's data handling changes and revise the effective date. Material changes will be communicated through the app or another appropriate notice.</p>
+
+  <footer><a href="https://patoucheas.github.io/">Kirk Patoucheas</a> · <a href="mailto:kirksprojects@gmail.com">Contact LastSet</a></footer>
+</main>
+</body>
+</html>
