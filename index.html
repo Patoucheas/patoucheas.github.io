@@ -199,10 +199,10 @@ html.js [data-reveal].in { opacity: 1; translate: 0 0; transition: opacity 1s va
 .t-copy h3 { font-size: clamp(28px, 3.4vw, 40px); font-weight: 700; letter-spacing: -.025em; line-height: 1.08; margin: 0; }
 .t-copy p { color: var(--muted); font-size: 17px; line-height: 1.42; max-width: 30em; }
 .t-copy .lnk { margin-top: 4px; }
-.t-vis { margin-top: auto; padding-left: clamp(28px, 4vw, 52px); transition: transform .6s var(--ease-apple); }
+.t-vis { margin-top: auto; padding-left: clamp(28px, 4vw, 52px); transform-origin: 100% 100%; transition: transform .6s var(--ease-apple); }
 .tile2.wide .t-vis { flex: 1.35 1 0; min-width: 0; align-self: flex-end; padding-top: clamp(28px, 4vw, 52px); }
 .t-vis .browser { border-radius: 12px 0 0 0; border-right: 0; border-bottom: 0; box-shadow: var(--shadow); }
-.tile2:hover .t-vis { transform: translateY(-6px); }
+.tile2:hover .t-vis { transform: scale(1.03); }   /* grows up and in from the corner it bleeds off, so its edges stay flush */
 
 .about2 { max-width: 880px; margin: 0 auto; text-align: center; display: grid; gap: 22px; justify-items: center; }
 .about2 h2 { font-size: clamp(36px, 5vw, 56px); font-weight: 700; letter-spacing: -.03em; line-height: 1.08; }
